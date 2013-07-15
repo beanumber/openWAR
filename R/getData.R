@@ -1,0 +1,179 @@
+#' @title getData
+#' 
+#' @description Retrieves MLBAM GameDay files for a time interval
+#' 
+#' @details Given a beginning and end date, this function will retrieve data from the 
+#' GameDay server, and process them into a single data.frame
+#' 
+#' @param start A valid date in yyyy-mm-dd format (default today)
+#' @param end A valid date in yyyy-mm-dd format (default start)
+#' 
+#' @return a data.frame consisting of play-by-play data 
+#' 
+#' @export
+#' @examples
+#' 
+#' ds = getData()
+#' getData(start = "2013-05-21", end = Sys.Date())
+
+getData <- function(start = Sys.Date()-1, end = NULL) {
+  if(is.null(end)) {
+    end = start
+  }
+  dates = seq(from=as.Date(start), to=as.Date(end), by="1 day")
+  gIds = unlist(sapply(dates, getGameIds))
+  #test<-getGameDay(gIds[1])
+  #if (require(multicore)) {
+   # message("Using multicore to parallelize!")
+    #gd.list = mclapply(gIds, gameday, mc.cores = max(1, getOption("core") - 1))
+  #} else {
+    gd.list = lapply(gIds, gameday)
+  #}
+  ds.list = lapply(gd.list, "[[", "ds")
+  out = do.call(rbind, ds.list)
+  out = recenter(out)
+  out = subset(out, game_type == "R")
+  return(out)
+}
+
+
+#' @title getMonthlyData
+#' @aliases getWeeklyData
+#' 
+#' @description Retrieves MLBAM GameDay files for a single month
+#' 
+#' @details Given a year and month, this function will retrieve data from the 
+#' GameDay server, and process them into a single data.frame
+#' 
+#' @param yyyy A year
+#' @param m a numeric value corresponding to a month
+#' 
+#' @return a data.frame consisting of play-by-play data 
+#' 
+#' @export
+#' @export getWeeklyData
+#' @examples
+#' 
+#' ds = getData()
+#' getMonthlyData(2-13, 5)
+
+getMonthlyData <- function(yyyy = 2013, m = 5) {
+  start = as.Date(paste(yyyy, m, "01", sep="-"), "%Y-%m-%d")
+  end = as.Date(paste(yyyy, m + 1, "01", sep="-"), "%Y-%m-%d") - 1
+  return(getData(start, end))
+}
+
+getWeeklyData <- function(start = Sys.Date() - 8) {
+  return(getData(as.Date(start), as.Date(start) + 6))
+}
+
+
+#' @title getGameIds
+#' 
+#' @description Retrieves MLBAM gameIds for a specified date
+#' 
+#' @details Downloads information for a given day from the MLBAM website and retrieves
+#' a list of valid gameIds
+#' 
+#' @param date A date in "yyyy-mm-dd" format
+#'  
+#' @return a vector of gameIds
+#' 
+#' @export
+#' @examples
+#' getGameIds()
+#' getGameIds("2008-05-14")
+#' 
+
+getGameIds <- function(date = Sys.Date()) {
+  require(RCurl)
+  if (class(as.Date(date)) != "Date") {
+    warning("Not a valid Date")
+  }
+  yyyy = format(date, "%Y")
+  mm = format(date, "%m")
+  dd = format(date, "%d")
+  url<-paste("http://gd2.mlb.com/components/game/mlb/year_",yyyy,"/month_",mm,"/day_",dd,"/",sep="")
+  cat(paste("\nRetrieving data from", date, "..."))
+  a <- getURL(url)
+  b <- strsplit(a,"<a")
+  ind <- grep("gid", b[[1]])
+  games <- substring(b[[1]][ind], 8, 37)
+  cat(paste("\n...found", length(games), "games"))
+  return(games)
+}
+
+
+recenter = function (data, ...) {
+  # From MLBAM specs
+  data = transform(data, our.x = x - 125)
+  data = transform(data, our.y = 199 - y)
+  # set distance from home to 2B
+  scale = sqrt(90^2 + 90^2) / 51
+  data = transform(data, r = scale * sqrt(our.x^2 + our.y^2))
+  data = transform(data, theta = atan2(our.y, our.x))
+  data = transform(data, our.x = r * cos(theta))
+  data = transform(data, our.y = r * sin(theta))
+  return(data)
+}
+
+  
+########################################################################
+#
+# Deprecated
+#
+#################################################################
+# 
+# getGameDayURLs = function (gameId = "gid_2012_08_12_atlmlb_nynmlb_1") {
+#   if (nchar(gameId) != 30) {
+#     stop("This is not a valid MLBAM gameId!")
+#   }
+#   yyyy <- substring(gameId, 5, 8)
+#   mm <- substring(gameId, 10, 11)
+#   dd <- substring(gameId, 13, 14)
+#   
+#   # Base URL
+#   base = paste("http://gd2.mlb.com/components/game/mlb/year_",yyyy,"/month_",mm,"/day_",dd,"/",sep="")
+#   message(base)
+#   
+#   url = NULL
+#   url["bis_boxscore.xml"] = paste(base, gameId, "/bis_boxscore.xml", sep="")  
+#   url["inning_all.xml"] = paste(base, gameId, "/inning/inning_all.xml", sep="")
+#   url["inning_hit.xml"] = paste(base, gameId, "/inning/inning_hit.xml", sep="")  
+#   url["game.xml"] = paste(base, gameId, "/game.xml", sep="")  
+#   url["game_events.xml"] = paste(base, gameId, "/game_events.xml", sep="")  
+#   
+#   
+#   return(url)
+# }
+# 
+# getGameDayXML = function (gameId = "gid_2012_08_12_atlmlb_nynmlb_1", type = "inning_all") {
+#   url = getGameDayURLs(gameId)
+#   
+#   # If the local directory for this game does not exist, create it and download the files
+#   dirname = file.path("data", gameId)
+#   if (!file.exists(dirname)) {
+#     warning("...GameDay XML files are not in local directory -- must download")
+#     dir.create(dirname)  
+#     files = getURL(url)
+#     for(i in 1:(length(files))) {
+#       filename = basename(names(files)[i])
+#       write(files[i], file.path(dirname, filename))
+#     }
+#   }
+#   
+#   # Now read from the local files
+#   xml = switch(type
+#                , bis_boxscore.xml = try(xmlParse(file.path(dirname, "bis_boxscore.xml")))
+#                , inning_all.xml = try(xmlTreeParse(file.path(dirname, "inning_all.xml")))
+#                , game.xml = try(xmlParse(file.path(dirname, "game.xml")))
+#                , game_events.xml = try(xmlTreeParse(file.path(dirname, "game_events.xml")))
+#                , inning_hit.xml = try(xmlTreeParse(file.path(dirname, "inning_hit.xml")))
+#   )
+# #   if (class(xml) == "try-error") {
+# #     warning("404 - GameDay files do not exist...")
+# #     return(NULL)
+# #   }
+#   return(xml)
+# }
+# 
