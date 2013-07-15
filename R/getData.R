@@ -32,7 +32,6 @@ getData <- function(start = Sys.Date()-1, end = NULL, drop.suspended = TRUE) {
   #}
   ds.list = lapply(gd.list, "[[", "ds")
   out = do.call(rbind, ds.list)
-  out = recenter(out)
   out = subset(out, game_type == "R")
   # exclude suspended games
   if (drop.suspended) {
@@ -40,6 +39,9 @@ getData <- function(start = Sys.Date()-1, end = NULL, drop.suspended = TRUE) {
     suspended = subset(test, Innings < 5)$gameId
     out = subset(out, !gameId %in% suspended)
   }
+  
+
+  
   return(out)
 }
 
@@ -111,18 +113,7 @@ getGameIds <- function(date = Sys.Date()) {
 }
 
 
-recenter = function (data, ...) {
-  # From MLBAM specs
-  data = transform(data, our.x = x - 125)
-  data = transform(data, our.y = 199 - y)
-  # set distance from home to 2B
-  scale = sqrt(90^2 + 90^2) / 51
-  data = transform(data, r = scale * sqrt(our.x^2 + our.y^2))
-  data = transform(data, theta = atan2(our.y, our.x))
-  data = transform(data, our.x = r * cos(theta))
-  data = transform(data, our.y = r * sin(theta))
-  return(data)
-}
+
 
   
 ########################################################################

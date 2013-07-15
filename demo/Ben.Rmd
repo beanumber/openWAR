@@ -103,20 +103,10 @@ data(MLBAM2013)
 ds = MLBAM2013
 ```
 
-First, some basic accounting to make sure that our data is accurate. A few games that we have data for were postponed due to rain, and will be completed later. Let's exlude those games.
-
-```{r}
-ppd = c("gid_2013_05_02_tbamlb_kcamlb_1", "gid_2013_04_16_slnmlb_pitmlb_1", "gid_2013_05_28_chnmlb_chamlb_1")
-ds = subset(ds, !gameId %in% ppd)
-```
-
-Compare these with [Baseball-reference.com](http://www.baseball-reference.com/leagues/MLB/2013-standard-batting.shtml)
+First, some basic accounting to make sure that our data is accurate. Compare these with [Baseball-reference.com](http://www.baseball-reference.com/leagues/MLB/2013-standard-batting.shtml)
 
 ```{r}
 sort(tally(~event, data=ds), decreasing=TRUE)
-ds = transform(ds, isPA = !event %in% c("Defensive Indiff", "Stolen Base 2B", "Runner Out"))
-ds = transform(ds, isHit = event %in% c("Single", "Double", "Triple", "Home Run"))
-ds = transform(ds, isBIP = event != "Home Run" & !is.na(x) & !is.na(y))
 ds$bat_team = with(ds, ifelse(half == "top", as.character(away_team), as.character(home_team)))
 teams = ddply(ds, ~ bat_team, summarise, G = length(unique(gameId)), PA = sum(isPA), R = sum(runsOnPlay), H = sum(isHit), HR = sum(event == "Home Run"), K = sum(event %in% c("Strikeout", "Strikeout - DP")), OBP = sum(isHit | event %in% c("Walk", "Intent Walk", "Hit By Pitch")) / sum(isPA & !event %in% c("Sac Bunt", "Sacrifice Bunt DP")))
 teams[order(teams$PA, decreasing=TRUE),]

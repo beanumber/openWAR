@@ -306,6 +306,14 @@ readData.gameday = function (gd) {
     
     out$gameId = as.character(gd$gameId)
     out = out[order(out$ab_num),]
+    
+    # add some convenience calculation fields
+    out = transform(out, isPA = !event %in% c("Defensive Indiff", "Stolen Base 2B", "Runner Out"))
+    out = transform(out, isHit = event %in% c("Single", "Double", "Triple", "Home Run"))
+    out = transform(out, isBIP = event != "Home Run" & !is.na(x) & !is.na(y))
+    
+    # translate the coordinates so that home plate is (0,0) and second base is (0, 127' 3 3/8")
+    out = recenter(out)
   } else {
     warning("Game data is no bueno -- most likely a rainout")
     out = NULL
@@ -430,8 +438,23 @@ updateDefense = function (data) {
   return(data)
 }
 
+recenter = function (data, ...) {
+  # From MLBAM specs
+  data = transform(data, our.x = x - 125)
+  data = transform(data, our.y = 199 - y)
+  # set distance from home to 2B
+  scale = sqrt(90^2 + 90^2) / 51
+  data = transform(data, r = scale * sqrt(our.x^2 + our.y^2))
+  data = transform(data, theta = atan2(our.y, our.x))
+  data = transform(data, our.x = r * cos(theta))
+  data = transform(data, our.y = r * sin(theta))
+  return(data)
+}
 
-
+################################################################################################
+#
+# Deprecated beyond this point
+#
 ################################################################################################
 
 #' @title getData
@@ -951,27 +974,5 @@ getGameEvents <- function (gd) {
     return(gr)
   }
 }
-
-#####################################################################################
-#
-# Aborted attempt to use XSLT to process the XML files
-#
-####################################################################################
-
-# getGameDay = function (gameId = "gid_2012_08_12_atlmlb_nynmlb_1") {
-#   require(RCurl)
-#   yyyy = substr(gameId, 5, 8)
-#   mm = substr(gameId, 10, 11)
-#   dd = substr(gameId, 13, 14)
-#   url = paste("http://gd2.mlb.com/components/game/mlb/year_", yyyy, "/month_", mm, "/day_", dd, "/", gameId, "/", sep="")
-#   
-#   cmd1 = paste("xsltproc inst/xsl/inning_all.xsl", paste(url, "inning/inning_all.xml", sep=""), ">", paste("data/", gameId, "_inning_all.csv", sep=""))
-#   cmd2 = paste("xsltproc inst/xsl/inning_hit.xsl", paste(url, "inning/inning_hit.xml", sep=""), ">", paste("data/", gameId, "_inning_hit.csv", sep=""))
-#   cmd3 = paste("xsltproc inst/xsl/game_events.xsl", paste(url, "game_events.xml", sep=""), ">", paste("data/", gameId, "_game_events.csv", sep=""))
-#   system(cmd1)
-#   system(cmd2)
-#   system(cmd3)
-# }
-
 
   
