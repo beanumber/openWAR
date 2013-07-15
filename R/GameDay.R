@@ -246,59 +246,9 @@ readData.gameday = function (gd) {
     out$startCode = as.numeric((1 * !is.na(out[, c("start1B", "start2B", "start3B")])) %*% c(1, 2, 4))
     out$endCode  = as.numeric((1 * !is.na(out[, c("end1B", "end2B", "end3B")])) %*% c(1, 2, 4))
     
-    # deprecated
-#    linescore = ddply(out[,c("inning", "half", "runsOnPlay", "startOuts", "endOuts")], ~inning + half, summarise, runsInning = sum(runsOnPlay), outsInInning = sum(endOuts - startOuts))
-#    temp = ddply(out[,c("inning", "half", "ab_num", "runsOnPlay")], ~inning + half, summarise, ab_num = identity(ab_num), R = cumsum(runsOnPlay))
-#    out$runsITD = temp[order(temp$ab_num),]$R
-#    out = merge(x = out, y = linescore, by=c("inning", "half"), all.x=TRUE)
-#    out = transform(out, runsFuture = runsInning - runsITD)
-    
     # Figure out who fielded the ball
-    # Flyouts
-    out$fielderId = with(out, ifelse(event %in% c("Flyout", "Lineout", "Pop Out", "Bunt Pop Out") & str_count(description, " (flies|lines|pops) out( sharply| softly)? to pitcher "), pitcherId, NA))
-    out$fielderId = with(out, ifelse(event %in% c("Flyout", "Lineout", "Pop Out", "Bunt Pop Out") & str_count(description, " (flies|lines|pops) out( sharply| softly)? to catcher "), playerId.C, fielderId))
-    out$fielderId = with(out, ifelse(event %in% c("Flyout", "Lineout", "Pop Out", "Bunt Pop Out") & str_count(description, " (flies|lines|pops) out( sharply| softly)? to first baseman "), playerId.1B, fielderId))
-    out$fielderId = with(out, ifelse(event %in% c("Flyout", "Lineout", "Pop Out", "Bunt Pop Out") & str_count(description, " (flies|lines|pops) out( sharply| softly)? to second baseman "), playerId.2B, fielderId))
-    out$fielderId = with(out, ifelse(event %in% c("Flyout", "Lineout", "Pop Out", "Bunt Pop Out") & str_count(description, " (flies|lines|pops) out( sharply| softly)? to third baseman "), playerId.3B, fielderId))
-    out$fielderId = with(out, ifelse(event %in% c("Flyout", "Lineout", "Pop Out", "Bunt Pop Out") & str_count(description, " (flies|lines|pops) out( sharply| softly)? to shortstop "), playerId.SS, fielderId))
-    out$fielderId = with(out, ifelse(event %in% c("Flyout", "Lineout", "Pop Out", "Bunt Pop Out") & str_count(description, " (flies|lines|pops) out( sharply| softly)? to left fielder "), playerId.LF, fielderId))
-    out$fielderId = with(out, ifelse(event %in% c("Flyout", "Lineout", "Pop Out", "Bunt Pop Out") & str_count(description, " (flies|lines|pops) out( sharply| softly)? to center fielder "), playerId.CF, fielderId))
-    out$fielderId = with(out, ifelse(event %in% c("Flyout", "Lineout", "Pop Out", "Bunt Pop Out") & str_count(description, " (flies|lines|pops) out( sharply| softly)? to right fielder "), playerId.RF, fielderId))
-    # Groundouts with an assist
-    out$fielderId = with(out, ifelse(event %in% c("Groundout", "Bunt Groundout") & str_count(description, " grounds out( sharply| softly)?(,| to) third baseman "), playerId.3B, fielderId))
-    out$fielderId = with(out, ifelse(event %in% c("Groundout", "Bunt Groundout") & str_count(description, " grounds out( sharply| softly)?(,| to) shortstop "), playerId.SS, fielderId))
-    out$fielderId = with(out, ifelse(event %in% c("Groundout", "Bunt Groundout") & str_count(description, " grounds out( sharply| softly)?(,| to) second baseman "), playerId.2B, fielderId))
-    out$fielderId = with(out, ifelse(event %in% c("Groundout", "Bunt Groundout") & str_count(description, " grounds out( sharply| softly)?(,| to) first baseman "), playerId.1B, fielderId))
-    out$fielderId = with(out, ifelse(event %in% c("Groundout", "Bunt Groundout") & str_count(description, " grounds out( sharply| softly)?(,| to) pitcher "), pitcherId, fielderId))
-    out$fielderId = with(out, ifelse(event %in% c("Groundout", "Bunt Groundout") & str_count(description, " grounds out( sharply| softly)?(,| to) catcher "), playerId.C, fielderId))
-    # Forceout
-    out$fielderId = with(out, ifelse(event == "Forceout" & str_count(description, " (grounds|pops)( sharply| softly)? into a force out,( fielded by)? third baseman "), playerId.3B, fielderId))
-    out$fielderId = with(out, ifelse(event == "Forceout" & str_count(description, " (grounds|pops)( sharply| softly)? into a force out,( fielded by)? shortstop "), playerId.SS, fielderId))
-    out$fielderId = with(out, ifelse(event == "Forceout" & str_count(description, " (grounds|pops)( sharply| softly)? into a force out,( fielded by)? second baseman "), playerId.2B, fielderId))
-    out$fielderId = with(out, ifelse(event == "Forceout" & str_count(description, " (grounds|pops)( sharply| softly)? into a force out,( fielded by)? first baseman "), playerId.1B, fielderId))
-    out$fielderId = with(out, ifelse(event == "Forceout" & str_count(description, " (grounds|pops)( sharply| softly)? into a force out,( fielded by)? pitcher "), pitcherId, fielderId))
-    out$fielderId = with(out, ifelse(event == "Forceout" & str_count(description, " (grounds|pops)( sharply| softly)? into a force out,( fielded by)? catcher "), playerId.C, fielderId))
-    # Grounded Into DP
-    out$fielderId = with(out, ifelse(event == "Grounded Into DP" & str_count(description, " grounds( sharply| softly)? into a double play, catcher "), playerId.C, fielderId))
-    out$fielderId = with(out, ifelse(event == "Grounded Into DP" & str_count(description, " grounds( sharply| softly)? into a double play, third baseman "), playerId.3B, fielderId))
-    out$fielderId = with(out, ifelse(event == "Grounded Into DP" & str_count(description, " grounds( sharply| softly)? into a double play, shortstop "), playerId.SS, fielderId))
-    out$fielderId = with(out, ifelse(event == "Grounded Into DP" & str_count(description, " grounds( sharply| softly)? into a double play, second baseman "), playerId.2B, fielderId))
-    out$fielderId = with(out, ifelse(event == "Grounded Into DP" & str_count(description, " grounds( sharply| softly)? into a double play, first baseman "), playerId.1B, fielderId))
-    out$fielderId = with(out, ifelse(event == "Grounded Into DP" & str_count(description, " grounds( sharply| softly)? into a double play, pitcher "), pitcherId, fielderId))
-    # Sac Bunts
-    out$fielderId = with(out, ifelse(event %in% c("Sac Bunt", "Sac Fly", "Fielders Choice Out") & str_count(description, " on a (fielders choice out|sacrifice bunt|sacrifice fly)(,| to) pitcher "), pitcherId, fielderId))
-    out$fielderId = with(out, ifelse(event %in% c("Sac Bunt", "Sac Fly", "Fielders Choice Out") & str_count(description, " on a (fielders choice out|sacrifice bunt|sacrifice fly)(,| to) catcher "), playerId.C, fielderId))
-    out$fielderId = with(out, ifelse(event %in% c("Sac Bunt", "Sac Fly", "Fielders Choice Out") & str_count(description, " on a (fielders choice out|sacrifice bunt|sacrifice fly)(,| to) first baseman "), playerId.1B, fielderId))
-    out$fielderId = with(out, ifelse(event %in% c("Sac Bunt", "Sac Fly", "Fielders Choice Out") & str_count(description, " on a (fielders choice out|sacrifice bunt|sacrifice fly)(,| to) second baseman "), playerId.2B, fielderId))
-    out$fielderId = with(out, ifelse(event %in% c("Sac Bunt", "Sac Fly", "Fielders Choice Out") & str_count(description, " on a (fielders choice out|sacrifice bunt|sacrifice fly)(,| to) third baseman "), playerId.3B, fielderId))
-    out$fielderId = with(out, ifelse(event %in% c("Sac Bunt", "Sac Fly", "Fielders Choice Out") & str_count(description, " on a (fielders choice out|sacrifice bunt|sacrifice fly)(,| to) shortstop "), playerId.SS, fielderId))
-    out$fielderId = with(out, ifelse(event %in% c("Sac Bunt", "Sac Fly", "Fielders Choice Out") & str_count(description, " on a (fielders choice out|sacrifice bunt|sacrifice fly)(,| to) left fielder "), playerId.LF, fielderId))
-    out$fielderId = with(out, ifelse(event %in% c("Sac Bunt", "Sac Fly", "Fielders Choice Out") & str_count(description, " on a (fielders choice out|sacrifice bunt|sacrifice fly)(,| to) center fielder "), playerId.CF, fielderId))
-    out$fielderId = with(out, ifelse(event %in% c("Sac Bunt", "Sac Fly", "Fielders Choice Out") & str_count(description, " on a (fielders choice out|sacrifice bunt|sacrifice fly)(,| to) right fielder "), playerId.RF, fielderId))    
-    
-    # Check progress
-#    subset(out, event == "Lineout", select=c("description", "fielderId"))
-    
+    out$fielderId = getFielderId(out)
+      
     # double-check -- should work for all normal plays, but fails on third out
   #  out$startBR = (1 * !is.na(out[, c("start1B", "start2B", "start3B")])) %*% c(1, 1, 1)
   #  out$endBR = (1 * !is.na(out[, c("end1B", "end2B", "end3B")])) %*% c(1, 1, 1)
@@ -436,6 +386,54 @@ updateDefense = function (data) {
 #  X = data[!is.na(data$batterId), c("playerId.C", "playerId.1B", "playerId.2B", "playerId.3B", "playerId.SS", "playerId.LF", "playerId.CF", "playerId.RF")]
 #  sum(apply(X, 1, duplicated))
   return(data)
+}
+
+getFielderId = function (data) {
+  
+  # Figure out who fielded the ball
+  # Flyouts
+  fielderId = with(data, ifelse(event %in% c("Flyout", "Lineout", "Pop Out", "Bunt Pop Out") & str_count(description, " (flies|lines|pops) out( sharply| softly)? to pitcher "), pitcherId, NA))
+  fielderId = with(data, ifelse(event %in% c("Flyout", "Lineout", "Pop Out", "Bunt Pop Out") & str_count(description, " (flies|lines|pops) out( sharply| softly)? to catcher "), playerId.C, fielderId))
+  fielderId = with(data, ifelse(event %in% c("Flyout", "Lineout", "Pop Out", "Bunt Pop Out") & str_count(description, " (flies|lines|pops) out( sharply| softly)? to first baseman "), playerId.1B, fielderId))
+  fielderId = with(data, ifelse(event %in% c("Flyout", "Lineout", "Pop Out", "Bunt Pop Out") & str_count(description, " (flies|lines|pops) out( sharply| softly)? to second baseman "), playerId.2B, fielderId))
+  fielderId = with(data, ifelse(event %in% c("Flyout", "Lineout", "Pop Out", "Bunt Pop Out") & str_count(description, " (flies|lines|pops) out( sharply| softly)? to third baseman "), playerId.3B, fielderId))
+  fielderId = with(data, ifelse(event %in% c("Flyout", "Lineout", "Pop Out", "Bunt Pop Out") & str_count(description, " (flies|lines|pops) out( sharply| softly)? to shortstop "), playerId.SS, fielderId))
+  fielderId = with(data, ifelse(event %in% c("Flyout", "Lineout", "Pop Out", "Bunt Pop Out") & str_count(description, " (flies|lines|pops) out( sharply| softly)? to left fielder "), playerId.LF, fielderId))
+  fielderId = with(data, ifelse(event %in% c("Flyout", "Lineout", "Pop Out", "Bunt Pop Out") & str_count(description, " (flies|lines|pops) out( sharply| softly)? to center fielder "), playerId.CF, fielderId))
+  fielderId = with(data, ifelse(event %in% c("Flyout", "Lineout", "Pop Out", "Bunt Pop Out") & str_count(description, " (flies|lines|pops) out( sharply| softly)? to right fielder "), playerId.RF, fielderId))
+  # Groundouts with an assist
+  fielderId = with(data, ifelse(event %in% c("Groundout", "Bunt Groundout") & str_count(description, " grounds out( sharply| softly)?(,| to) third baseman "), playerId.3B, fielderId))
+  fielderId = with(data, ifelse(event %in% c("Groundout", "Bunt Groundout") & str_count(description, " grounds out( sharply| softly)?(,| to) shortstop "), playerId.SS, fielderId))
+  fielderId = with(data, ifelse(event %in% c("Groundout", "Bunt Groundout") & str_count(description, " grounds out( sharply| softly)?(,| to) second baseman "), playerId.2B, fielderId))
+  fielderId = with(data, ifelse(event %in% c("Groundout", "Bunt Groundout") & str_count(description, " grounds out( sharply| softly)?(,| to) first baseman "), playerId.1B, fielderId))
+  fielderId = with(data, ifelse(event %in% c("Groundout", "Bunt Groundout") & str_count(description, " grounds out( sharply| softly)?(,| to) pitcher "), pitcherId, fielderId))
+  fielderId = with(data, ifelse(event %in% c("Groundout", "Bunt Groundout") & str_count(description, " grounds out( sharply| softly)?(,| to) catcher "), playerId.C, fielderId))
+  # Forceout
+  fielderId = with(data, ifelse(event == "Forceout" & str_count(description, " (grounds|pops)( sharply| softly)? into a force out,( fielded by)? third baseman "), playerId.3B, fielderId))
+  fielderId = with(data, ifelse(event == "Forceout" & str_count(description, " (grounds|pops)( sharply| softly)? into a force out,( fielded by)? shortstop "), playerId.SS, fielderId))
+  fielderId = with(data, ifelse(event == "Forceout" & str_count(description, " (grounds|pops)( sharply| softly)? into a force out,( fielded by)? second baseman "), playerId.2B, fielderId))
+  fielderId = with(data, ifelse(event == "Forceout" & str_count(description, " (grounds|pops)( sharply| softly)? into a force out,( fielded by)? first baseman "), playerId.1B, fielderId))
+  fielderId = with(data, ifelse(event == "Forceout" & str_count(description, " (grounds|pops)( sharply| softly)? into a force out,( fielded by)? pitcher "), pitcherId, fielderId))
+  fielderId = with(data, ifelse(event == "Forceout" & str_count(description, " (grounds|pops)( sharply| softly)? into a force out,( fielded by)? catcher "), playerId.C, fielderId))
+  # Grounded Into DP
+  fielderId = with(data, ifelse(event == "Grounded Into DP" & str_count(description, " grounds( sharply| softly)? into a double play, catcher "), playerId.C, fielderId))
+  fielderId = with(data, ifelse(event == "Grounded Into DP" & str_count(description, " grounds( sharply| softly)? into a double play, third baseman "), playerId.3B, fielderId))
+  fielderId = with(data, ifelse(event == "Grounded Into DP" & str_count(description, " grounds( sharply| softly)? into a double play, shortstop "), playerId.SS, fielderId))
+  fielderId = with(data, ifelse(event == "Grounded Into DP" & str_count(description, " grounds( sharply| softly)? into a double play, second baseman "), playerId.2B, fielderId))
+  fielderId = with(data, ifelse(event == "Grounded Into DP" & str_count(description, " grounds( sharply| softly)? into a double play, first baseman "), playerId.1B, fielderId))
+  fielderId = with(data, ifelse(event == "Grounded Into DP" & str_count(description, " grounds( sharply| softly)? into a double play, pitcher "), pitcherId, fielderId))
+  # Sac Bunts
+  fielderId = with(data, ifelse(event %in% c("Sac Bunt", "Sac Fly", "Fielders Choice Out") & str_count(description, " on a (fielders choice out|sacrifice bunt|sacrifice fly)(,| to) pitcher "), pitcherId, fielderId))
+  fielderId = with(data, ifelse(event %in% c("Sac Bunt", "Sac Fly", "Fielders Choice Out") & str_count(description, " on a (fielders choice out|sacrifice bunt|sacrifice fly)(,| to) catcher "), playerId.C, fielderId))
+  fielderId = with(data, ifelse(event %in% c("Sac Bunt", "Sac Fly", "Fielders Choice Out") & str_count(description, " on a (fielders choice out|sacrifice bunt|sacrifice fly)(,| to) first baseman "), playerId.1B, fielderId))
+  fielderId = with(data, ifelse(event %in% c("Sac Bunt", "Sac Fly", "Fielders Choice Out") & str_count(description, " on a (fielders choice out|sacrifice bunt|sacrifice fly)(,| to) second baseman "), playerId.2B, fielderId))
+  fielderId = with(data, ifelse(event %in% c("Sac Bunt", "Sac Fly", "Fielders Choice Out") & str_count(description, " on a (fielders choice out|sacrifice bunt|sacrifice fly)(,| to) third baseman "), playerId.3B, fielderId))
+  fielderId = with(data, ifelse(event %in% c("Sac Bunt", "Sac Fly", "Fielders Choice Out") & str_count(description, " on a (fielders choice out|sacrifice bunt|sacrifice fly)(,| to) shortstop "), playerId.SS, fielderId))
+  fielderId = with(data, ifelse(event %in% c("Sac Bunt", "Sac Fly", "Fielders Choice Out") & str_count(description, " on a (fielders choice out|sacrifice bunt|sacrifice fly)(,| to) left fielder "), playerId.LF, fielderId))
+  fielderId = with(data, ifelse(event %in% c("Sac Bunt", "Sac Fly", "Fielders Choice Out") & str_count(description, " on a (fielders choice out|sacrifice bunt|sacrifice fly)(,| to) center fielder "), playerId.CF, fielderId))
+  fielderId = with(data, ifelse(event %in% c("Sac Bunt", "Sac Fly", "Fielders Choice Out") & str_count(description, " on a (fielders choice out|sacrifice bunt|sacrifice fly)(,| to) right fielder "), playerId.RF, fielderId))    
+  
+  return(fielderId)
 }
 
 recenter = function (data, ...) {
