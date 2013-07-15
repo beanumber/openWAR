@@ -29,3 +29,4 @@ Collate:
     'GameDay.R'
     'bbplot.R'
     'warplot.R'
+    'getRunEx.R'

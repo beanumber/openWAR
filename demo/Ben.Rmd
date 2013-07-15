@@ -228,8 +228,8 @@ subset(gd$ds, inning == 1 & half == "bottom", select=c("runsFuture", "runsOnPlay
 The inning began in the state $(0,0)$. Our estimate $\hat{\rho}(0,0)$ of the expected value (in runs) of that state is:
 
 ```{r}
-fit.rem = makeFun(rmod2)
-fit.rem(startCode = 0, startOuts = 0)
+fit.rem = getRunEx(ds)
+fit.rem(baseCode = 0, outs = 0)
 # Note this is equivalent to 
 # rem[1,1]
 ```
@@ -346,9 +346,7 @@ So what does this look like? First, let's assign the beginning and ending state 
 
 ```{r}
 ds = transform(ds, startExR = fit.rem(startCode, startOuts))
-# a hack because fit.rem can't handle three out states
-tempEndOuts = ifelse(ds$endOuts == 3, 0, ds$endOuts)
-ds$endExR = ifelse(ds$endOuts == 3, 0, fit.rem(ds$endCode, tempEndOuts))
+ds = transform(ds, endExR = fit.rem(endCode, endOuts))
 ds = transform(ds, delta = endExR - startExR + runsOnPlay)
 ```
 
