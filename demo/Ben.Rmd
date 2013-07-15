@@ -369,7 +369,7 @@ Let's build a model based on the location of the hit
 ```
 
 ```{r}
-ds$delta.bat = mapply(ghostrunnerExR, ds$startCode, ds$startOuts, ds$event)
+# ds$delta.bat = mapply(ghostrunnerExR, ds$startCode, ds$startOuts, ds$event)
 ```
 
 One of the nice features of this type of model is that in $n$ completed innings, the number of expected runs generated should be exactly equal to the number of runs scored. 
@@ -403,8 +403,7 @@ Note that the runs are not equally distributed across innings.
 
 ```{r, message=FALSE}
 require(plyr)
-# ????
-ddply(ds[,c("gameId", "inning", "runsOnPlay", "delta")], ~ inning, summarise, N = length(inning), G = length(unique(gameId)), D = sum(delta, na.rm=TRUE))
+ddply(ds, ~ inning, summarise, N = length(inning), G = length(unique(gameId)), D = sum(delta, na.rm=TRUE))
 ```
 
 #### Estimating Batting WAR
@@ -421,7 +420,7 @@ summary(mod.bat)
 This is a flat model that controls only for ballpark and the platoon advantage.
 
 ```{r}
-# ds = transform(ds, delta.bat = mod.bat$fitted)
+ds = transform(ds, delta.bat = mod.bat$fitted)
 war.bat = ddply(ds, ~ batterId, summarise, Name = max(as.character(batterName)), PA = length(batterId), G = length(unique(gameId)), HR = sum(event=="Home Run"), RAA = sum(delta, na.rm=TRUE), RAA.bat = sum(delta.bat, na.rm=TRUE))
 ```
 
@@ -438,14 +437,6 @@ This makes a lot of sense.
 dw = subset(ds, batterId == 431151)
 dw[order(dw$delta, decreasing=TRUE),c("event", "startCode", "endCode", "startOuts", "endOuts", "runsOnPlay", "startExR", "endExR", "delta", "delta.bat")]
 ```
-
-We have our point estimates, but now let's put some variance estimates on those. 
-
-```{r}
-warplot(431151, data=ds)
-warplot(c(431151, 502517, 408234, 285078), data=ds)
-```
-
 
 #### Estimating Baserunning WAR
 
@@ -564,5 +555,14 @@ mod.all = glm(!is.na(fielderId) ~ poly(our.x, 12) + poly(our.y, 12) + our.x * ou
 summary(mod.all)
 fit.all = makeFun(mod.all)
 plotFun(fit.all(x, y) ~ x + y, surface=TRUE, alpha = 1, x.lim = c(-300, 300), y.lim = c(0, 500))
+```
+
+#### Final Output
+
+We have our point estimates, but now let's put some variance estimates on those. 
+
+```{r}
+warplot(431151, data=ds)
+warplot(c(431151, 502517, 408234, 285078), data=ds)
 ```
 
