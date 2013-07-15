@@ -1,0 +1,31 @@
+Package: openWAR
+Type: Package
+Title: Machinery for analyzing baseball data and computing WAR
+Version: 0.1-1
+Date: 2012-10-01
+Author: Ben Baumer and Gregory J. Matthews
+Maintainer: Ban Baumer <ben.baumer@gmail.com>
+Description: This package is useful for computing WAR
+Depends:
+    R (>= 1.8.0)
+Imports:
+    RMySQL,
+    mosaic,
+    XML,
+    RCurl,
+    plyr,
+    stringr
+License: GPL (>=2)
+Collate:
+    'getCon.R'
+    'getWAR.R'
+    'reliability.R'
+    'openWAR-package.R'
+    'exWPct.R'
+    'getBatting.R'
+    'getLinearWeights.R'
+    'getBattingWAR.R'
+    'getData.R'
+    'GameDay.R'
+    'bbplot.R'
+    'warplot.R'
