@@ -2,7 +2,8 @@
 \alias{getData}
 \title{getData}
 \usage{
-  getData(start = Sys.Date() - 1, end = NULL)
+  getData(start = Sys.Date() - 1, end = NULL,
+    drop.suspended = TRUE)
 }
 \arguments{
   \item{start}{A valid date in yyyy-mm-dd format (default
@@ -10,6 +11,9 @@
 
   \item{end}{A valid date in yyyy-mm-dd format (default
   start)}
+
+  \item{drop.suspended}{a LOGICAL indicating whether games
+  with fewer than 5 innings should be excluded}
 }
 \value{
   a data.frame consisting of play-by-play data

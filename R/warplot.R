@@ -4,8 +4,9 @@
 #' 
 #' @details Density Plot for WAR estimates
 #' 
-#' @param batterId A vector of valid MLBAM player ID present in the data argument
-#' @param data 
+#' @param playerIds A vector of valid MLBAM player IDs present in the data argument
+#' @param data A dataset
+#' @param N the number of bootstrapped estimates
 #' 
 #' @return an xyplot() 
 #' 

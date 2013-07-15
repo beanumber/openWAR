@@ -7,6 +7,7 @@
 #' 
 #' @param start A valid date in yyyy-mm-dd format (default today)
 #' @param end A valid date in yyyy-mm-dd format (default start)
+#' @param drop.suspended a LOGICAL indicating whether games with fewer than 5 innings should be excluded
 #' 
 #' @return a data.frame consisting of play-by-play data 
 #' 
@@ -16,7 +17,7 @@
 #' ds = getData()
 #' getData(start = "2013-05-21", end = Sys.Date())
 
-getData <- function(start = Sys.Date()-1, end = NULL) {
+getData <- function(start = Sys.Date()-1, end = NULL, drop.suspended = TRUE) {
   if(is.null(end)) {
     end = start
   }
@@ -33,6 +34,12 @@ getData <- function(start = Sys.Date()-1, end = NULL) {
   out = do.call(rbind, ds.list)
   out = recenter(out)
   out = subset(out, game_type == "R")
+  # exclude suspended games
+  if (drop.suspended) {
+    test = ddply(out, ~gameId, summarize, Innings = max(inning))
+    suspended = subset(test, Innings < 5)$gameId
+    out = subset(out, !gameId %in% suspended)
+  }
   return(out)
 }
 

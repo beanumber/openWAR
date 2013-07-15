@@ -197,7 +197,7 @@ readData.gameday = function (gd) {
     lkup$bo = as.numeric(as.character(lkup$bo))
     # Weed out pitchers
     lineup = subset(lkup, bo %% 100 == 0)
-    lineup$startPos = do.call("rbind", strsplit(as.character(lineup$pos), split="-"))[,1]
+    lineup$startPos = sapply(strsplit(as.character(lineup$pos), split="-"), "[", 1)
     lineup.long = lineup[order(lineup$teamId, lineup$startPos),]
     lineup.wide = reshape(lineup.long, v.names = "playerId", timevar = "startPos", idvar = "teamId", direction="wide", drop=c("playerName", "bo", "pos"))
     def.pos = c("playerId.C", "playerId.1B", "playerId.2B", "playerId.3B", "playerId.SS", "playerId.LF", "playerId.CF", "playerId.RF")

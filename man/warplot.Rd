@@ -2,13 +2,15 @@
 \alias{warplot}
 \title{warplot}
 \usage{
-  warplot(batterIds, data, N = 5000, ...)
+  warplot(playerIds, data, N = 5000, ...)
 }
 \arguments{
-  \item{batterId}{A vector of valid MLBAM player ID present
-  in the data argument}
+  \item{playerIds}{A vector of valid MLBAM player IDs
+  present in the data argument}
 
-  \item{data}{}
+  \item{data}{A dataset}
+
+  \item{N}{the number of bootstrapped estimates}
 }
 \value{
   an xyplot()
