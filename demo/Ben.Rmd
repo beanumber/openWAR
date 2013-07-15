@@ -442,9 +442,27 @@ ds$delta.br3 = with(ds, ifelse(!is.na(start3B), delta.br / (1 * !is.na(c("start1
 Now compute for individual players
 
 ```{r}
-war.br = ddply(ds, ~ start1B, summarise, PA = length(start1B), G = length(unique(gameId)), RAA = sum(delta), RAA.br = sum(delta.br1 + delta.br2 + delta.br3, na.rm=TRUE))
-war.br[order(war.br$RAA.br, decreasing=TRUE),]
-densityplot(~RAA.br, data=war.br)
+war.br1 = ddply(ds, ~start1B, summarise, RAA.br1 = sum(delta.br1, na.rm=TRUE))
+war.br1[order(war.br1$RAA.br1, decreasing=TRUE),]
+densityplot(~RAA.br1, data=war.br1)
+
+war.br2 = ddply(ds, ~start2B, summarise, RAA.br2 = sum(delta.br2, na.rm=TRUE))
+densityplot(~RAA.br2, data=war.br2)
+
+war.br3 = ddply(ds, ~start3B, summarise, RAA.br3 = sum(delta.br3, na.rm=TRUE))
+densityplot(~RAA.br3, data=war.br3)
+```
+
+Combine the offensive RAA estimates
+
+```{r}
+war.off = merge(x=war.bat, y=war.br1, by.x="batterId", by.y="start1B", all.x=TRUE)
+war.off = merge(x=war.off, y=war.br2, by.x="batterId", by.y="start2B", all.x=TRUE)
+war.off = merge(x=war.off, y=war.br3, by.x="batterId", by.y="start3B", all.x=TRUE)
+war.off[is.na(war.off)] = 0
+war.off = transform(war.off, RAA.br = RAA.br1 + RAA.br2 + RAA.br3)
+war.off = transform(war.off, RAA = RAA.bat + RAA.br)
+war.off[order(war.off$RAA, decreasing=TRUE),]
 ```
 
 
