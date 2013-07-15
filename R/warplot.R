@@ -54,12 +54,12 @@ warplot = function (playerIds, data, N = 5000, ...) {
 }
 
 getWARest = function (playerId, data, ...) {
-  delta = list()
-  delta$bat = subset(data, batterId == playerId)$delta.bat
-  delta$br = c(subset(data, start1B == playerId)$delta.br1
+  delta = list("Batting" = NULL, "Baserunning" = NULL, "Pitching" = NULL, "Fielding" = NULL)
+  delta$Batting = subset(data, batterId == playerId)$delta.bat
+  delta$Baserunning = c(subset(data, start1B == playerId)$delta.br1
                , subset(data, start2B == playerId)$delta.br2, subset(data, start3B == playerId)$delta.br3)
-  delta$pitch = subset(data, pitcherId == playerId)$delta.pitch
-  delta$field = c(subset(data, pitcherId == playerId)$delta.field, subset(data, playerId.C == playerId)$delta.field
+  delta$Pitching = subset(data, pitcherId == playerId)$delta.pitch
+  delta$Fielding = c(subset(data, pitcherId == playerId)$delta.field, subset(data, playerId.C == playerId)$delta.field
                , subset(data, playerId.1B == playerId)$delta.field, subset(data, playerId.2B == playerId)$delta.field
                , subset(data, playerId.3B == playerId)$delta.field, subset(data, playerId.SS == playerId)$delta.field
                , subset(data, playerId.LF == playerId)$delta.field, subset(data, playerId.CF == playerId)$delta.field
