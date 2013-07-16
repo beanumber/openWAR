@@ -203,6 +203,9 @@ readData.gameday = function (gd) {
     def.pos = c("playerId.C", "playerId.1B", "playerId.2B", "playerId.3B", "playerId.SS", "playerId.LF", "playerId.CF", "playerId.RF")
     out = merge(x=out, y=lineup.wide[,c("teamId", def.pos)], by.x = "field_teamId", by.y = "teamId", all.x=TRUE)
     
+    # Grab the defensive position of the batter
+    out = merge(x=out, y=lineup[,c("playerId", "startPos")], by.x = "batterId", by.y = "playerId", all.x=TRUE)
+    
     # Grab the batters and pitchers names
     out = merge(x=out, y=lkup[,c("playerId", "playerName")], by.x = "batterId", by.y = "playerId", all.x=TRUE)
     out = merge(x=out, y=lkup[,c("playerId", "playerName")], by.x = "pitcherId", by.y = "playerId", all.x=TRUE)

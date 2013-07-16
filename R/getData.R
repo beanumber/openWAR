@@ -35,7 +35,7 @@ getData <- function(start = Sys.Date()-1, end = NULL, drop.suspended = TRUE) {
   out = subset(out, game_type == "R")
   # exclude suspended games
   if (drop.suspended) {
-    test = ddply(out, ~gameId, summarize, Innings = max(inning))
+    test = ddply(out, ~gameId, summarise, Innings = max(inning))
     suspended = subset(test, Innings < 5)$gameId
     out = subset(out, !gameId %in% suspended)
   }
