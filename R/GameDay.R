@@ -197,22 +197,22 @@ readData.gameday = function (gd) {
     lkup$bo = as.numeric(as.character(lkup$bo))
     # Weed out pitchers
     lineup = subset(lkup, bo %% 100 == 0)
-    lineup$startPos = sapply(strsplit(as.character(lineup$pos), split="-"), "[", 1)
-    lineup.long = lineup[order(lineup$teamId, lineup$startPos),]
-    lineup.wide = reshape(lineup.long, v.names = "playerId", timevar = "startPos", idvar = "teamId", direction="wide", drop=c("playerName", "bo", "pos"))
+    lineup$batterPos = sapply(strsplit(as.character(lineup$pos), split="-"), "[", 1)
+    lineup.long = lineup[order(lineup$teamId, lineup$batterPos),]
+    lineup.wide = reshape(lineup.long, v.names = "playerId", timevar = "batterPos", idvar = "teamId", direction="wide", drop=c("playerName", "bo", "pos"))
     def.pos = c("playerId.C", "playerId.1B", "playerId.2B", "playerId.3B", "playerId.SS", "playerId.LF", "playerId.CF", "playerId.RF")
     out = merge(x=out, y=lineup.wide[,c("teamId", def.pos)], by.x = "field_teamId", by.y = "teamId", all.x=TRUE)
     
     # Grab the defensive position of the batter
-    out = merge(x=out, y=lineup[,c("playerId", "startPos")], by.x = "batterId", by.y = "playerId", all.x=TRUE)
+    out = merge(x=out, y=lineup[,c("playerId", "batterPos")], by.x = "batterId", by.y = "playerId", all.x=TRUE)
     
     # Grab the batters and pitchers names
     out = merge(x=out, y=lkup[,c("playerId", "playerName")], by.x = "batterId", by.y = "playerId", all.x=TRUE)
     out = merge(x=out, y=lkup[,c("playerId", "playerName")], by.x = "pitcherId", by.y = "playerId", all.x=TRUE)
     
     # Clean up some column names
-    idx = which(names(out) %in% c("inning.x", "event.x", "playerName.x", "playerName.y"))
-    names(out)[idx] = c("inning", "event", "batterName", "pitcherName")
+    idx = which(names(out) %in% c("inning.x", "event.x", "batterPos", "playerName.x", "playerName.y"))
+    names(out)[idx] = c("inning", "event", "batterPos", "batterName", "pitcherName")
     out = out[,!names(out) %in% c("inning.y", "event.y", "timestamp.x", "timestamp.y")]
     
     # Convert columns to numerics
@@ -383,7 +383,7 @@ makeSubstitutions = function (data) {
     if (str_count(data[i,"description"], "Pinch-hitter")) { 
       x = which(data$batterId == data[i, "actionId"])
       # You can only pinch-hit once, and it must be the first time you appeared in the game
-      data[x[1], "startPos"] = "PH"
+      data[x[1], "batterPos"] = "PH"
     }
   }
   
@@ -399,35 +399,35 @@ makeSubstitutions = function (data) {
     }
     if (str_count(data[i,"description"], "(to catcher|as the catcher|playing catcher)")) { 
       data[intersect(i:n, def), "playerId.C"] = data[i,"actionId"]
-      data[intersect(i:n, which(data$batterId == data[i,"actionId"])), "startPos"] = "C"
+      data[intersect(i:n, which(data$batterId == data[i,"actionId"])), "batterPos"] = "C"
     }
     if (str_count(data[i,"description"], "(to first base|as the first baseman|playing first base)")) { 
       data[intersect(i:n, def), "playerId.1B"] = data[i,"actionId"]
-      data[intersect(i:n, which(data$batterId == data[i,"actionId"])), "startPos"] = "1B"
+      data[intersect(i:n, which(data$batterId == data[i,"actionId"])), "batterPos"] = "1B"
     }
     if (str_count(data[i,"description"], "(to second base|as the second baseman|playing second base)")) { 
       data[intersect(i:n, def), "playerId.2B"] = data[i,"actionId"]
-      data[intersect(i:n, which(data$batterId == data[i,"actionId"])), "startPos"] = "2B"
+      data[intersect(i:n, which(data$batterId == data[i,"actionId"])), "batterPos"] = "2B"
     }
     if (str_count(data[i,"description"], "(to third base|as the third baseman|playing third base)")) { 
       data[intersect(i:n, def), "playerId.3B"] = data[i,"actionId"]
-      data[intersect(i:n, which(data$batterId == data[i,"actionId"])), "startPos"] = "3B"
+      data[intersect(i:n, which(data$batterId == data[i,"actionId"])), "batterPos"] = "3B"
     }
     if (str_count(data[i,"description"], "(to shortstop|as the shortstop|playing shortstop)")) { 
       data[intersect(i:n, def), "playerId.SS"] = data[i,"actionId"]
-      data[intersect(i:n, which(data$batterId == data[i,"actionId"])), "startPos"] = "SS"
+      data[intersect(i:n, which(data$batterId == data[i,"actionId"])), "batterPos"] = "SS"
     }
     if (str_count(data[i,"description"], "(to left field|as the left fielder|playing left field)")) { 
       data[intersect(i:n, def), "playerId.LF"] = data[i,"actionId"]
-      data[intersect(i:n, which(data$batterId == data[i,"actionId"])), "startPos"] = "LF"
+      data[intersect(i:n, which(data$batterId == data[i,"actionId"])), "batterPos"] = "LF"
     }
     if (str_count(data[i,"description"], "(to center field|as the center fielder|playing center field)")) { 
       data[intersect(i:n, def), "playerId.CF"] = data[i,"actionId"]
-      data[intersect(i:n, which(data$batterId == data[i,"actionId"])), "startPos"] = "CF"
+      data[intersect(i:n, which(data$batterId == data[i,"actionId"])), "batterPos"] = "CF"
     }
     if (str_count(data[i,"description"], "(to right field|as the right fielder|playing right field)")) { 
       data[intersect(i:n, def), "playerId.RF"] = data[i,"actionId"]
-      data[intersect(i:n, which(data$batterId == data[i,"actionId"])), "startPos"] = "RF"
+      data[intersect(i:n, which(data$batterId == data[i,"actionId"])), "batterPos"] = "RF"
     }
   }
   # double-check to make sure you always have 9 distinct defenders
