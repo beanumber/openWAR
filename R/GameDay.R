@@ -229,7 +229,7 @@ readData.gameday = function (gd) {
     # Update fielders for defensive switches
     require(stringr)
     require(plyr)
-    out = ddply(out, ~half, updateDefense)  
+    out = makeSubstitutions(out)  
     
     # Experimental -- I think we can filter out non-inning-all events now
     out = subset(out, !is.na(batterId))
@@ -369,25 +369,71 @@ getRunnerMovement = function (x) {
 
 
 
-updateDefense = function (data) {
+makeSubstitutions = function (data) {
   # IMPORTANT: Have to sort the data frame just in case
   # Have to sort by timestamp here, NOT by ab_num!
   data = data[order(data$timestamp),]
-  idx = which(data$event %in% c("Defensive Switch", "Defensive Sub"))
   n = nrow(data)
+  top = which(data$half == "top")
+  bottom = which(data$half != "top")
+  
+  # Pinch-hitters
+  idx = which(data$event %in% c("Offensive sub"))
   for(i in idx) {
-    if (str_count(data[i,"description"], "(to catcher|as the catcher|playing catcher)")) { data[i:n,"playerId.C"] = data[i,"actionId"]; }
-    if (str_count(data[i,"description"], "(to first base|as the first baseman|playing first base)")) { data[i:n,"playerId.1B"] = data[i,"actionId"]; }
-    if (str_count(data[i,"description"], "(to second base|as the second baseman|playing second base)")) { data[i:n,"playerId.2B"] = data[i,"actionId"]; }
-    if (str_count(data[i,"description"], "(to third base|as the third baseman|playing third base)")) { data[i:n,"playerId.3B"] = data[i,"actionId"]; }
-    if (str_count(data[i,"description"], "(to shortstop|as the shortstop|playing shortstop)")) { data[i:n,"playerId.SS"] = data[i,"actionId"]; }
-    if (str_count(data[i,"description"], "(to left field|as the left fielder|playing left field)")) { data[i:n,"playerId.LF"] = data[i,"actionId"]; }
-    if (str_count(data[i,"description"], "(to center field|as the center fielder|playing center field)")) { data[i:n,"playerId.CF"] = data[i,"actionId"]; }
-    if (str_count(data[i,"description"], "(to right field|as the right fielder|playing right field)")) { data[i:n,"playerId.RF"] = data[i,"actionId"]; }
+    if (str_count(data[i,"description"], "Pinch-hitter")) { 
+      x = which(data$batterId == data[i, "actionId"])
+      # You can only pinch-hit once, and it must be the first time you appeared in the game
+      data[x[1], "startPos"] = "PH"
+    }
+  }
+  
+  # Defensive substitutions
+  idx = which(data$event %in% c("Defensive Switch", "Defensive Sub"))
+  for(i in idx) {
+    if (data[i, "half"] == "top") {
+      off = bottom
+      def = top
+    } else {
+      off = top
+      def = bottom
+    }
+    if (str_count(data[i,"description"], "(to catcher|as the catcher|playing catcher)")) { 
+      data[intersect(i:n, def), "playerId.C"] = data[i,"actionId"]
+      data[intersect(i:n, which(data$batterId == data[i,"actionId"])), "startPos"] = "C"
+    }
+    if (str_count(data[i,"description"], "(to first base|as the first baseman|playing first base)")) { 
+      data[intersect(i:n, def), "playerId.1B"] = data[i,"actionId"]
+      data[intersect(i:n, which(data$batterId == data[i,"actionId"])), "startPos"] = "1B"
+    }
+    if (str_count(data[i,"description"], "(to second base|as the second baseman|playing second base)")) { 
+      data[intersect(i:n, def), "playerId.2B"] = data[i,"actionId"]
+      data[intersect(i:n, which(data$batterId == data[i,"actionId"])), "startPos"] = "2B"
+    }
+    if (str_count(data[i,"description"], "(to third base|as the third baseman|playing third base)")) { 
+      data[intersect(i:n, def), "playerId.3B"] = data[i,"actionId"]
+      data[intersect(i:n, which(data$batterId == data[i,"actionId"])), "startPos"] = "3B"
+    }
+    if (str_count(data[i,"description"], "(to shortstop|as the shortstop|playing shortstop)")) { 
+      data[intersect(i:n, def), "playerId.SS"] = data[i,"actionId"]
+      data[intersect(i:n, which(data$batterId == data[i,"actionId"])), "startPos"] = "SS"
+    }
+    if (str_count(data[i,"description"], "(to left field|as the left fielder|playing left field)")) { 
+      data[intersect(i:n, def), "playerId.LF"] = data[i,"actionId"]
+      data[intersect(i:n, which(data$batterId == data[i,"actionId"])), "startPos"] = "LF"
+    }
+    if (str_count(data[i,"description"], "(to center field|as the center fielder|playing center field)")) { 
+      data[intersect(i:n, def), "playerId.CF"] = data[i,"actionId"]
+      data[intersect(i:n, which(data$batterId == data[i,"actionId"])), "startPos"] = "CF"
+    }
+    if (str_count(data[i,"description"], "(to right field|as the right fielder|playing right field)")) { 
+      data[intersect(i:n, def), "playerId.RF"] = data[i,"actionId"]
+      data[intersect(i:n, which(data$batterId == data[i,"actionId"])), "startPos"] = "RF"
+    }
   }
   # double-check to make sure you always have 9 distinct defenders
 #  X = data[!is.na(data$batterId), c("playerId.C", "playerId.1B", "playerId.2B", "playerId.3B", "playerId.SS", "playerId.LF", "playerId.CF", "playerId.RF")]
 #  sum(apply(X, 1, duplicated))
+
   return(data)
 }
 
