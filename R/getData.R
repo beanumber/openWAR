@@ -17,12 +17,16 @@
 #' ds = getData()
 #' getData(start = "2013-05-21", end = Sys.Date())
 
-getData <- function(start = Sys.Date()-1, end = NULL, drop.suspended = TRUE) {
-  if(is.null(end)) {
-    end = start
+getData <- function(start = Sys.Date()-1, end = NULL, gameIds = NULL, drop.suspended = TRUE) {
+  if (is.null(gameIds)) {
+    if(is.null(end)) {
+      end = start
+    }
+    dates = seq(from=as.Date(start), to=as.Date(end), by="1 day")
+    gIds = unlist(sapply(dates, getGameIds))
+  } else {
+    gIds = gameIds
   }
-  dates = seq(from=as.Date(start), to=as.Date(end), by="1 day")
-  gIds = unlist(sapply(dates, getGameIds))
   #test<-getGameDay(gIds[1])
   #if (require(multicore)) {
    # message("Using multicore to parallelize!")
@@ -112,6 +116,29 @@ getGameIds <- function(date = Sys.Date()) {
   return(games)
 }
 
+#' @title updateGame
+#' 
+#' @description Replaces data from a single game
+#' 
+#' @details Deletes, and then rbinds fresh information from a particular game
+#' 
+#' @param gameId A valid MLBAM gameId
+#' @param data a data.frame returned by getData()
+#'  
+#' @return a data.frame
+#' 
+#' @export
+#' @examples
+#' getData(start = "2013-0331", end = "2013-07-14")
+#' ds = updateGame("gid_2013_04_16_nynmlb_colmlb_2")
+#' 
+
+updateGame <- function(gameId.vec, data, ...) {
+  temp = subset(data, !gameId %in% gameId.vec)
+  ds.new = getData(gameIds = unique(gameId.vec))
+  out = rbind(temp, ds.new)
+  return(out)
+}
 
 
 

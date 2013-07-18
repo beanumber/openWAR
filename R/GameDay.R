@@ -181,6 +181,10 @@ readData.gameday = function (gd) {
   }
   
   if (length(gd$data) == 5) {
+    # If any timestamps are missing, set them equal to the previous timstamp
+    missing.idx = which(gd$data$game_events$timestamp == "")
+    gd$data$game_events$timestamp[missing.idx] = gd$data$game_events$timestamp[missing.idx - 1]
+    
     # Now, merge the data frames into one large data frame
     out = merge(x=gd$data$inning_all, y=gd$data$inning_hit[,c("inning", "batterId", "pitcherId", "event", "x", "y")], by=c("inning", "batterId", "pitcherId", "event"), all.x=TRUE)
     out = merge(x=gd$data$game_events, y=out, by = "ab_num", all.x=TRUE)
@@ -230,6 +234,9 @@ readData.gameday = function (gd) {
     require(stringr)
     require(plyr)
     out = makeSubstitutions(out)  
+    # Sometimes data errors result in the batter's defensive position not getting set. Set it to UN manually
+    missing.idx = which(is.na(out$batterPos) & out$batterId > 0)
+    out$batterPos[missing.idx] = "UN"
     
     # Experimental -- I think we can filter out non-inning-all events now
     out = subset(out, !is.na(batterId))
