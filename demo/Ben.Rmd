@@ -108,7 +108,7 @@ First, some basic accounting to make sure that our data is accurate. Compare the
 ```{r}
 sort(tally(~event, data=ds), decreasing=TRUE)
 ds$bat_team = with(ds, ifelse(half == "top", as.character(away_team), as.character(home_team)))
-teams = ddply(ds, ~ startPos, summarise, G = length(unique(gameId)), PA = sum(isPA), R = sum(runsOnPlay), H = sum(isHit), HR = sum(event == "Home Run"), K = sum(event %in% c("Strikeout", "Strikeout - DP")), OBP = sum(isHit | event %in% c("Walk", "Intent Walk", "Hit By Pitch")) / sum(isPA & !event %in% c("Sac Bunt", "Sacrifice Bunt DP")))
+teams = ddply(ds, ~ batterPos, summarise, G = length(unique(gameId)), PA = sum(isPA), R = sum(runsOnPlay), H = sum(isHit), HR = sum(event == "Home Run"), K = sum(event %in% c("Strikeout", "Strikeout - DP")), OBP = sum(isHit | event %in% c("Walk", "Intent Walk", "Hit By Pitch")) / sum(isPA & !event %in% c("Sac Bunt", "Sacrifice Bunt DP")))
 teams[order(teams$OBP, decreasing=TRUE),]
 ```
 
@@ -401,14 +401,14 @@ We're now in a position where we can compute the batting component of WAR.
 Now we need a model that describes the expected performance of the batter. This model gives the expected changed in run scoring associated with the event type, after controlling for ballpark and the platoon advantage. The output of this model is the component that will go to the batter. 
 
 ```{r}
-mod.bat = lm(delta ~ event + startPos + stadium + (stand == throws), data=ds)
+mod.bat = lm(delta ~ batterPos + stadium + (stand == throws), data=ds)
 summary(mod.bat)
 ```
 
 This is a flat model that controls only for ballpark and the platoon advantage.
 
 ```{r}
-ds = transform(ds, delta.bat = mod.bat$fitted)
+ds = transform(ds, delta.bat = mod.bat$residuals)
 war.bat = ddply(ds, ~ batterId, summarise, Name = max(as.character(batterName)), PA = length(batterId), G = length(unique(gameId)), HR = sum(event=="Home Run"), RAA = sum(delta, na.rm=TRUE), RAA.bat = sum(delta.bat, na.rm=TRUE))
 ```
 
@@ -433,7 +433,6 @@ Now, we need to partition $\delta$ among the (at most) four offensive players. W
 ```{r}
 ds = transform(ds, delta.br = delta - delta.bat)
 xhistogram(~delta.br, data=ds)
-subset(ds, delta.br > 2)
 ds$delta.br1 = with(ds, ifelse(!is.na(start1B), delta.br / (1 * !is.na(c("start1B", "start2B", "start3B"))) %*% c(1, 1, 1), NA))
 ds$delta.br2 = with(ds, ifelse(!is.na(start2B), delta.br / (1 * !is.na(c("start1B", "start2B", "start3B"))) %*% c(1, 1, 1), NA))
 ds$delta.br3 = with(ds, ifelse(!is.na(start3B), delta.br / (1 * !is.na(c("start1B", "start2B", "start3B"))) %*% c(1, 1, 1), NA))
@@ -456,81 +455,64 @@ densityplot(~RAA.br3, data=war.br3)
 Combine the offensive RAA estimates
 
 ```{r}
-war.off = merge(x=war.bat, y=war.br1, by.x="batterId", by.y="start1B", all.x=TRUE)
-war.off = merge(x=war.off, y=war.br2, by.x="batterId", by.y="start2B", all.x=TRUE)
-war.off = merge(x=war.off, y=war.br3, by.x="batterId", by.y="start3B", all.x=TRUE)
-war.off[is.na(war.off)] = 0
-war.off = transform(war.off, RAA.br = RAA.br1 + RAA.br2 + RAA.br3)
-war.off = transform(war.off, RAA = RAA.bat + RAA.br)
-war.off[order(war.off$RAA, decreasing=TRUE),]
-```
-
-
-#### Estimating Pitching WAR
-
-For right now, let's only consider events where the ball is not in play. 
-
-```{r}
-mod.pitch = lm(delta ~ isBIP + stadium + (stand == throws), data=ds)
-summary(mod.pitch)
-```
-
-```{r}
-ds = transform(ds, delta.pitch = mod.pitch$residuals)
-war.pitch = ddply(ds, ~ pitcherId, summarise, Name = max(as.character(pitcherName)), PA = length(pitcherId), G = length(unique(gameId)), HR = sum(event=="Home Run"), RAA = sum(delta), RAA.pitch = sum(delta.pitch))
-war.pitch[order(war.pitch$RAA.pitch, decreasing=FALSE),]
-densityplot(~RAA.pitch, data=war.pitch)
+players = merge(x=war.bat, y=war.br1, by.x="batterId", by.y="start1B", all=TRUE)
+players = merge(x=players, y=war.br2, by.x="batterId", by.y="start2B", all=TRUE)
+players = merge(x=players, y=war.br3, by.x="batterId", by.y="start3B", all=TRUE)
+players[is.na(players)] = 0
+players = transform(players, RAA.br = RAA.br1 + RAA.br2 + RAA.br3)
+players = transform(players, RAA = RAA.bat + RAA.br)
+players[order(players$RAA, decreasing=TRUE),]
+densityplot(~RAA.br, data=players)
 ```
 
 #### Estimating Fielding WAR
 
-Who's made the most plays?
+Who fielded each ball?
 
 ```{r}
-lkup.b = ds[,c("batterId", "batterName")]
-lkup.p = ds[,c("pitcherId", "pitcherName")]
-names(lkup.p) = names(lkup.b)
-lkup = unique(rbind(lkup.b, lkup.p))
+ds = transform(ds, wasFielded = !is.na(fielderId))
+ds$fielderPos = ifelse(is.na(ds$fielderId), "Hit", "Out")
+ds$fielderPos = ifelse(!is.na(ds$fielderId) & ds$fielderId == ds$pitcherId, "P", ds$fielderPos)
+ds$fielderPos = ifelse(!is.na(ds$fielderId) & ds$fielderId == ds$playerId.C, "C", ds$fielderPos)
+ds$fielderPos = ifelse(!is.na(ds$fielderId) & ds$fielderId == ds$playerId.1B, "1B", ds$fielderPos)
+ds$fielderPos = ifelse(!is.na(ds$fielderId) & ds$fielderId == ds$playerId.2B, "2B", ds$fielderPos)
+ds$fielderPos = ifelse(!is.na(ds$fielderId) & ds$fielderId == ds$playerId.3B, "3B", ds$fielderPos)
+ds$fielderPos = ifelse(!is.na(ds$fielderId) & ds$fielderId == ds$playerId.SS, "SS", ds$fielderPos)
+ds$fielderPos = ifelse(!is.na(ds$fielderId) & ds$fielderId == ds$playerId.LF, "LF", ds$fielderPos)
+ds$fielderPos = ifelse(!is.na(ds$fielderId) & ds$fielderId == ds$playerId.CF, "CF", ds$fielderPos)
+ds$fielderPos = ifelse(!is.na(ds$fielderId) & ds$fielderId == ds$playerId.RF, "RF", ds$fielderPos)
+tally(~fielderPos, data=ds)
 ```
 
+To build the fielding models we'll need to consider only those events in which the ball was put into play. 
 
 ```{r}
-ds.field = subset(ds, isBIP == FALSE) 
-mod.field = lm(delta ~ stadium + stand, data=ds.field)
-summary(mod.field)
+ds.field = subset(ds, isBIP == TRUE) 
 ```
 
-This only measures the plays they made -- not the plays they didn't make!
-
-```{r}
-ds.field = transform(ds.field, hat.delta.field = mod.field$residuals)
-war.field = ddply(ds.field[,c("gameId", "fielderId", "event", "delta", "hat.delta.field")], ~ fielderId, summarise, N = length(fielderId), G = length(unique(gameId)), RAA.null = sum(delta, na.rm=TRUE), RAA.field = sum(hat.delta.field, na.rm=TRUE))
-war.field = merge(x=war.field, y=lkup, by.x = "fielderId", by.y = "batterId", all.x=TRUE)
-war.field[order(war.field$RAA.field, decreasing=FALSE),]
-densityplot(~RAA.field, data=war.field)
-```
+Next, we'll build 9 separate models -- each giving the probability of a fielder making a play. 
 
 ```{r}
 # form = "poly(our.x, 2) + poly(our.y, 2)"
-mod.P = glm((fielderId == pitcherId) ~ as.formula(form) , data=ds.field, family="binomial")
-mod.C = glm((fielderId == playerId.C) ~ poly(our.x, 2) + poly(our.y, 2), data=ds.field, family="binomial")
-mod.1B = glm((fielderId == playerId.1B) ~ poly(our.x, 2) + poly(our.y, 2), data=ds.field, family="binomial")
-mod.2B = glm((fielderId == playerId.2B) ~ poly(our.x, 2) + poly(our.y, 2), data=ds.field, family="binomial")
-mod.3B = glm((fielderId == playerId.3B) ~ poly(our.x, 2) + poly(our.y, 2), data=ds.field, family="binomial")
-mod.SS = glm((fielderId == playerId.SS) ~ poly(our.x, 2) + poly(our.y, 2), data=ds.field, family="binomial")
-mod.LF = glm((fielderId == playerId.LF) ~ poly(our.x, 2) + poly(our.y, 2), data=ds.field, family="binomial")
-mod.CF = glm((fielderId == playerId.CF) ~ poly(our.x, 2) + poly(our.y, 2), data=ds.field, family="binomial")
-mod.RF = glm((fielderId == playerId.RF) ~ poly(our.x, 2) + poly(our.y, 2), data=ds.field, family="binomial")
+mod.P = glm((fielderPos == "P") ~ poly(our.x, 2) + poly(our.y, 2), data=ds.field, family="binomial")
+mod.C = glm((fielderPos == "C") ~ poly(our.x, 2) + poly(our.y, 2), data=ds.field, family="binomial")
+mod.1B = glm((fielderPos == "1B") ~ poly(our.x, 2) + poly(our.y, 2), data=ds.field, family="binomial")
+mod.2B = glm((fielderPos == "2B") ~ poly(our.x, 2) + poly(our.y, 2), data=ds.field, family="binomial")
+mod.3B = glm((fielderPos == "3B") ~ poly(our.x, 2) + poly(our.y, 2), data=ds.field, family="binomial")
+mod.SS = glm((fielderPos == "SS") ~ poly(our.x, 2) + poly(our.y, 2), data=ds.field, family="binomial")
+mod.LF = glm((fielderPos == "LF") ~ poly(our.x, 2) + poly(our.y, 2), data=ds.field, family="binomial")
+mod.CF = glm((fielderPos == "CF") ~ poly(our.x, 2) + poly(our.y, 2), data=ds.field, family="binomial")
+mod.RF = glm((fielderPos == "RF") ~ poly(our.x, 2) + poly(our.y, 2), data=ds.field, family="binomial")
 summary(mod.SS)
 
 fit.SS = makeFun(mod.SS)
-require(gridExtra)
-grid.arrange(p4, p6)
-print(p4, split=c(1,1,1,2))
-print(p6, split=c(1,2,1,2))
+# require(gridExtra)
+# grid.arrange(p4, p6)
+# print(p4, split=c(1,1,1,2))
+# print(p6, split=c(1,2,1,2))
 
-p6 = plotFun(fit.SS(x, y) ~ x + y, surface=TRUE, alpha = 1, x.lim = c(-300, 300), y.lim = c(0, 400))
-p4 = plotFun(fit.2B(x, y) ~ x + y, surface=TRUE, alpha = 1, x.lim = c(-300, 300), y.lim = c(0, 400))
+plotFun(fit.SS(x, y) ~ x + y, surface=TRUE, alpha = 1, x.lim = c(-300, 300), y.lim = c(0, 400))
+plotFun(fit.2B(x, y) ~ x + y, surface=TRUE, alpha = 1, x.lim = c(-300, 300), y.lim = c(0, 400))
 plotFun(fit.LF(x, y) ~ x + y, surface=TRUE, alpha = 1, x.lim = c(-300, 300), y.lim = c(0, 500))
 plotFun(fit.CF(x, y) ~ x + y, surface=TRUE, alpha = 1, x.lim = c(-300, 300), y.lim = c(0, 500))
 plotFun(fit.RF(x, y) ~ x + y, surface=TRUE, alpha = 1, x.lim = c(-300, 300), y.lim = c(0, 500))
@@ -547,12 +529,43 @@ fit.3B = makeFun(mod.3B)
 fit.LF = makeFun(mod.LF)
 fit.CF = makeFun(mod.CF)
 fit.RF = makeFun(mod.RF)
-fit.all = makeFun(fit.P(x, y) + fit.C(x, y) + fit.1B(x, y) + fit.2B(x, y) + fit.3B(x, y) + fit.SS(x,y) + fit.LF(x, y) + fit.CF(x, y) + fit.RF(x,y) ~ x + y)
-one = makeFun(1 ~ x + y)
-fit = makeFun(min(one(x,y), fit.all(x,y)) ~ x + y)
-plotFun(fit(x, y) ~ x + y, surface=TRUE, alpha = 1, x.lim = c(-300, 300), y.lim = c(0, 500))
 ```
 
+What is the probability of **any** fielder making a play? 
+
+```{r}
+fit.all = makeFun(fit.P(x, y) + fit.C(x, y) + fit.1B(x, y) + fit.2B(x, y) + fit.3B(x, y) + fit.SS(x,y) + fit.LF(x, y) + fit.CF(x, y) + fit.RF(x,y) ~ x + y)
+one = makeFun(1 ~ x + y)
+fit.total = makeFun(min(one(x,y), fit.all(x,y)) ~ x + y)
+plotFun(fit.total(x, y) ~ x + y, surface=TRUE, alpha = 1, x.lim = c(-300, 300), y.lim = c(0, 500))
+```
+
+Allocate the defensive responsibility.
+
+```{r}
+field.idx = which(ds$isBIP == TRUE)
+ds[field.idx, "resp.P"] = mod.P$fitted
+ds[field.idx, "resp.C"] = mod.C$fitted
+ds[field.idx, "resp.1B"] = mod.1B$fitted
+ds[field.idx, "resp.2B"] = mod.2B$fitted
+ds[field.idx, "resp.3B"] = mod.3B$fitted
+ds[field.idx, "resp.SS"] = mod.SS$fitted
+ds[field.idx, "resp.LF"] = mod.LF$fitted
+ds[field.idx, "resp.CF"] = mod.CF$fitted
+ds[field.idx, "resp.RF"] = mod.RF$fitted
+ds = transform(ds, resp.field = pmin(1, resp.P + resp.C + resp.1B + resp.2B + resp.3B + resp.SS + resp.LF + resp.CF + resp.RF))
+ds = transform(ds, delta.field = delta * resp.field)
+ds = transform(ds, delta.P = delta.field * (resp.P / resp.field))
+ds = transform(ds, delta.C = delta.field * (resp.C / resp.field))
+ds = transform(ds, delta.1B = delta.field * (resp.1B / resp.field))
+ds = transform(ds, delta.2B = delta.field * (resp.2B / resp.field))
+ds = transform(ds, delta.3B = delta.field * (resp.3B / resp.field))
+ds = transform(ds, delta.SS = delta.field * (resp.SS / resp.field))
+ds = transform(ds, delta.LF = delta.field * (resp.LF / resp.field))
+ds = transform(ds, delta.CF = delta.field * (resp.CF / resp.field))
+ds = transform(ds, delta.RF = delta.field * (resp.RF / resp.field))
+ds$delta.pitch = with(ds, ifelse(is.na(delta.field), delta, delta - delta.field))
+```
 
 Fit one surface for all fielders.
 
@@ -563,12 +576,84 @@ fit.all = makeFun(mod.all)
 plotFun(fit.all(x, y) ~ x + y, surface=TRUE, alpha = 1, x.lim = c(-300, 300), y.lim = c(0, 500))
 ```
 
+
+Who's made the most plays?
+
+```{r}
+lkup.b = ds[,c("batterId", "batterName")]
+lkup.p = ds[,c("pitcherId", "pitcherName")]
+names(lkup.p) = names(lkup.b)
+lkup = unique(rbind(lkup.b, lkup.p))
+```
+
+Who are the best fielding pitchers?
+
+```{r}
+war.P = ddply(ds, ~pitcherId, summarise, RAA.P = sum(delta.P, na.rm=TRUE))
+war.P[order(war.P$RAA.P, decreasing=FALSE),]
+densityplot(~RAA.P, data=war.P)
+```
+
+Who are the best fielding catchers?
+
+```{r}
+war.C = ddply(ds, ~playerId.C, summarise, RAA.C = sum(delta.C, na.rm=TRUE))
+war.C[order(war.C$RAA.C, decreasing=FALSE),]
+densityplot(~RAA.C, data=war.C)
+```
+
+```{r}
+war.1B = ddply(ds, ~playerId.1B, summarise, RAA.1B = sum(delta.1B, na.rm=TRUE))
+war.2B = ddply(ds, ~playerId.2B, summarise, RAA.2B = sum(delta.2B, na.rm=TRUE))
+war.3B = ddply(ds, ~playerId.3B, summarise, RAA.3B = sum(delta.3B, na.rm=TRUE))
+war.SS = ddply(ds, ~playerId.SS, summarise, RAA.SS = sum(delta.SS, na.rm=TRUE))
+war.LF = ddply(ds, ~playerId.LF, summarise, RAA.LF = sum(delta.LF, na.rm=TRUE))
+war.CF = ddply(ds, ~playerId.CF, summarise, RAA.CF = sum(delta.CF, na.rm=TRUE))
+war.RF = ddply(ds, ~playerId.RF, summarise, RAA.RF = sum(delta.RF, na.rm=TRUE))
+```
+
+
+
+#### Estimating Pitching WAR
+
+
+```{r}
+war.pitch = ddply(ds, ~ pitcherId, summarise, Name = max(as.character(pitcherName)), RAA.pitch = sum(delta.pitch))
+war.pitch[order(war.pitch$RAA.pitch, decreasing=FALSE),]
+densityplot(~RAA.pitch, data=war.pitch)
+```
+
+```{r}
+players = merge(x=players, y=war.pitch, by.x="batterId", by.y="pitcherId", all=TRUE)
+players$Name = with(players, ifelse(is.na(Name.x), Name.y, Name.x))
+players = merge(x=players, y=war.P, by.x="batterId", by.y="pitcherId", all=TRUE)
+players = merge(x=players, y=war.C, by.x="batterId", by.y="playerId.C", all=TRUE)
+players = merge(x=players, y=war.1B, by.x="batterId", by.y="playerId.1B", all=TRUE)
+players = merge(x=players, y=war.2B, by.x="batterId", by.y="playerId.2B", all=TRUE)
+players = merge(x=players, y=war.3B, by.x="batterId", by.y="playerId.3B", all=TRUE)
+players = merge(x=players, y=war.SS, by.x="batterId", by.y="playerId.SS", all=TRUE)
+players = merge(x=players, y=war.LF, by.x="batterId", by.y="playerId.LF", all=TRUE)
+players = merge(x=players, y=war.CF, by.x="batterId", by.y="playerId.CF", all=TRUE)
+players = merge(x=players, y=war.RF, by.x="batterId", by.y="playerId.RF", all=TRUE)
+players[is.na(players)] = 0
+players = transform(players, RAA.field = RAA.P + RAA.C + RAA.1B + RAA.2B + RAA.3B + RAA.SS + RAA.LF + RAA.CF + RAA.RF)
+players = transform(players, RAA = RAA.bat + RAA.br - RAA.pitch - RAA.field)
+```
+
+And now, the moment you've all been waiting for...
+
+```{r}
+head(players[order(players$RAA, decreasing=TRUE), c("Name", "RAA", "RAA.bat", "RAA.br", "RAA.field", "RAA.pitch")], 100)
+head(players[order(players$RAA, decreasing=FALSE), c("Name", "RAA", "RAA.bat", "RAA.br", "RAA.field", "RAA.pitch")], 100)
+```
+
+
 #### Final Output
 
 We have our point estimates, but now let's put some variance estimates on those. 
 
 ```{r}
 warplot(431151, data=ds)
-warplot(c(431151, 502517, 408234, 285078), data=ds)
+warplot(c(431151, 502517, 408234, 285078, 518774, 285079), data=ds)
 ```
 

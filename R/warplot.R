@@ -49,6 +49,7 @@ warplot = function (playerIds, data, N = 5000, ...) {
            }
          }
        , auto.key=list(columns=min(4, length(playerIds)), text = labels)
+       , ylim = c(-0.01, 0.2)
        , xlab = "Runs Above Average (RAA)"
   )
   return(plot)
@@ -60,12 +61,12 @@ getWARest = function (playerId, data, ...) {
   delta$Baserunning = c(subset(data, start1B == playerId)$delta.br1
                , subset(data, start2B == playerId)$delta.br2, subset(data, start3B == playerId)$delta.br3)
   delta$Pitching = subset(data, pitcherId == playerId)$delta.pitch
-  delta$Fielding = c(subset(data, pitcherId == playerId)$delta.field, subset(data, playerId.C == playerId)$delta.field
-               , subset(data, playerId.1B == playerId)$delta.field, subset(data, playerId.2B == playerId)$delta.field
-               , subset(data, playerId.3B == playerId)$delta.field, subset(data, playerId.SS == playerId)$delta.field
-               , subset(data, playerId.LF == playerId)$delta.field, subset(data, playerId.CF == playerId)$delta.field
-             , subset(data, playerId.RF == playerId)$delta.field)
-  raa = sapply(delta, bstrap)
+  delta$Fielding = c(subset(data, pitcherId == playerId)$delta.P, subset(data, playerId.C == playerId)$delta.C
+               , subset(data, playerId.1B == playerId)$delta.1B, subset(data, playerId.2B == playerId)$delta.2B
+               , subset(data, playerId.3B == playerId)$delta.3B, subset(data, playerId.SS == playerId)$delta.SS
+               , subset(data, playerId.LF == playerId)$delta.LF, subset(data, playerId.CF == playerId)$delta.CF
+             , subset(data, playerId.RF == playerId)$delta.RF)
+  raa = lapply(delta, bstrap)
   ns = unlist(sapply(raa, nrow))
   out = data.frame(playerId = playerId, component = rep(names(ns), ns), raa = do.call("rbind", raa))
   return(out)
@@ -73,7 +74,7 @@ getWARest = function (playerId, data, ...) {
 
 bstrap = function (x, N = 5000) {
   if (length(x) > 0) {
-    return(do(N) * sum(resample(x)))
+    return(do(N) * sum(resample(x), na.rm=TRUE))
   } else {
     return(NULL)
   }
