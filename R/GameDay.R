@@ -383,12 +383,14 @@ makeSubstitutions = function (data) {
     if (str_count(data[i,"description"], "Pinch-hitter")) { 
       x = which(data$batterId == data[i, "actionId"])
       # You can only pinch-hit once, and it must be the first time you appeared in the game
-      data[x[1], "batterPos"] = "PH"
+      if (length(x) > 0) {
+        data[x[1], "batterPos"] = "PH"
+      }
     }
   }
   
   # Defensive substitutions
-  idx = which(data$event %in% c("Defensive Switch", "Defensive Sub"))
+  idx = which(data$event %in% c("Defensive Switch", "Defensive Sub", "Pitching Substitution"))
   for(i in idx) {
     if (data[i, "half"] == "top") {
       off = bottom
@@ -396,6 +398,12 @@ makeSubstitutions = function (data) {
     } else {
       off = top
       def = bottom
+    }
+    if (str_count(data[i,"description"], "Pitching Change:")) { 
+      data[intersect(i:n, which(data$batterId == data[i,"actionId"])), "batterPos"] = "P"
+    }
+    if (str_count(data[i,"description"], "(to designated hitter|as the designated hitter|playing designated hitter)")) { 
+      data[intersect(i:n, which(data$batterId == data[i,"actionId"])), "batterPos"] = "DH"
     }
     if (str_count(data[i,"description"], "(to catcher|as the catcher|playing catcher)")) { 
       data[intersect(i:n, def), "playerId.C"] = data[i,"actionId"]
