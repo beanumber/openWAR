@@ -510,6 +510,14 @@ fit.SS = makeFun(mod.SS)
 # grid.arrange(p4, p6)
 # print(p4, split=c(1,1,1,2))
 # print(p6, split=c(1,2,1,2))
+fit.P = makeFun(mod.P)
+fit.C = makeFun(mod.C)
+fit.1B = makeFun(mod.1B)
+fit.2B = makeFun(mod.2B)
+fit.3B = makeFun(mod.3B)
+fit.LF = makeFun(mod.LF)
+fit.CF = makeFun(mod.CF)
+fit.RF = makeFun(mod.RF)
 
 plotFun(fit.SS(x, y) ~ x + y, surface=TRUE, alpha = 1, x.lim = c(-300, 300), y.lim = c(0, 400))
 plotFun(fit.2B(x, y) ~ x + y, surface=TRUE, alpha = 1, x.lim = c(-300, 300), y.lim = c(0, 400))
@@ -521,14 +529,6 @@ plotFun(fit.3B(x, y) ~ x + y, surface=TRUE, alpha = 1, x.lim = c(-300, 300), y.l
 plotFun(fit.P(x, y) ~ x + y, surface=TRUE, alpha = 1, x.lim = c(-300, 300), y.lim = c(0, 400))
 plotFun(fit.C(x, y) ~ x + y, surface=TRUE, alpha = 1, x.lim = c(-300, 300), y.lim = c(0, 400))
 
-fit.P = makeFun(mod.P)
-fit.C = makeFun(mod.C)
-fit.1B = makeFun(mod.1B)
-fit.2B = makeFun(mod.2B)
-fit.3B = makeFun(mod.3B)
-fit.LF = makeFun(mod.LF)
-fit.CF = makeFun(mod.CF)
-fit.RF = makeFun(mod.RF)
 ```
 
 What is the probability of **any** fielder making a play? 
@@ -554,7 +554,7 @@ ds[field.idx, "resp.LF"] = mod.LF$fitted
 ds[field.idx, "resp.CF"] = mod.CF$fitted
 ds[field.idx, "resp.RF"] = mod.RF$fitted
 ds = transform(ds, resp.field = pmin(1, resp.P + resp.C + resp.1B + resp.2B + resp.3B + resp.SS + resp.LF + resp.CF + resp.RF))
-ds = transform(ds, delta.field = delta * resp.field)
+ds$delta.field = with(ds, ifelse(wasFielded, delta * (1 - resp.field), delta * resp.field))
 ds = transform(ds, delta.P = delta.field * (resp.P / resp.field))
 ds = transform(ds, delta.C = delta.field * (resp.C / resp.field))
 ds = transform(ds, delta.1B = delta.field * (resp.1B / resp.field))
@@ -610,8 +610,23 @@ war.SS = ddply(ds, ~playerId.SS, summarise, RAA.SS = sum(delta.SS, na.rm=TRUE))
 war.LF = ddply(ds, ~playerId.LF, summarise, RAA.LF = sum(delta.LF, na.rm=TRUE))
 war.CF = ddply(ds, ~playerId.CF, summarise, RAA.CF = sum(delta.CF, na.rm=TRUE))
 war.RF = ddply(ds, ~playerId.RF, summarise, RAA.RF = sum(delta.RF, na.rm=TRUE))
+densityplot(~RAA.RF, data=war.RF)
 ```
 
+The distribution is not fair, because balls hit to the outfield have higher run consequence.
+
+```{r}
+densityplot(~RAA.3B, data=war.3B)
+densityplot(~RAA.CF, data=war.CF)
+```
+
+
+How is an individual player affected?
+
+```{r}
+dw = subset(ds, playerId.CF == 460576)
+head(dw[order(dw$delta.CF, decreasing=TRUE), c("event", "startCode", "endCode", "startOuts", "endOuts", "runsOnPlay", "startExR", "endExR", "delta", "delta.pitch", "delta.field", "delta.CF", "description")], 100)
+```
 
 
 #### Estimating Pitching WAR
