@@ -30,3 +30,4 @@ Collate:
     'bbplot.R'
     'warplot.R'
     'getRunEx.R'
+    'getBIPresp.R'

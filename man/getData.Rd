@@ -3,7 +3,7 @@
 \title{getData}
 \usage{
   getData(start = Sys.Date() - 1, end = NULL,
-    drop.suspended = TRUE)
+    gameIds = NULL, drop.suspended = TRUE)
 }
 \arguments{
   \item{start}{A valid date in yyyy-mm-dd format (default

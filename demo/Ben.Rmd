@@ -467,20 +467,28 @@ densityplot(~RAA.br, data=players)
 
 #### Estimating Fielding WAR
 
-Who fielded each ball?
+The first question is how much of the change in expected runs should be attributed to the fielders, and how much to the pitcher. Thus, we being by estimating the probability that a given ball in play will be converted into an out by **any** fielder. 
+
+We'll use a 2D kernel smoother to come up with a non-parametric estimate for this. 
 
 ```{r}
-ds = transform(ds, wasFielded = !is.na(fielderId))
-ds$fielderPos = ifelse(is.na(ds$fielderId), "Hit", "Out")
-ds$fielderPos = ifelse(!is.na(ds$fielderId) & ds$fielderId == ds$pitcherId, "P", ds$fielderPos)
-ds$fielderPos = ifelse(!is.na(ds$fielderId) & ds$fielderId == ds$playerId.C, "C", ds$fielderPos)
-ds$fielderPos = ifelse(!is.na(ds$fielderId) & ds$fielderId == ds$playerId.1B, "1B", ds$fielderPos)
-ds$fielderPos = ifelse(!is.na(ds$fielderId) & ds$fielderId == ds$playerId.2B, "2B", ds$fielderPos)
-ds$fielderPos = ifelse(!is.na(ds$fielderId) & ds$fielderId == ds$playerId.3B, "3B", ds$fielderPos)
-ds$fielderPos = ifelse(!is.na(ds$fielderId) & ds$fielderId == ds$playerId.SS, "SS", ds$fielderPos)
-ds$fielderPos = ifelse(!is.na(ds$fielderId) & ds$fielderId == ds$playerId.LF, "LF", ds$fielderPos)
-ds$fielderPos = ifelse(!is.na(ds$fielderId) & ds$fielderId == ds$playerId.CF, "CF", ds$fielderPos)
-ds$fielderPos = ifelse(!is.na(ds$fielderId) & ds$fielderId == ds$playerId.RF, "RF", ds$fielderPos)
+
+
+```
+
+Now that we know how likely it is that **any** fielder, we can use this estimate to split $\delta$ between the pitcher and the fielders. 
+
+```{r}
+
+# ds$delta.field = with(ds, ifelse(wasFielded, delta * (1 - resp.field), delta * resp.field))
+ds$delta.field = with(ds, delta * resp.field)
+ds$delta.pitch = with(ds, ifelse(is.na(delta.field), delta, delta - delta.field))
+```
+
+
+
+```{r}
+ds = setBIPresp(ds)
 tally(~fielderPos, data=ds)
 ```
 
@@ -490,54 +498,14 @@ To build the fielding models we'll need to consider only those events in which t
 ds.field = subset(ds, isBIP == TRUE) 
 ```
 
-Next, we'll build 9 separate models -- each giving the probability of a fielder making a play. 
+Next, we'll build 9 separate models -- each giving the probability of a fielder making a play. This is all done in **setBIPresp()**, but we'll show an example here. 
 
 ```{r}
-# form = "poly(our.x, 2) + poly(our.y, 2)"
-mod.P = glm((fielderPos == "P") ~ poly(our.x, 2) + poly(our.y, 2), data=ds.field, family="binomial")
-mod.C = glm((fielderPos == "C") ~ poly(our.x, 2) + poly(our.y, 2), data=ds.field, family="binomial")
-mod.1B = glm((fielderPos == "1B") ~ poly(our.x, 2) + poly(our.y, 2), data=ds.field, family="binomial")
-mod.2B = glm((fielderPos == "2B") ~ poly(our.x, 2) + poly(our.y, 2), data=ds.field, family="binomial")
-mod.3B = glm((fielderPos == "3B") ~ poly(our.x, 2) + poly(our.y, 2), data=ds.field, family="binomial")
 mod.SS = glm((fielderPos == "SS") ~ poly(our.x, 2) + poly(our.y, 2), data=ds.field, family="binomial")
-mod.LF = glm((fielderPos == "LF") ~ poly(our.x, 2) + poly(our.y, 2), data=ds.field, family="binomial")
-mod.CF = glm((fielderPos == "CF") ~ poly(our.x, 2) + poly(our.y, 2), data=ds.field, family="binomial")
-mod.RF = glm((fielderPos == "RF") ~ poly(our.x, 2) + poly(our.y, 2), data=ds.field, family="binomial")
 summary(mod.SS)
 
 fit.SS = makeFun(mod.SS)
-# require(gridExtra)
-# grid.arrange(p4, p6)
-# print(p4, split=c(1,1,1,2))
-# print(p6, split=c(1,2,1,2))
-fit.P = makeFun(mod.P)
-fit.C = makeFun(mod.C)
-fit.1B = makeFun(mod.1B)
-fit.2B = makeFun(mod.2B)
-fit.3B = makeFun(mod.3B)
-fit.LF = makeFun(mod.LF)
-fit.CF = makeFun(mod.CF)
-fit.RF = makeFun(mod.RF)
-
 plotFun(fit.SS(x, y) ~ x + y, surface=TRUE, alpha = 1, x.lim = c(-300, 300), y.lim = c(0, 400))
-plotFun(fit.2B(x, y) ~ x + y, surface=TRUE, alpha = 1, x.lim = c(-300, 300), y.lim = c(0, 400))
-plotFun(fit.LF(x, y) ~ x + y, surface=TRUE, alpha = 1, x.lim = c(-300, 300), y.lim = c(0, 500))
-plotFun(fit.CF(x, y) ~ x + y, surface=TRUE, alpha = 1, x.lim = c(-300, 300), y.lim = c(0, 500))
-plotFun(fit.RF(x, y) ~ x + y, surface=TRUE, alpha = 1, x.lim = c(-300, 300), y.lim = c(0, 500))
-plotFun(fit.1B(x, y) ~ x + y, surface=TRUE, alpha = 1, x.lim = c(-300, 300), y.lim = c(0, 400))
-plotFun(fit.3B(x, y) ~ x + y, surface=TRUE, alpha = 1, x.lim = c(-300, 300), y.lim = c(0, 400))
-plotFun(fit.P(x, y) ~ x + y, surface=TRUE, alpha = 1, x.lim = c(-300, 300), y.lim = c(0, 400))
-plotFun(fit.C(x, y) ~ x + y, surface=TRUE, alpha = 1, x.lim = c(-300, 300), y.lim = c(0, 400))
-
-```
-
-What is the probability of **any** fielder making a play? 
-
-```{r}
-fit.all = makeFun(fit.P(x, y) + fit.C(x, y) + fit.1B(x, y) + fit.2B(x, y) + fit.3B(x, y) + fit.SS(x,y) + fit.LF(x, y) + fit.CF(x, y) + fit.RF(x,y) ~ x + y)
-one = makeFun(1 ~ x + y)
-fit.total = makeFun(min(one(x,y), fit.all(x,y)) ~ x + y)
-plotFun(fit.total(x, y) ~ x + y, surface=TRUE, alpha = 1, x.lim = c(-300, 300), y.lim = c(0, 500))
 ```
 
 Allocate the defensive responsibility.
@@ -554,7 +522,6 @@ ds[field.idx, "resp.LF"] = mod.LF$fitted
 ds[field.idx, "resp.CF"] = mod.CF$fitted
 ds[field.idx, "resp.RF"] = mod.RF$fitted
 ds = transform(ds, resp.field = pmin(1, resp.P + resp.C + resp.1B + resp.2B + resp.3B + resp.SS + resp.LF + resp.CF + resp.RF))
-ds$delta.field = with(ds, ifelse(wasFielded, delta * (1 - resp.field), delta * resp.field))
 ds = transform(ds, delta.P = delta.field * (resp.P / resp.field))
 ds = transform(ds, delta.C = delta.field * (resp.C / resp.field))
 ds = transform(ds, delta.1B = delta.field * (resp.1B / resp.field))
@@ -564,17 +531,41 @@ ds = transform(ds, delta.SS = delta.field * (resp.SS / resp.field))
 ds = transform(ds, delta.LF = delta.field * (resp.LF / resp.field))
 ds = transform(ds, delta.CF = delta.field * (resp.CF / resp.field))
 ds = transform(ds, delta.RF = delta.field * (resp.RF / resp.field))
-ds$delta.pitch = with(ds, ifelse(is.na(delta.field), delta, delta - delta.field))
 ```
 
-Fit one surface for all fielders.
+Now build models for the $\delta$ associated with each fielding position
 
 ```{r}
-mod.all = glm(!is.na(fielderId) ~ poly(our.x, 12) + poly(our.y, 12) + our.x * our.y, data=ds.field, family="binomial")
-summary(mod.all)
-fit.all = makeFun(mod.all)
-plotFun(fit.all(x, y) ~ x + y, surface=TRUE, alpha = 1, x.lim = c(-300, 300), y.lim = c(0, 500))
+mod.delta.P = lm(delta.P ~ stadium, data=ds)
+mod.delta.C = lm(delta.C ~ stadium, data=ds)
+mod.delta.1B = lm(delta.1B ~ stadium, data=ds)
+mod.delta.2B = lm(delta.2B ~ stadium, data=ds)
+mod.delta.3B = lm(delta.3B ~ stadium, data=ds)
+mod.delta.SS = lm(delta.SS ~ stadium, data=ds)
+mod.delta.LF = lm(delta.LF ~ stadium, data=ds)
+mod.delta.CF = lm(delta.CF ~ stadium, data=ds)
+mod.delta.RF = lm(delta.RF ~ stadium, data=ds)
+ds$raa.P = ifelse(!is.na(ds$delta.P), mod.delta.P$residuals, NA)
+ds$raa.C = ifelse(!is.na(ds$delta.C), mod.delta.C$residuals, NA)
+ds$raa.1B = ifelse(!is.na(ds$delta.1B), mod.delta.1B$residuals, NA)
+ds$raa.2B = ifelse(!is.na(ds$delta.2B), mod.delta.2B$residuals, NA)
+ds$raa.3B = ifelse(!is.na(ds$delta.3B), mod.delta.3B$residuals, NA)
+ds$raa.SS = ifelse(!is.na(ds$delta.SS), mod.delta.SS$residuals, NA)
+ds$raa.LF = ifelse(!is.na(ds$delta.LF), mod.delta.LF$residuals, NA)
+ds$raa.CF = ifelse(!is.na(ds$delta.CF), mod.delta.CF$residuals, NA)
+ds$raa.RF = ifelse(!is.na(ds$delta.RF), mod.delta.RF$residuals, NA)
 ```
+
+Since these are based on the residuals from a regression model, they will all sum to 0. 
+
+```{r}
+sum(ds$raa.1B, na.rm=TRUE)
+sum(ds$raa.SS, na.rm=TRUE)
+sum(ds$raa.CF, na.rm=TRUE)
+sum(ds$raa.RF, na.rm=TRUE)
+```
+
+
 
 
 Who's made the most plays?
@@ -589,7 +580,7 @@ lkup = unique(rbind(lkup.b, lkup.p))
 Who are the best fielding pitchers?
 
 ```{r}
-war.P = ddply(ds, ~pitcherId, summarise, RAA.P = sum(delta.P, na.rm=TRUE))
+war.P = ddply(ds, ~pitcherId, summarise, RAA.P = sum(raa.P, na.rm=TRUE))
 war.P[order(war.P$RAA.P, decreasing=FALSE),]
 densityplot(~RAA.P, data=war.P)
 ```
@@ -597,25 +588,20 @@ densityplot(~RAA.P, data=war.P)
 Who are the best fielding catchers?
 
 ```{r}
-war.C = ddply(ds, ~playerId.C, summarise, RAA.C = sum(delta.C, na.rm=TRUE))
+war.C = ddply(ds, ~playerId.C, summarise, RAA.C = sum(raa.C, na.rm=TRUE))
 war.C[order(war.C$RAA.C, decreasing=FALSE),]
 densityplot(~RAA.C, data=war.C)
 ```
 
 ```{r}
-war.1B = ddply(ds, ~playerId.1B, summarise, RAA.1B = sum(delta.1B, na.rm=TRUE))
-war.2B = ddply(ds, ~playerId.2B, summarise, RAA.2B = sum(delta.2B, na.rm=TRUE))
-war.3B = ddply(ds, ~playerId.3B, summarise, RAA.3B = sum(delta.3B, na.rm=TRUE))
-war.SS = ddply(ds, ~playerId.SS, summarise, RAA.SS = sum(delta.SS, na.rm=TRUE))
-war.LF = ddply(ds, ~playerId.LF, summarise, RAA.LF = sum(delta.LF, na.rm=TRUE))
-war.CF = ddply(ds, ~playerId.CF, summarise, RAA.CF = sum(delta.CF, na.rm=TRUE))
-war.RF = ddply(ds, ~playerId.RF, summarise, RAA.RF = sum(delta.RF, na.rm=TRUE))
+war.1B = ddply(ds, ~playerId.1B, summarise, RAA.1B = sum(raa.1B, na.rm=TRUE))
+war.2B = ddply(ds, ~playerId.2B, summarise, RAA.2B = sum(raa.2B, na.rm=TRUE))
+war.3B = ddply(ds, ~playerId.3B, summarise, RAA.3B = sum(raa.3B, na.rm=TRUE))
+war.SS = ddply(ds, ~playerId.SS, summarise, RAA.SS = sum(raa.SS, na.rm=TRUE))
+war.LF = ddply(ds, ~playerId.LF, summarise, RAA.LF = sum(raa.LF, na.rm=TRUE))
+war.CF = ddply(ds, ~playerId.CF, summarise, RAA.CF = sum(raa.CF, na.rm=TRUE))
+war.RF = ddply(ds, ~playerId.RF, summarise, RAA.RF = sum(raa.RF, na.rm=TRUE))
 densityplot(~RAA.RF, data=war.RF)
-```
-
-The distribution is not fair, because balls hit to the outfield have higher run consequence.
-
-```{r}
 densityplot(~RAA.3B, data=war.3B)
 densityplot(~RAA.CF, data=war.CF)
 ```
@@ -625,7 +611,7 @@ How is an individual player affected?
 
 ```{r}
 dw = subset(ds, playerId.CF == 460576)
-head(dw[order(dw$delta.CF, decreasing=TRUE), c("event", "startCode", "endCode", "startOuts", "endOuts", "runsOnPlay", "startExR", "endExR", "delta", "delta.pitch", "delta.field", "delta.CF", "description")], 100)
+head(dw[order(dw$raa.CF, decreasing=TRUE), c("event", "startCode", "endCode", "startOuts", "endOuts", "runsOnPlay", "startExR", "endExR", "delta", "delta.pitch", "delta.field", "raa.CF", "description")], 100)
 ```
 
 

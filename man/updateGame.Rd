@@ -2,7 +2,7 @@
 \alias{updateGame}
 \title{updateGame}
 \usage{
-  updateGame(game.id, data, ...)
+  updateGame(gameId.vec, data, ...)
 }
 \arguments{
   \item{gameId}{A valid MLBAM gameId}
