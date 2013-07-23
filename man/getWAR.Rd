@@ -2,8 +2,9 @@
 \alias{getWAR}
 \title{getWAR}
 \usage{
-  getWAR(con, ids = NULL, start = 2012, end = 2012,
-    group = FALSE)
+  getWAR(data, ...)
+
+  getWAR(data, ...)
 }
 \arguments{
   \item{con}{An RMySQL database connection}
@@ -16,6 +17,8 @@
 
   \item{end}{A numeric representing the end year of the
   interval for selecting WAR}
+
+  \item{data}{An MLBAM data.frame}
 }
 \value{
   A data.frame with the following elements: \item{PlayerID
@@ -29,13 +32,20 @@
   }{Replacemnt player value} \item{RAA }{Runs above
   average} \item{RAR }{Runs above replacement} \item{WAR
   }{Wins above replacement}
+
+  a data.frame of RAA values per player
 }
 \description{
   Retrieves WAR from a database table
+
+  Retrieve openWAR
 }
 \details{
   This function will retrieve bWAR data for all players
   within a specified timeframe.
+
+  Retrieves openWAR, aggregated by player, given an MLBAM
+  data set
 }
 \examples{
 # Create a connection to the database
@@ -44,5 +54,7 @@ con = getCon()
 war = getWAR(con)
 # Pull bWAR for the 1980s
 war = getWAR(con, start=1980, end=1989)
+ds = getData()
+res = getWAR(ds)
 }
 
