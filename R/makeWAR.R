@@ -92,7 +92,7 @@ makeWAR = function (data, ...) {
   message("...Estimating Batting Runs Above Average...")
   data = transform(data, delta.bat = delta - ifelse(is.na(delta.br1), 0, delta.br1) 
                    - ifelse(is.na(delta.br2), 0, delta.br2) - ifelse(is.na(delta.br3), 0, delta.br3))
-  mod.bat = lm(delta.bat ~ batterPos + stadium + (stand == throws), data=data)
+  mod.bat = lm(delta.bat ~ as.factor(batterPos) + stadium + (stand == throws), data=data)
 #  summary(mod.bat)
   data = transform(data, raa.bat = mod.bat$residuals)
   return(data)
@@ -164,6 +164,7 @@ getWAR = function (data, recompute = FALSE, ...) {
   players[is.na(players)] = 0
   players = transform(players, RAA.field = RAA.P + RAA.C + RAA.1B + RAA.2B + RAA.3B + RAA.SS + RAA.LF + RAA.CF + RAA.RF)
   players = transform(players, RAA = RAA.bat + RAA.br + RAA.pitch + RAA.field)
+  players = players[, setdiff(names(players), c("Name.x", "Name.y"))]
   return(players)
 }
 
