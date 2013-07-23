@@ -78,9 +78,9 @@ makeWAR = function (data, ...) {
   endOuts.br1 = with(ds1, ifelse(basesAdvanced == -1, startOuts + 1, startOuts)) 
   ds1 = transform(ds1, delta.br1 = fit.rem(endCode.br1, endOuts.br1) - fit.rem(rep(1, nrow(ds1)), startOuts) + (basesAdvanced == 3))
   
-  mod.br3 = lm(delta.br3 ~ event + startOuts, data = ds3)
-  mod.br2 = lm(delta.br2 ~ event + startOuts, data = ds2)
-  mod.br1 = lm(delta.br1 ~ event + startOuts, data = ds1)
+  mod.br3 = lm(delta.br3 ~ event + as.factor(startOuts), data = ds3)
+  mod.br2 = lm(delta.br2 ~ event + as.factor(startOuts), data = ds2)
+  mod.br1 = lm(delta.br1 ~ event + as.factor(startOuts), data = ds1)
   data[br3.idx, "delta.br3"] = ds3$delta.br3
   data[br2.idx, "delta.br2"] = ds2$delta.br2
   data[br1.idx, "delta.br1"] = ds1$delta.br1
