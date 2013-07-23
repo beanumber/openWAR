@@ -115,8 +115,15 @@ makeWAR = function (data, ...) {
 #' res = getWAR(ds)
 #' 
 
-getWAR = function (data, ...) {
-  ds = makeWAR(data)
+getWAR = function (data, recompute = FALSE, ...) {
+  # Check to see if the WAR fields already exist
+  raa.fields = c("raa.bat", "raa.br1", "raa.br2", "raa.br3", "raa.pitch", "raa.P", "raa.C", "raa.1B"
+                 , "raa.2B", "raa.3B", "raa.SS", "raa.LF", "raa.CF", "raa.RF")
+  if (length(intersect(raa.fields, names(data))) < length(raa.fields) | recompute) {
+    ds = makeWAR(data)
+  } else {
+    ds = data
+  }
   
   require(plyr)
   war.bat = ddply(ds, ~ batterId, summarise, Name = max(as.character(batterName))

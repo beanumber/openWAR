@@ -646,6 +646,7 @@ And now, the moment you've all been waiting for...
 ```{r}
 head(players[order(players$RAA, decreasing=TRUE), c("Name", "RAA", "RAA.bat", "RAA.br", "RAA.field", "RAA.pitch")], 100)
 head(players[order(players$RAA, decreasing=FALSE), c("Name", "RAA", "RAA.bat", "RAA.br", "RAA.field", "RAA.pitch")], 100)
+head(players[order(players$RAA.br, decreasing=FALSE), c("Name", "RAA", "RAA.bat", "RAA.br", "RAA.field", "RAA.pitch")], 100)
 ```
 
 
