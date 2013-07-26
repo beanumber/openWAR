@@ -142,7 +142,7 @@ getWAR = function (data, recompute = FALSE, ...) {
   war.LF = ddply(ds, ~playerId.LF, summarise, RAA.LF = sum(raa.LF, na.rm=TRUE))
   war.CF = ddply(ds, ~playerId.CF, summarise, RAA.CF = sum(raa.CF, na.rm=TRUE))
   war.RF = ddply(ds, ~playerId.RF, summarise, RAA.RF = sum(raa.RF, na.rm=TRUE))
-  war.pitch = ddply(ds, ~ pitcherId, summarise, Name = max(as.character(pitcherName)), RAA.pitch = sum(raa.pitch))
+  war.pitch = ddply(ds, ~ pitcherId, summarise, Name = max(as.character(pitcherName)), BF = length(pitcherId), RAA.pitch = sum(raa.pitch))
   
   players = merge(x=war.bat, y=war.br1, by.x="batterId", by.y="start1B", all=TRUE)
   players = merge(x=players, y=war.br2, by.x="batterId", by.y="start2B", all=TRUE)
@@ -164,6 +164,7 @@ getWAR = function (data, recompute = FALSE, ...) {
   players[is.na(players)] = 0
   players = transform(players, RAA.field = RAA.P + RAA.C + RAA.1B + RAA.2B + RAA.3B + RAA.SS + RAA.LF + RAA.CF + RAA.RF)
   players = transform(players, RAA = RAA.bat + RAA.br + RAA.pitch + RAA.field)
+  players = transform(players, TPA = PA + BF)
   players = players[, setdiff(names(players), c("Name.x", "Name.y"))]
   return(players)
 }
@@ -307,15 +308,26 @@ getFielderResp = function (data, ...) {
   ds$fielderPos = with(ds, ifelse(!is.na(fielderId) & fielderId == playerId.CF, "CF", fielderPos))
   ds$fielderPos = with(ds, ifelse(!is.na(fielderId) & fielderId == playerId.RF, "RF", fielderPos))
   
-  mod.P = glm((fielderPos == "P") ~ poly(our.x, 2) + poly(our.y, 2), data=ds, family="binomial")
-  mod.C = glm((fielderPos == "C") ~ poly(our.x, 2) + poly(our.y, 2), data=ds, family="binomial")
+  mod.P = glm((fielderPos == "P") ~ poly(our.x, 2) + poly(our.y, 2) + I(our.x * our.y), data=ds, family="binomial")
+  mod.C = glm((fielderPos == "C") ~ poly(our.x, 2) + poly(our.y, 2) + I(our.x * our.y), data=ds, family="binomial")
   mod.1B = glm((fielderPos == "1B") ~ poly(our.x, 2) + poly(our.y, 2), data=ds, family="binomial")
-  mod.2B = glm((fielderPos == "2B") ~ poly(our.x, 2) + poly(our.y, 2), data=ds, family="binomial")
-  mod.3B = glm((fielderPos == "3B") ~ poly(our.x, 2) + poly(our.y, 2), data=ds, family="binomial")
-  mod.SS = glm((fielderPos == "SS") ~ poly(our.x, 2) + poly(our.y, 2), data=ds, family="binomial")
-  mod.LF = glm((fielderPos == "LF") ~ poly(our.x, 2) + poly(our.y, 2), data=ds, family="binomial")
-  mod.CF = glm((fielderPos == "CF") ~ poly(our.x, 2) + poly(our.y, 2), data=ds, family="binomial")
-  mod.RF = glm((fielderPos == "RF") ~ poly(our.x, 2) + poly(our.y, 2), data=ds, family="binomial")
+  mod.2B = glm((fielderPos == "2B") ~ poly(our.x, 2) + poly(our.y, 2) + I(our.x * our.y), data=ds, family="binomial")
+  mod.3B = glm((fielderPos == "3B") ~ poly(our.x, 2) + poly(our.y, 2) + I(our.x * our.y), data=ds, family="binomial")
+  mod.SS = glm((fielderPos == "SS") ~ poly(our.x, 2) + poly(our.y, 2) + I(our.x * our.y), data=ds, family="binomial")
+  mod.LF = glm((fielderPos == "LF") ~ poly(our.x, 2) + poly(our.y, 2) + I(our.x * our.y), data=ds, family="binomial")
+  mod.CF = glm((fielderPos == "CF") ~ poly(our.x, 2) + poly(our.y, 2) + I(our.x * our.y), data=ds, family="binomial")
+  mod.RF = glm((fielderPos == "RF") ~ poly(our.x, 2) + poly(our.y, 2) + I(our.x * our.y), data=ds, family="binomial")
+  
+#   mod = mod.CF
+#   summary(mod)
+#   fit = makeFun(mod)
+#   plotFun(fit(x,y) ~ x + y, surface=TRUE, alpha=0.9
+#           , xlim = c(-350, 350), ylim = c(0, 550)
+#           , xlab = "Horizontal Distance from Home Plate (ft.)"
+#           , ylab = "Vertical Distance from Home Plate (ft.)"
+#           , zlab = "Probability of Making a Play"
+#   )
+  
   out = data.frame(mod.P$fitted, mod.C$fitted, mod.1B$fitted, mod.2B$fitted, mod.3B$fitted
               , mod.SS$fitted, mod.LF$fitted, mod.CF$fitted, mod.RF$fitted)
   row.sums = apply(out, 1, sum)
