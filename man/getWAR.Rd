@@ -2,9 +2,9 @@
 \alias{getWAR}
 \title{getWAR}
 \usage{
-  getWAR(data, ...)
+  getWAR(data, recompute = FALSE, ...)
 
-  getWAR(data, ...)
+  getWAR(data, recompute = FALSE, ...)
 }
 \arguments{
   \item{con}{An RMySQL database connection}

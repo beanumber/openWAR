@@ -41,60 +41,87 @@ makeWAR = function (data, ...) {
 #  summary(mod.pitch)
   data$raa.pitch = -mod.pitch$residuals
   
-  # Step 4: Define RAA for the baserunners
+  # Step 4: Define RAA for the batter
+  message("...Estimating Batting Runs Above Average...")
+  require(plyr)
+  
+  # Figure out the most common outcome for every beginning state and event type
+  getMostCommon = function(df) {
+    outcomes = ddply(df, ~endCode + endOuts + runsOnPlay, summarise, N = length(endCode))
+    outcomes$Pct = outcomes$N / nrow(df)
+    names(outcomes)[which(names(outcomes) %in% c("endCode", "endOuts", "runsOnPlay"))] = c("endBatCode", "endBatOuts", "batRunsOnPlay")
+    return(outcomes[which.max(outcomes$N),])
+  }
+  event.lkup = ddply(data, ~startCode + startOuts + event, getMostCommon)
+  #  densityplot(~Pct, data=event.lkup)
+  event.lkup = transform(event.lkup, bat.ExR = fit.rem(endBatCode, endBatOuts) + batRunsOnPlay)
+  data = merge(x=data, y=event.lkup[, c("startCode", "startOuts", "event", "endBatCode", "endBatOuts", "batRunsOnPlay", "bat.ExR")]
+               , by = c("startCode", "startOuts", "event"), all.x=TRUE)
+  
+  # Assign that difference to the batter
+  data = transform(data, delta.bat = bat.ExR - startExR)
+  mod.bat = lm(delta.bat ~ as.factor(batterPos) + stadium + (stand == throws), data=data)
+  #  summary(mod.bat)
+  data = transform(data, raa.bat = mod.bat$residuals)  
+  
+  # Step 5: Define RAA for the baserunners
   message("...Estimating Baserunning Runs Above Average...")
+  data = transform(data, delta.br = delta - delta.bat)
+  
   require(MASS)
   require(stringr)
   # Figure out what happened to the runner on 3B
   br3.idx = which(!is.na(data$start3B))
   ds3 = data[br3.idx,]
-  scored3B = str_count(ds3$runnerMovement, paste(ds3$start3B, ":3B::T:", sep=""))
-  out3B = str_count(ds3$runnerMovement, paste(ds3$start3B, ":3B:::", sep=""))
-  basesAdvanced = ifelse(scored3B == 1, 1, ifelse(out3B == 1, -3, 0))
-  endCode.br3 = ifelse(basesAdvanced == 0, 4, 0) 
-  endOuts.br3 = with(ds3, ifelse(basesAdvanced == -3, startOuts + 1, startOuts)) 
-  ds3 = transform(ds3, delta.br3 = fit.rem(endCode.br3, endOuts.br3) - fit.rem(rep(4, nrow(ds3)), startOuts) + (basesAdvanced == 1))
+  br3.scored = with(ds3, str_count(runnerMovement, paste(start3B, ":3B::T:", sep="")))
+  br3.out = with(ds3, str_count(runnerMovement, paste(start3B, ":3B:::", sep="")))
+  ds3$basesAdvanced = ifelse(br3.scored == 1, 1, ifelse(br3.out == 1, -3, 0))
   
   # Figure out what happened to the runner on 2B
   br2.idx = which(!is.na(data$start2B))
   ds2 = data[br2.idx,]
-  scored2B = with(ds2, str_count(runnerMovement, paste(start2B, ":2B::T:", sep="")))
-  out2B = with(ds2, str_count(runnerMovement, paste(start2B, ":2B:::", sep="")))
-  advanced = with(ds2, str_count(runnerMovement, paste(start2B, ":2B:3B::", sep="")))
-  basesAdvanced = ifelse(scored2B == 1, 2, ifelse(out2B == 1, -2, ifelse(advanced == 1, 1, 0)))
-  endCode.br2 = ifelse(basesAdvanced == 0, 2, ifelse(basesAdvanced == 1, 4, 0)) 
-  endOuts.br2 = with(ds2, ifelse(basesAdvanced == -2, startOuts + 1, startOuts)) 
-  ds2 = transform(ds2, delta.br2 = fit.rem(endCode.br2, endOuts.br2) - fit.rem(rep(2, nrow(ds2)), startOuts) + (basesAdvanced == 2))
+  br2.scored = with(ds2, str_count(runnerMovement, paste(start2B, ":2B::T:", sep="")))
+  br2.out = with(ds2, str_count(runnerMovement, paste(start2B, ":2B:::", sep="")))
+  br2.advanced = with(ds2, str_count(runnerMovement, paste(start2B, ":2B:3B::", sep="")))
+  ds2$basesAdvanced = ifelse(br2.scored == 1, 2, ifelse(br2.out == 1, -2, ifelse(br2.advanced == 1, 1, 0)))
   
   # Figure out what happened to the runner on 1B
   br1.idx = which(!is.na(data$start1B))
   ds1 = data[br1.idx,]
-  scored1B = with(ds1, str_count(runnerMovement, paste(start1B, ":1B::T:", sep="")))
-  out1B = with(ds1, str_count(runnerMovement, paste(start1B, ":1B:::", sep="")))
-  advanced.one = with(ds1, str_count(runnerMovement, paste(start1B, ":1B:2B::", sep="")))
-  advanced.two = with(ds1, str_count(runnerMovement, paste(start1B, ":1B:3B::", sep="")))
-  basesAdvanced = ifelse(scored1B == 1, 3, ifelse(out1B == 1, -1, ifelse(advanced.one == 1, 1, ifelse(advanced.two == 1, 2, 0))))
-  endCode.br1 = ifelse(basesAdvanced == 0, 1, ifelse(basesAdvanced == 1, 2, ifelse(basesAdvanced == 3, 4, 0)))
-  endOuts.br1 = with(ds1, ifelse(basesAdvanced == -1, startOuts + 1, startOuts)) 
-  ds1 = transform(ds1, delta.br1 = fit.rem(endCode.br1, endOuts.br1) - fit.rem(rep(1, nrow(ds1)), startOuts) + (basesAdvanced == 3))
+  br1.scored = with(ds1, str_count(runnerMovement, paste(start1B, ":1B::T:", sep="")))
+  br1.out = with(ds1, str_count(runnerMovement, paste(start1B, ":1B:::", sep="")))
+  br1.advanced.one = with(ds1, str_count(runnerMovement, paste(start1B, ":1B:2B::", sep="")))
+  br1.advanced.two = with(ds1, str_count(runnerMovement, paste(start1B, ":1B:3B::", sep="")))
+  ds1$basesAdvanced = ifelse(br1.scored == 1, 3, ifelse(br1.out == 1, -1, ifelse(br1.advanced.one == 1, 1, ifelse(br1.advanced.two == 1, 2, 0))))
+
+  # Figure out what happened to the batter
+  br0.scored = with(data, str_count(runnerMovement, paste(batterId, ":::T:", sep="")))
+#  br0.out = with(data, str_count(runnerMovement, paste(batterId, "::::", sep="")))
+  br0.advanced.one = with(data, str_count(runnerMovement, paste(batterId, "::1B::", sep="")))
+  br0.advanced.two = with(data, str_count(runnerMovement, paste(batterId, "::2B::", sep="")))
+  br0.advanced.three = with(data, str_count(runnerMovement, paste(batterId, "::3B::", sep="")))
   
-  mod.br3 = lm(delta.br3 ~ event + as.factor(startOuts), data = ds3)
-  mod.br2 = lm(delta.br2 ~ event + as.factor(startOuts), data = ds2)
-  mod.br1 = lm(delta.br1 ~ event + as.factor(startOuts), data = ds1)
-  data[br3.idx, "delta.br3"] = ds3$delta.br3
-  data[br2.idx, "delta.br2"] = ds2$delta.br2
-  data[br1.idx, "delta.br1"] = ds1$delta.br1
-  data[br3.idx, "raa.br3"] = mod.br3$residuals
-  data[br2.idx, "raa.br2"] = mod.br2$residuals
-  data[br1.idx, "raa.br1"] = mod.br1$residuals
+  data$br0.extra = ifelse(br0.scored == 1, 4, ifelse(br0.advanced.one == 1, 1, ifelse(br0.advanced.two == 1, 2, ifelse(br0.advanced.three == 3, 3, 0))))
+  data[br3.idx, "br3.extra"] = ds3$basesAdvanced
+  data[br2.idx, "br2.extra"] = ds2$basesAdvanced
+  data[br1.idx, "br1.extra"] = ds1$basesAdvanced
   
-  # Step 5: Define RAA for the batter
-  message("...Estimating Batting Runs Above Average...")
-  data = transform(data, delta.bat = delta - ifelse(is.na(delta.br1), 0, delta.br1) 
-                   - ifelse(is.na(delta.br2), 0, delta.br2) - ifelse(is.na(delta.br3), 0, delta.br3))
-  mod.bat = lm(delta.bat ~ as.factor(batterPos) + stadium + (stand == throws), data=data)
-#  summary(mod.bat)
-  data = transform(data, raa.bat = mod.bat$residuals)
+  data$basesAdvanced = rowSums(data[,c("br0.extra", "br1.extra", "br2.extra", "br3.extra")], na.rm=TRUE)
+  data$delta.br0 = with(data, ifelse(basesAdvanced == 0, 0, delta.br * (br0.extra / basesAdvanced)))
+  data$delta.br1 = with(data, ifelse(basesAdvanced == 0, 0, delta.br * (br1.extra / basesAdvanced)))
+  data$delta.br2 = with(data, ifelse(basesAdvanced == 0, 0, delta.br * (br2.extra / basesAdvanced)))
+  data$delta.br3 = with(data, ifelse(basesAdvanced == 0, 0, delta.br * (br3.extra / basesAdvanced)))
+  
+  mod.br3 = lm(delta.br3 ~ event + as.factor(startOuts), data = data)
+  mod.br2 = lm(delta.br2 ~ event + as.factor(startOuts), data = data)
+  mod.br1 = lm(delta.br1 ~ event + as.factor(startOuts), data = data)
+  mod.br0 = lm(delta.br0 ~ event + as.factor(startOuts), data = data)
+  
+  data$raa.br0 = mod.br0$residuals
+  data[!is.na(data$delta.br3), "raa.br3"] = mod.br3$residuals
+  data[!is.na(data$delta.br2), "raa.br2"] = mod.br2$residuals
+  data[!is.na(data$delta.br1), "raa.br1"] = mod.br1$residuals
+  
   return(data)
 }
 
@@ -117,7 +144,7 @@ makeWAR = function (data, ...) {
 
 getWAR = function (data, recompute = FALSE, ...) {
   # Check to see if the WAR fields already exist
-  raa.fields = c("raa.bat", "raa.br1", "raa.br2", "raa.br3", "raa.pitch", "raa.P", "raa.C", "raa.1B"
+  raa.fields = c("raa.bat", "raa.br0", "raa.br1", "raa.br2", "raa.br3", "raa.pitch", "raa.P", "raa.C", "raa.1B"
                  , "raa.2B", "raa.3B", "raa.SS", "raa.LF", "raa.CF", "raa.RF")
   if (length(intersect(raa.fields, names(data))) < length(raa.fields) | recompute) {
     ds = makeWAR(data)
@@ -129,6 +156,7 @@ getWAR = function (data, recompute = FALSE, ...) {
   war.bat = ddply(ds, ~ batterId, summarise, Name = max(as.character(batterName))
                   , PA = length(batterId), G = length(unique(gameId)), HR = sum(event=="Home Run")
                   , RAA = sum(delta, na.rm=TRUE), RAA.bat = sum(raa.bat, na.rm=TRUE))
+  war.br0 = ddply(ds, ~batterId, summarise, RAA.br0 = sum(raa.br0, na.rm=TRUE))
   war.br1 = ddply(ds, ~start1B, summarise, RAA.br1 = sum(raa.br1, na.rm=TRUE))
   war.br2 = ddply(ds, ~start2B, summarise, RAA.br2 = sum(raa.br2, na.rm=TRUE))
   war.br3 = ddply(ds, ~start3B, summarise, RAA.br3 = sum(raa.br3, na.rm=TRUE))
@@ -144,11 +172,12 @@ getWAR = function (data, recompute = FALSE, ...) {
   war.RF = ddply(ds, ~playerId.RF, summarise, RAA.RF = sum(raa.RF, na.rm=TRUE))
   war.pitch = ddply(ds, ~ pitcherId, summarise, Name = max(as.character(pitcherName)), BF = length(pitcherId), RAA.pitch = sum(raa.pitch))
   
-  players = merge(x=war.bat, y=war.br1, by.x="batterId", by.y="start1B", all=TRUE)
+  players = merge(x=war.bat, y=war.br0, by.x="batterId", by.y="batterId", all=TRUE)
+  players = merge(x=players, y=war.br1, by.x="batterId", by.y="start1B", all=TRUE)
   players = merge(x=players, y=war.br2, by.x="batterId", by.y="start2B", all=TRUE)
   players = merge(x=players, y=war.br3, by.x="batterId", by.y="start3B", all=TRUE)
   players[is.na(players)] = 0
-  players = transform(players, RAA.br = RAA.br1 + RAA.br2 + RAA.br3)
+  players = transform(players, RAA.br = RAA.br0 + RAA.br1 + RAA.br2 + RAA.br3)
   players = transform(players, RAA = RAA.bat + RAA.br)
   players = merge(x=players, y=war.pitch, by.x="batterId", by.y="pitcherId", all=TRUE)
   players$Name = with(players, ifelse(is.na(Name.x), Name.y, Name.x))
