@@ -15,7 +15,7 @@
 #' res = makeWAR(ds)
 #' 
 
-makeWAR = function (data, ...) {
+makeWAR = function (data, method = "simple", ...) {
   # Step 1: Define \delta, the change in expected runs
   message("...Estimating Expected Runs...")
   fit.rem = getRunEx(data)
@@ -45,28 +45,38 @@ makeWAR = function (data, ...) {
   message("...Estimating Batting Runs Above Average...")
   require(plyr)
   
-  # Figure out the most common outcome for every beginning state and event type
-  getMostCommon = function(df) {
-    outcomes = ddply(df, ~endCode + endOuts + runsOnPlay, summarise, N = length(endCode))
-    outcomes$Pct = outcomes$N / nrow(df)
-    names(outcomes)[which(names(outcomes) %in% c("endCode", "endOuts", "runsOnPlay"))] = c("endBatCode", "endBatOuts", "batRunsOnPlay")
-    return(outcomes[which.max(outcomes$N),])
+  if ( method == "ghostrunner") {
+    # Figure out the most common outcome for every beginning state and event type
+    getMostCommon = function(df) {
+      outcomes = ddply(df, ~endCode + endOuts + runsOnPlay, summarise, N = length(endCode))
+      outcomes$Pct = outcomes$N / nrow(df)
+      names(outcomes)[which(names(outcomes) %in% c("endCode", "endOuts", "runsOnPlay"))] = c("endBatCode", "endBatOuts", "batRunsOnPlay")
+      return(outcomes[which.max(outcomes$N),])
+    }
+    event.lkup = ddply(data, ~startCode + startOuts + event, getMostCommon)
+    #  densityplot(~Pct, data=event.lkup)
+    event.lkup = transform(event.lkup, bat.ExR = fit.rem(endBatCode, endBatOuts) + batRunsOnPlay)
+    data = merge(x=data, y=event.lkup[, c("startCode", "startOuts", "event", "endBatCode", "endBatOuts", "batRunsOnPlay", "bat.ExR")]
+                 , by = c("startCode", "startOuts", "event"), all.x=TRUE)
+    
+    # Assign that difference to the batter
+    data = transform(data, delta.bat = bat.ExR - startExR)     
+    mod.bat = lm(delta.bat ~ as.factor(batterPos) + stadium + (stand == throws), data=data)
+    #  summary(mod.bat)
+    data = transform(data, raa.bat = mod.bat$residuals)   
+  } else {
+    # Just give everything to the batter
+    mod.bat = lm(delta ~ as.factor(batterPos) + stadium + (stand == throws), data=data)
+    #  summary(mod.bat)
+    data = transform(data, raa.bat = mod.bat$residuals)  
+    data = transform(data, delta.br = mod.bat$fitted)  
+    # If no baserunners, then delta.br = 0
+    data$delta.br = with(data, ifelse(startCode == 0, NA, delta.br))
+    data = transform(data, delta.bat = delta - delta.br)
   }
-  event.lkup = ddply(data, ~startCode + startOuts + event, getMostCommon)
-  #  densityplot(~Pct, data=event.lkup)
-  event.lkup = transform(event.lkup, bat.ExR = fit.rem(endBatCode, endBatOuts) + batRunsOnPlay)
-  data = merge(x=data, y=event.lkup[, c("startCode", "startOuts", "event", "endBatCode", "endBatOuts", "batRunsOnPlay", "bat.ExR")]
-               , by = c("startCode", "startOuts", "event"), all.x=TRUE)
-  
-  # Assign that difference to the batter
-  data = transform(data, delta.bat = bat.ExR - startExR)
-  mod.bat = lm(delta.bat ~ as.factor(batterPos) + stadium + (stand == throws), data=data)
-  #  summary(mod.bat)
-  data = transform(data, raa.bat = mod.bat$residuals)  
   
   # Step 5: Define RAA for the baserunners
   message("...Estimating Baserunning Runs Above Average...")
-  data = transform(data, delta.br = delta - delta.bat)
   
   require(MASS)
   require(stringr)
@@ -101,23 +111,40 @@ makeWAR = function (data, ...) {
   br0.advanced.two = with(data, str_count(runnerMovement, paste(batterId, "::2B::", sep="")))
   br0.advanced.three = with(data, str_count(runnerMovement, paste(batterId, "::3B::", sep="")))
   
-  data$br0.extra = ifelse(br0.scored == 1, 4, ifelse(br0.advanced.one == 1, 1, ifelse(br0.advanced.two == 1, 2, ifelse(br0.advanced.three == 3, 3, 0))))
-  data[br3.idx, "br3.extra"] = ds3$basesAdvanced
-  data[br2.idx, "br2.extra"] = ds2$basesAdvanced
-  data[br1.idx, "br1.extra"] = ds1$basesAdvanced
+  # Compute the number of bases advanced by each baserunner
+  data$br0.adv = ifelse(br0.scored == 1, 4, ifelse(br0.advanced.one == 1, 1, ifelse(br0.advanced.two == 1, 2, ifelse(br0.advanced.three == 1, 3, 0))))
+  data[br1.idx, "br1.adv"] = ds1$basesAdvanced
+  data[br2.idx, "br2.adv"] = ds2$basesAdvanced
+  data[br3.idx, "br3.adv"] = ds3$basesAdvanced
   
-  data$basesAdvanced = rowSums(data[,c("br0.extra", "br1.extra", "br2.extra", "br3.extra")], na.rm=TRUE)
-  data$delta.br0 = with(data, ifelse(basesAdvanced == 0, 0, delta.br * (br0.extra / basesAdvanced)))
-  data$delta.br1 = with(data, ifelse(basesAdvanced == 0, 0, delta.br * (br1.extra / basesAdvanced)))
-  data$delta.br2 = with(data, ifelse(basesAdvanced == 0, 0, delta.br * (br2.extra / basesAdvanced)))
-  data$delta.br3 = with(data, ifelse(basesAdvanced == 0, 0, delta.br * (br3.extra / basesAdvanced)))
+  # Compute the extra bases associated with each baserunner
+  data = transform(data, br1.extra = br1.adv - br0.adv)
+  data = transform(data, br2.extra = br2.adv - br0.adv)
+  data = transform(data, br3.extra = br3.adv - br0.adv)
+  
+  # Compute a share for each baserunner
+  # Leave out the batter
+  data$basesAdvanced = ifelse(is.na(data$delta.br), NA, rowSums(abs(data[,c("br1.extra", "br2.extra", "br3.extra")]), na.rm=TRUE))
+#  data$delta.br0 = with(data, ifelse(basesAdvanced == 0, 0, delta.br * (br0.extra / basesAdvanced)))
+  data$delta.br1 = with(data, ifelse(is.na(start1B), NA, ifelse(basesAdvanced == 0, 0, delta.br * (abs(br1.extra) / basesAdvanced))))
+  data$delta.br2 = with(data, ifelse(is.na(start2B), NA, ifelse(basesAdvanced == 0, 0, delta.br * (abs(br2.extra) / basesAdvanced))))
+  data$delta.br3 = with(data, ifelse(is.na(start3B), NA, ifelse(basesAdvanced == 0, 0, delta.br * (abs(br3.extra) / basesAdvanced))))
+  
+#  mod.br3 = lm(basesAdvanced ~ event * as.factor(startOuts), data = ds3)
+#  mod.br2 = lm(basesAdvanced ~ event * as.factor(startOuts), data = ds2)
+#  mod.br1 = lm(basesAdvanced ~ event * as.factor(startOuts), data = ds1)
+#  mod.br0 = lm(br0.adv ~ event * as.factor(startOuts), data = data)
+#  bwplot(mod.br3$resid ~ event, data=ds3)
+#  bwplot(mod.br2$resid ~ event, data=ds2)
   
   mod.br3 = lm(delta.br3 ~ event + as.factor(startOuts), data = data)
   mod.br2 = lm(delta.br2 ~ event + as.factor(startOuts), data = data)
   mod.br1 = lm(delta.br1 ~ event + as.factor(startOuts), data = data)
-  mod.br0 = lm(delta.br0 ~ event + as.factor(startOuts), data = data)
+#  mod.br0 = lm(delta.br0 ~ event + as.factor(startOuts), data = data)
   
-  data$raa.br0 = mod.br0$residuals
+  # Placeholder in case we want to use this later on
+#  data$raa.br0 = mod.br0$residuals
+  data$raa.br0 = 0
   data[!is.na(data$delta.br3), "raa.br3"] = mod.br3$residuals
   data[!is.na(data$delta.br2), "raa.br2"] = mod.br2$residuals
   data[!is.na(data$delta.br1), "raa.br1"] = mod.br1$residuals
@@ -152,6 +179,7 @@ getWAR = function (data, recompute = FALSE, ...) {
     ds = data
   }
   
+  message("...Tabulating RAA per player...")
   require(plyr)
   war.bat = ddply(ds, ~ batterId, summarise, Name = max(as.character(batterName))
                   , PA = length(batterId), G = length(unique(gameId)), HR = sum(event=="Home Run")
