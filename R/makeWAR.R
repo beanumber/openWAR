@@ -71,7 +71,7 @@ makeWAR = function (data, method = "simple", ...) {
     data = transform(data, raa.bat = mod.bat$residuals)  
     data = transform(data, delta.br = mod.bat$fitted)  
     # If no baserunners, then delta.br = 0
-    data$delta.br = with(data, ifelse(startCode == 0, NA, delta.br))
+    data$delta.br = with(data, ifelse(startCode == 0 | isBIP == FALSE, NA, delta.br))
     data = transform(data, delta.bat = delta - delta.br)
   }
   

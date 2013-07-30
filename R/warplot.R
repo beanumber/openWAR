@@ -57,15 +57,15 @@ warplot = function (playerIds, data, N = 5000, ...) {
 
 getWARest = function (playerId, data, ...) {
   delta = list("Batting" = NULL, "Baserunning" = NULL, "Pitching" = NULL, "Fielding" = NULL)
-  delta$Batting = subset(data, batterId == playerId)$delta.bat
-  delta$Baserunning = c(subset(data, start1B == playerId)$delta.br1
-               , subset(data, start2B == playerId)$delta.br2, subset(data, start3B == playerId)$delta.br3)
-  delta$Pitching = subset(data, pitcherId == playerId)$delta.pitch
-  delta$Fielding = c(subset(data, pitcherId == playerId)$delta.P, subset(data, playerId.C == playerId)$delta.C
-               , subset(data, playerId.1B == playerId)$delta.1B, subset(data, playerId.2B == playerId)$delta.2B
-               , subset(data, playerId.3B == playerId)$delta.3B, subset(data, playerId.SS == playerId)$delta.SS
-               , subset(data, playerId.LF == playerId)$delta.LF, subset(data, playerId.CF == playerId)$delta.CF
-             , subset(data, playerId.RF == playerId)$delta.RF)
+  delta$Batting = subset(data, batterId == playerId)$raa.bat
+  delta$Baserunning = c(subset(data, start1B == playerId)$raa.br1
+               , subset(data, start2B == playerId)$raa.br2, subset(data, start3B == playerId)$raa.br3)
+  delta$Pitching = subset(data, pitcherId == playerId)$raa.pitch
+  delta$Fielding = c(subset(data, pitcherId == playerId)$raa.P, subset(data, playerId.C == playerId)$raa.C
+               , subset(data, playerId.1B == playerId)$raa.1B, subset(data, playerId.2B == playerId)$raa.2B
+               , subset(data, playerId.3B == playerId)$raa.3B, subset(data, playerId.SS == playerId)$raa.SS
+               , subset(data, playerId.LF == playerId)$raa.LF, subset(data, playerId.CF == playerId)$raa.CF
+             , subset(data, playerId.RF == playerId)$raa.RF)
   raa = lapply(delta, bstrap)
   ns = unlist(sapply(raa, nrow))
   out = data.frame(playerId = playerId, component = rep(names(ns), ns), raa = do.call("rbind", raa))
