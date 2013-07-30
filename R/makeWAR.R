@@ -65,14 +65,16 @@ makeWAR = function (data, method = "simple", ...) {
     #  summary(mod.bat)
     data = transform(data, raa.bat = mod.bat$residuals)   
   } else {
-    # Just give everything to the batter
-    mod.bat = lm(delta ~ as.factor(batterPos) + stadium + (stand == throws), data=data)
-    #  summary(mod.bat)
-    data = transform(data, raa.bat = mod.bat$residuals)  
-    data = transform(data, delta.br = mod.bat$fitted)  
-    # If no baserunners, then delta.br = 0
-    data$delta.br = with(data, ifelse(startCode == 0 | isBIP == FALSE, NA, delta.br))
+    # Control for circumstances
+    mod.off = lm(delta ~ as.factor(batterPos) + stadium + (stand == throws), data=data)
+    # summary(mod.off)
+    data = transform(data, delta.off = mod.off$residuals)  
+    # Siphon off the portion attributable to the baserunners
+    br.idx = which(data$startCode > 0)
+    mod.br = lm(delta.off ~ event * as.factor(startCode) * as.factor(startOuts), data=data[br.idx,])
+    data[br.idx, "delta.br"] = mod.br$residuals
     data = transform(data, delta.bat = delta - delta.br)
+    data = transform(data, raa.bat = delta.bat)
   }
   
   # Step 5: Define RAA for the baserunners
