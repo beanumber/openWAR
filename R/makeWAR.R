@@ -137,9 +137,9 @@ makeWAR = function (data, method = "simple", ...) {
 #  bwplot(mod.br3$resid ~ event, data=ds3)
 #  bwplot(mod.br2$resid ~ event, data=ds2)
   
-  mod.br3 = lm(delta.br3 ~ event + as.factor(startOuts), data = data)
-  mod.br2 = lm(delta.br2 ~ event + as.factor(startOuts), data = data)
-  mod.br1 = lm(delta.br1 ~ event + as.factor(startOuts), data = data)
+  mod.br3 = lm(delta.br3 ~ event * as.factor(startOuts), data = data)
+  mod.br2 = lm(delta.br2 ~ event * as.factor(startOuts), data = data)
+  mod.br1 = lm(delta.br1 ~ event * as.factor(startOuts), data = data)
 #  mod.br0 = lm(delta.br0 ~ event + as.factor(startOuts), data = data)
   
   # Placeholder in case we want to use this later on
