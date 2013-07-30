@@ -67,6 +67,11 @@ getWARest = function (playerId, data, ...) {
                , subset(data, playerId.LF == playerId)$raa.LF, subset(data, playerId.CF == playerId)$raa.CF
              , subset(data, playerId.RF == playerId)$raa.RF)
   raa = lapply(delta, bstrap)
+  raa$RAA = data.frame(result = with(raa, ifelse(is.null(Batting), 0, Batting)))
+  raa$RAA = with(raa, ifelse(is.null(Baserunning), RAA, RAA + Baserunning))
+  raa$RAA = with(raa, ifelse(is.null(Pitching), RAA, RAA + Pitching))
+  raa$RAA = data.frame(result = with(raa, ifelse(is.null(Fielding), RAA, RAA + Fielding)))
+  names(raa$RAA) = c("result")
   ns = unlist(sapply(raa, nrow))
   out = data.frame(playerId = playerId, component = rep(names(ns), ns), raa = do.call("rbind", raa))
   return(out)
