@@ -83,6 +83,9 @@ makeWAR = function (data, method = "simple", ...) {
   require(MASS)
   require(stringr)
   # Figure out what happened to the runner on 3B
+  data$dest.br3 = with(data, ifelse(str_count(runnerMovement, paste(start3B, ":3B::T:", sep="")), "H", NA))
+  data$dest.br3 = with(data, ifelse(!is.na(start3B) & !is.na(end3B) & start3B == end3B, "3B", dest.br3))
+  
   br3.idx = which(!is.na(data$start3B))
   ds3 = data[br3.idx,]
   br3.scored = with(ds3, str_count(runnerMovement, paste(start3B, ":3B::T:", sep="")))
@@ -90,6 +93,10 @@ makeWAR = function (data, method = "simple", ...) {
   ds3$basesAdvanced = ifelse(br3.scored == 1, 1, ifelse(br3.out == 1, -3, 0))
   
   # Figure out what happened to the runner on 2B
+  data$dest.br2 = with(data, ifelse(str_count(runnerMovement, paste(start2B, ":2B::T:", sep="")), "H", NA))
+  data$dest.br2 = with(data, ifelse(!is.na(start2B) & !is.na(end3B) & start2B == end3B, "3B", dest.br2))
+  data$dest.br2 = with(data, ifelse(!is.na(start2B) & !is.na(end2B) & start2B == end2B, "2B", dest.br2))
+  
   br2.idx = which(!is.na(data$start2B))
   ds2 = data[br2.idx,]
   br2.scored = with(ds2, str_count(runnerMovement, paste(start2B, ":2B::T:", sep="")))
@@ -98,6 +105,11 @@ makeWAR = function (data, method = "simple", ...) {
   ds2$basesAdvanced = ifelse(br2.scored == 1, 2, ifelse(br2.out == 1, -2, ifelse(br2.advanced == 1, 1, 0)))
   
   # Figure out what happened to the runner on 1B
+  data$dest.br1 = with(data, ifelse(str_count(runnerMovement, paste(start1B, ":1B::T:", sep="")), "H", NA))
+  data$dest.br1 = with(data, ifelse(!is.na(start1B) & !is.na(end3B) & start1B == end3B, "3B", dest.br1))
+  data$dest.br1 = with(data, ifelse(!is.na(start1B) & !is.na(end2B) & start1B == end2B, "2B", dest.br1))
+  data$dest.br1 = with(data, ifelse(!is.na(start1B) & !is.na(end1B) & start1B == end1B, "1B", dest.br1))
+  
   br1.idx = which(!is.na(data$start1B))
   ds1 = data[br1.idx,]
   br1.scored = with(ds1, str_count(runnerMovement, paste(start1B, ":1B::T:", sep="")))
@@ -106,6 +118,12 @@ makeWAR = function (data, method = "simple", ...) {
   br1.advanced.two = with(ds1, str_count(runnerMovement, paste(start1B, ":1B:3B::", sep="")))
   ds1$basesAdvanced = ifelse(br1.scored == 1, 3, ifelse(br1.out == 1, -1, ifelse(br1.advanced.one == 1, 1, ifelse(br1.advanced.two == 1, 2, 0))))
 
+  # Compute the empirical probabilities
+  tally(~basesAdvanced, data=ds1)
+  polr(as.factor(basesAdvanced) ~ event + startOuts, data=ds1)
+  ddply(data, ~startCode + startOuts + event, summarise, N = length(startCode)
+        , Pr3.H = sum(dest.br3 == "H") / sum(!is.na(start3B)))
+  
   # Figure out what happened to the batter
   br0.scored = with(data, str_count(runnerMovement, paste(batterId, ":::T:", sep="")))
 #  br0.out = with(data, str_count(runnerMovement, paste(batterId, "::::", sep="")))
