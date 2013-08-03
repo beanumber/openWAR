@@ -68,14 +68,15 @@ makeWAR = function (data, method = "simple", ...) {
     # Control for circumstances
     mod.off = lm(delta ~ as.factor(batterPos) + stadium + (stand == throws), data=data)
     # summary(mod.off)
-    #delta.off is the contribution above average of the batter AND all of the runners
+    # delta.off is the contribution above average of the batter AND all of the runners
     data = transform(data, delta.off = mod.off$residuals)  
     # Siphon off the portion attributable to the baserunners
     br.idx = which(data$startCode > 0)
     mod.br = lm(delta.off ~ event * as.factor(startCode) * as.factor(startOuts), data=data[br.idx,])
     data[br.idx, "delta.br"] = mod.br$residuals
-    #Whatever is left over goes to the batter
-    data = transform(data, delta.bat = delta - delta.br)
+    # Whatever is left over goes to the batter
+    data$delta.bat = with(data, ifelse(is.na(delta.br), delta, delta - delta.br))
+#    data = transform(data, delta.bat = delta - delta.br)
     data = transform(data, raa.bat = delta.bat)
   }
   
@@ -120,22 +121,21 @@ makeWAR = function (data, method = "simple", ...) {
   br1.advanced.two = with(ds1, str_count(runnerMovement, paste(start1B, ":1B:3B::", sep="")))
   ds1$basesAdvanced = ifelse(br1.scored == 1, 3, ifelse(br1.out == 1, -1, ifelse(br1.advanced.one == 1, 1, ifelse(br1.advanced.two == 1, 2, 0))))
   
-  
   # Compute the number of bases advanced by each baserunner
-  #data$br0.adv = ifelse(br0.scored == 1, 4, ifelse(br0.advanced.one == 1, 1, ifelse(br0.advanced.two == 1, 2, ifelse(br0.advanced.three == 1, 3, 0))))
+  # data$br0.adv = ifelse(br0.scored == 1, 4, ifelse(br0.advanced.one == 1, 1, ifelse(br0.advanced.two == 1, 2, ifelse(br0.advanced.three == 1, 3, 0))))
   data[br1.idx, "br1.adv"] = ds1$basesAdvanced
   data[br2.idx, "br2.adv"] = ds2$basesAdvanced
   data[br3.idx, "br3.adv"] = ds3$basesAdvanced
   
   # Compute the empirical probabilities
-  #events for the runner on third
-  ds3Tab<-ddply(ds3, basesAdvanced~event+startOuts+startCode, summarize, N=length(basesAdvanced))
-  ds3TabEvent<-ddply(ds3Tab,~event+startOuts+startCode,summarize,Nevent=sum(N))
+  # events for the runner on third
+  ds3Tab <- ddply(ds3, basesAdvanced ~ event + startOuts + startCode, summarize, N=length(basesAdvanced))
+  ds3TabEvent <- ddply(ds3Tab, ~event + startOuts + startCode, summarize, Nevent=sum(N))
   ds3Probs<-merge(ds3Tab,ds3TabEvent,by.x=c("event","startOuts","startCode"),by.y=c("event","startOuts","startCode"),all.x=TRUE)
   ds3Probs$probs<-ds3Probs$N/ds3Probs$Nevent
   ds3Probs$index<-paste(ds3Probs$event,ds3Probs$startOuts,ds3Probs$startCode,sep="-")
   ds3Probs<-ds3Probs[order(ds3Probs$index,ds3Probs$basesAdvanced),]
-  cdf.br3<-tapply(ds3Probs$probs,ds3Probs$index,cumsum)
+  cdf.br3 <- tapply(ds3Probs$probs, ds3Probs$index,cumsum)
   ds3Probs<-cbind(ds3Probs,cdf.br3=unlist(cdf.br3))
   ds3Probs<-ds3Probs[,c("startCode","startOuts","event","basesAdvanced","cdf.br3")]
   data<-merge(data,ds3Probs,by.x=c("startCode","startOuts","event","br3.adv"),by.y=c("startCode","startOuts","event","basesAdvanced"),all.x=TRUE)
@@ -179,7 +179,7 @@ makeWAR = function (data, method = "simple", ...) {
   
   
   #  data$delta.br0 = with(data, ifelse(basesAdvanced == 0, 0, delta.br * (br0.extra / basesAdvanced)))
-  data$detla.br[is.na(data$delta.br)]<-0
+  data$delta.br[is.na(data$delta.br)]<-0
   data$raa.br1 = data$p.norm.br1*data$delta.br
   data$raa.br2 = data$p.norm.br2*data$delta.br
   data$raa.br3 = data$p.norm.br3*data$delta.br
@@ -238,7 +238,7 @@ getWAR = function (data, recompute = FALSE, ...) {
   war.bat = ddply(ds, ~ batterId, summarise, Name = max(as.character(batterName))
                   , PA = length(batterId), G = length(unique(gameId)), HR = sum(event=="Home Run")
                   , RAA = sum(delta, na.rm=TRUE), RAA.bat = sum(raa.bat, na.rm=TRUE))
-  #war.br0 = ddply(ds, ~batterId, summarise, RAA.br0 = sum(raa.br0, na.rm=TRUE))
+  # war.br0 = ddply(ds, ~batterId, summarise, RAA.br0 = sum(raa.br0, na.rm=TRUE))
   war.br1 = ddply(ds, ~start1B, summarise, RAA.br1 = sum(raa.br1, na.rm=TRUE))
   war.br2 = ddply(ds, ~start2B, summarise, RAA.br2 = sum(raa.br2, na.rm=TRUE))
   war.br3 = ddply(ds, ~start3B, summarise, RAA.br3 = sum(raa.br3, na.rm=TRUE))
@@ -254,15 +254,12 @@ getWAR = function (data, recompute = FALSE, ...) {
   war.RF = ddply(ds, ~playerId.RF, summarise, RAA.RF = sum(raa.RF, na.rm=TRUE))
   war.pitch = ddply(ds, ~ pitcherId, summarise, Name = max(as.character(pitcherName)), BF = length(pitcherId), RAA.pitch = sum(raa.pitch))
   
-  #players = merge(x=war.bat, y=war.br0, by.x="batterId", by.y="batterId", all=TRUE)
+  # players = merge(x=war.bat, y=war.br0, by.x="batterId", by.y="batterId", all=TRUE)
   players = merge(x=war.bat, y=war.br1, by.x="batterId", by.y="start1B", all=TRUE)
   players = merge(x=players, y=war.br2, by.x="batterId", by.y="start2B", all=TRUE)
   players = merge(x=players, y=war.br3, by.x="batterId", by.y="start3B", all=TRUE)
-  players[is.na(players)] = 0
-  players = transform(players, RAA.br =  RAA.br1 + RAA.br2 + RAA.br3)
-  players = transform(players, RAA.off = RAA.bat + RAA.br)
-  players = merge(x=players, y=war.pitch[,-c(2)], by.x="batterId", by.y="pitcherId", all=TRUE)
-  #players$Name = with(players, ifelse(is.na(Name.x), Name.y, Name.x))
+  players = merge(x=players, y=war.pitch, by.x="batterId", by.y="pitcherId", all=TRUE)
+  players$Name = with(players, ifelse(is.na(Name.x), Name.y, Name.x))
   players = merge(x=players, y=war.P, by.x="batterId", by.y="pitcherId", all=TRUE)
   players = merge(x=players, y=war.C, by.x="batterId", by.y="playerId.C", all=TRUE)
   players = merge(x=players, y=war.1B, by.x="batterId", by.y="playerId.1B", all=TRUE)
@@ -273,10 +270,12 @@ getWAR = function (data, recompute = FALSE, ...) {
   players = merge(x=players, y=war.CF, by.x="batterId", by.y="playerId.CF", all=TRUE)
   players = merge(x=players, y=war.RF, by.x="batterId", by.y="playerId.RF", all=TRUE)
   players[is.na(players)] = 0
+  players = transform(players, RAA.br =  RAA.br1 + RAA.br2 + RAA.br3)
+  players = transform(players, RAA.off = RAA.bat + RAA.br)
   players = transform(players, RAA.field = RAA.P + RAA.C + RAA.1B + RAA.2B + RAA.3B + RAA.SS + RAA.LF + RAA.CF + RAA.RF)
   players = transform(players, RAA = RAA.bat + RAA.br + RAA.pitch + RAA.field)
   players = transform(players, TPA = PA + BF)
-  #players = players[, setdiff(names(players), c("Name.x", "Name.y"))]
+  players = players[, setdiff(names(players), c("Name.x", "Name.y"))]
   return(players)
 }
 
