@@ -33,12 +33,12 @@ makeWAR = function (data, method = "simple", ...) {
   for(col.name in new.names) {
     data[bip.idx, col.name] = ds.field[,col.name]
   }
-    
+  
   # Step 3: Define RAA for the pitcher
   message("...Estimating Pitching Runs Above Average...")
   data$delta.pitch = with(data, ifelse(is.na(delta.field), delta, delta - delta.field))
   mod.pitch = lm(delta.pitch ~ stadium + (throws == stand), data = data)
-#  summary(mod.pitch)
+  #  summary(mod.pitch)
   data$raa.pitch = -mod.pitch$residuals
   
   # Step 4: Define RAA for the batter
@@ -68,11 +68,13 @@ makeWAR = function (data, method = "simple", ...) {
     # Control for circumstances
     mod.off = lm(delta ~ as.factor(batterPos) + stadium + (stand == throws), data=data)
     # summary(mod.off)
+    #delta.off is the contribution above average of the batter AND all of the runners
     data = transform(data, delta.off = mod.off$residuals)  
     # Siphon off the portion attributable to the baserunners
     br.idx = which(data$startCode > 0)
     mod.br = lm(delta.off ~ event * as.factor(startCode) * as.factor(startOuts), data=data[br.idx,])
     data[br.idx, "delta.br"] = mod.br$residuals
+    #Whatever is left over goes to the batter
     data = transform(data, delta.bat = delta - delta.br)
     data = transform(data, raa.bat = delta.bat)
   }
@@ -117,57 +119,89 @@ makeWAR = function (data, method = "simple", ...) {
   br1.advanced.one = with(ds1, str_count(runnerMovement, paste(start1B, ":1B:2B::", sep="")))
   br1.advanced.two = with(ds1, str_count(runnerMovement, paste(start1B, ":1B:3B::", sep="")))
   ds1$basesAdvanced = ifelse(br1.scored == 1, 3, ifelse(br1.out == 1, -1, ifelse(br1.advanced.one == 1, 1, ifelse(br1.advanced.two == 1, 2, 0))))
-
-  # Compute the empirical probabilities
-  tally(~basesAdvanced, data=ds1)
-  polr(as.factor(basesAdvanced) ~ event + startOuts, data=ds1)
-  ddply(data, ~startCode + startOuts + event, summarise, N = length(startCode)
-        , Pr3.H = sum(dest.br3 == "H") / sum(!is.na(start3B)))
   
-  # Figure out what happened to the batter
-  br0.scored = with(data, str_count(runnerMovement, paste(batterId, ":::T:", sep="")))
-#  br0.out = with(data, str_count(runnerMovement, paste(batterId, "::::", sep="")))
-  br0.advanced.one = with(data, str_count(runnerMovement, paste(batterId, "::1B::", sep="")))
-  br0.advanced.two = with(data, str_count(runnerMovement, paste(batterId, "::2B::", sep="")))
-  br0.advanced.three = with(data, str_count(runnerMovement, paste(batterId, "::3B::", sep="")))
   
   # Compute the number of bases advanced by each baserunner
-  data$br0.adv = ifelse(br0.scored == 1, 4, ifelse(br0.advanced.one == 1, 1, ifelse(br0.advanced.two == 1, 2, ifelse(br0.advanced.three == 1, 3, 0))))
+  #data$br0.adv = ifelse(br0.scored == 1, 4, ifelse(br0.advanced.one == 1, 1, ifelse(br0.advanced.two == 1, 2, ifelse(br0.advanced.three == 1, 3, 0))))
   data[br1.idx, "br1.adv"] = ds1$basesAdvanced
   data[br2.idx, "br2.adv"] = ds2$basesAdvanced
   data[br3.idx, "br3.adv"] = ds3$basesAdvanced
   
-  # Compute the extra bases associated with each baserunner
-  data = transform(data, br1.extra = br1.adv - br0.adv)
-  data = transform(data, br2.extra = br2.adv - br0.adv)
-  data = transform(data, br3.extra = br3.adv - br0.adv)
+  # Compute the empirical probabilities
+  #events for the runner on third
+  ds3Tab<-ddply(ds3, basesAdvanced~event+startOuts+startCode, summarize, N=length(basesAdvanced))
+  ds3TabEvent<-ddply(ds3Tab,~event+startOuts+startCode,summarize,Nevent=sum(N))
+  ds3Probs<-merge(ds3Tab,ds3TabEvent,by.x=c("event","startOuts","startCode"),by.y=c("event","startOuts","startCode"),all.x=TRUE)
+  ds3Probs$probs<-ds3Probs$N/ds3Probs$Nevent
+  ds3Probs$index<-paste(ds3Probs$event,ds3Probs$startOuts,ds3Probs$startCode,sep="-")
+  ds3Probs<-ds3Probs[order(ds3Probs$index,ds3Probs$basesAdvanced),]
+  cdf.br3<-tapply(ds3Probs$probs,ds3Probs$index,cumsum)
+  ds3Probs<-cbind(ds3Probs,cdf.br3=unlist(cdf.br3))
+  ds3Probs<-ds3Probs[,c("startCode","startOuts","event","basesAdvanced","cdf.br3")]
+  data<-merge(data,ds3Probs,by.x=c("startCode","startOuts","event","br3.adv"),by.y=c("startCode","startOuts","event","basesAdvanced"),all.x=TRUE)
+  
+  #events for the runner on second
+  ds2Tab<-ddply(ds2, basesAdvanced~event+startOuts+startCode, summarize, N=length(basesAdvanced))
+  ds2TabEvent<-ddply(ds2Tab,~event+startOuts+startCode,summarize,Nevent=sum(N))
+  ds2Probs<-merge(ds2Tab,ds2TabEvent,by.x=c("event","startOuts","startCode"),by.y=c("event","startOuts","startCode"),all.x=TRUE)
+  ds2Probs$probs<-ds2Probs$N/ds2Probs$Nevent
+  ds2Probs$index<-paste(ds2Probs$event,ds2Probs$startOuts,ds2Probs$startCode,sep="-")
+  ds2Probs<-ds2Probs[order(ds2Probs$index,ds2Probs$basesAdvanced),]
+  cdf.br2<-tapply(ds2Probs$probs,ds2Probs$index,cumsum)
+  ds2Probs<-cbind(ds2Probs,cdf.br2=unlist(cdf.br2))
+  ds2Probs<-ds2Probs[,c("startCode","startOuts","event","basesAdvanced","cdf.br2")]
+  data<-merge(data,ds2Probs,by.x=c("startCode","startOuts","event","br2.adv"),by.y=c("startCode","startOuts","event","basesAdvanced"),all.x=TRUE)
+  
+  
+  #events for the runner on first
+  ds1Tab<-ddply(ds1, basesAdvanced~event+startOuts+startCode, summarize, N=length(basesAdvanced))
+  ds1TabEvent<-ddply(ds1Tab,~event+startOuts+startCode,summarize,Nevent=sum(N))
+  ds1Probs<-merge(ds1Tab,ds1TabEvent,by.x=c("event","startOuts","startCode"),by.y=c("event","startOuts","startCode"),all.x=TRUE)
+  ds1Probs$probs<-ds1Probs$N/ds1Probs$Nevent
+  ds1Probs$index<-paste(ds1Probs$event,ds1Probs$startOuts,ds1Probs$startCode,sep="-")
+  ds1Probs<-ds1Probs[order(ds1Probs$index,ds1Probs$basesAdvanced),]
+  cdf.br1<-tapply(ds1Probs$probs,ds1Probs$index,cumsum)
+  ds1Probs<-cbind(ds1Probs,cdf.br1=unlist(cdf.br1))
+  ds1Probs<-ds1Probs[,c("startCode","startOuts","event","basesAdvanced","cdf.br1")]
+  data<-merge(data,ds1Probs,by.x=c("startCode","startOuts","event","br1.adv"),by.y=c("startCode","startOuts","event","basesAdvanced"),all.x=TRUE)
+  
   
   # Compute a share for each baserunner
-  # Leave out the batter
-  data$basesAdvanced = ifelse(is.na(data$delta.br), NA, rowSums(abs(data[,c("br1.extra", "br2.extra", "br3.extra")]), na.rm=TRUE))
-#  data$delta.br0 = with(data, ifelse(basesAdvanced == 0, 0, delta.br * (br0.extra / basesAdvanced)))
-  data$delta.br1 = with(data, ifelse(is.na(start1B), NA, ifelse(basesAdvanced == 0, 0, delta.br * (abs(br1.extra) / basesAdvanced))))
-  data$delta.br2 = with(data, ifelse(is.na(start2B), NA, ifelse(basesAdvanced == 0, 0, delta.br * (abs(br2.extra) / basesAdvanced))))
-  data$delta.br3 = with(data, ifelse(is.na(start3B), NA, ifelse(basesAdvanced == 0, 0, delta.br * (abs(br3.extra) / basesAdvanced))))
+  data$cdf.br1[is.na(data$cdf.br1)]<-0
+  data$cdf.br2[is.na(data$cdf.br2)]<-0
+  data$cdf.br3[is.na(data$cdf.br3)]<-0
   
-#  mod.br3 = lm(basesAdvanced ~ event * as.factor(startOuts), data = ds3)
-#  mod.br2 = lm(basesAdvanced ~ event * as.factor(startOuts), data = ds2)
-#  mod.br1 = lm(basesAdvanced ~ event * as.factor(startOuts), data = ds1)
-#  mod.br0 = lm(br0.adv ~ event * as.factor(startOuts), data = data)
-#  bwplot(mod.br3$resid ~ event, data=ds3)
-#  bwplot(mod.br2$resid ~ event, data=ds2)
+  #normalize the cdf probs
+  data$p.norm.br1<-data$cdf.br1/(data$cdf.br1+data$cdf.br2+data$cdf.br3)
+  data$p.norm.br2<-data$cdf.br2/(data$cdf.br1+data$cdf.br2+data$cdf.br3)
+  data$p.norm.br3<-data$cdf.br3/(data$cdf.br1+data$cdf.br2+data$cdf.br3)
   
-  mod.br3 = lm(delta.br3 ~ event * as.factor(startOuts), data = data)
-  mod.br2 = lm(delta.br2 ~ event * as.factor(startOuts), data = data)
-  mod.br1 = lm(delta.br1 ~ event * as.factor(startOuts), data = data)
-#  mod.br0 = lm(delta.br0 ~ event + as.factor(startOuts), data = data)
+  
+  
+  #  data$delta.br0 = with(data, ifelse(basesAdvanced == 0, 0, delta.br * (br0.extra / basesAdvanced)))
+  data$detla.br[is.na(data$delta.br)]<-0
+  data$raa.br1 = data$p.norm.br1*data$delta.br
+  data$raa.br2 = data$p.norm.br2*data$delta.br
+  data$raa.br3 = data$p.norm.br3*data$delta.br
+  
+  #  mod.br3 = lm(basesAdvanced ~ event * as.factor(startOuts), data = ds3)
+  #  mod.br2 = lm(basesAdvanced ~ event * as.factor(startOuts), data = ds2)
+  #  mod.br1 = lm(basesAdvanced ~ event * as.factor(startOuts), data = ds1)
+  #  mod.br0 = lm(br0.adv ~ event * as.factor(startOuts), data = data)
+  #  bwplot(mod.br3$resid ~ event, data=ds3)
+  #  bwplot(mod.br2$resid ~ event, data=ds2)
+  
+  #mod.br3 = lm(delta.br3 ~ event * as.factor(startOuts), data = data)
+  #mod.br2 = lm(delta.br2 ~ event * as.factor(startOuts), data = data)
+  #mod.br1 = lm(delta.br1 ~ event * as.factor(startOuts), data = data)
+  #  mod.br0 = lm(delta.br0 ~ event + as.factor(startOuts), data = data)
   
   # Placeholder in case we want to use this later on
-#  data$raa.br0 = mod.br0$residuals
-  data$raa.br0 = 0
-  data[!is.na(data$delta.br3), "raa.br3"] = mod.br3$residuals
-  data[!is.na(data$delta.br2), "raa.br2"] = mod.br2$residuals
-  data[!is.na(data$delta.br1), "raa.br1"] = mod.br1$residuals
+  #  data$raa.br0 = mod.br0$residuals
+  #data$raa.br0 = 0
+  #data[!is.na(data$delta.br3), "raa.br3"] = mod.br3$residuals
+  #data[!is.na(data$delta.br2), "raa.br2"] = mod.br2$residuals
+  #data[!is.na(data$delta.br1), "raa.br1"] = mod.br1$residuals
   
   return(data)
 }
@@ -191,7 +225,7 @@ makeWAR = function (data, method = "simple", ...) {
 
 getWAR = function (data, recompute = FALSE, ...) {
   # Check to see if the WAR fields already exist
-  raa.fields = c("raa.bat", "raa.br0", "raa.br1", "raa.br2", "raa.br3", "raa.pitch", "raa.P", "raa.C", "raa.1B"
+  raa.fields = c("raa.bat", "raa.br1", "raa.br2", "raa.br3", "raa.pitch", "raa.P", "raa.C", "raa.1B"
                  , "raa.2B", "raa.3B", "raa.SS", "raa.LF", "raa.CF", "raa.RF")
   if (length(intersect(raa.fields, names(data))) < length(raa.fields) | recompute) {
     ds = makeWAR(data)
@@ -204,7 +238,7 @@ getWAR = function (data, recompute = FALSE, ...) {
   war.bat = ddply(ds, ~ batterId, summarise, Name = max(as.character(batterName))
                   , PA = length(batterId), G = length(unique(gameId)), HR = sum(event=="Home Run")
                   , RAA = sum(delta, na.rm=TRUE), RAA.bat = sum(raa.bat, na.rm=TRUE))
-  war.br0 = ddply(ds, ~batterId, summarise, RAA.br0 = sum(raa.br0, na.rm=TRUE))
+  #war.br0 = ddply(ds, ~batterId, summarise, RAA.br0 = sum(raa.br0, na.rm=TRUE))
   war.br1 = ddply(ds, ~start1B, summarise, RAA.br1 = sum(raa.br1, na.rm=TRUE))
   war.br2 = ddply(ds, ~start2B, summarise, RAA.br2 = sum(raa.br2, na.rm=TRUE))
   war.br3 = ddply(ds, ~start3B, summarise, RAA.br3 = sum(raa.br3, na.rm=TRUE))
@@ -220,15 +254,15 @@ getWAR = function (data, recompute = FALSE, ...) {
   war.RF = ddply(ds, ~playerId.RF, summarise, RAA.RF = sum(raa.RF, na.rm=TRUE))
   war.pitch = ddply(ds, ~ pitcherId, summarise, Name = max(as.character(pitcherName)), BF = length(pitcherId), RAA.pitch = sum(raa.pitch))
   
-  players = merge(x=war.bat, y=war.br0, by.x="batterId", by.y="batterId", all=TRUE)
-  players = merge(x=players, y=war.br1, by.x="batterId", by.y="start1B", all=TRUE)
+  #players = merge(x=war.bat, y=war.br0, by.x="batterId", by.y="batterId", all=TRUE)
+  players = merge(x=war.bat, y=war.br1, by.x="batterId", by.y="start1B", all=TRUE)
   players = merge(x=players, y=war.br2, by.x="batterId", by.y="start2B", all=TRUE)
   players = merge(x=players, y=war.br3, by.x="batterId", by.y="start3B", all=TRUE)
   players[is.na(players)] = 0
-  players = transform(players, RAA.br = RAA.br0 + RAA.br1 + RAA.br2 + RAA.br3)
-  players = transform(players, RAA = RAA.bat + RAA.br)
-  players = merge(x=players, y=war.pitch, by.x="batterId", by.y="pitcherId", all=TRUE)
-  players$Name = with(players, ifelse(is.na(Name.x), Name.y, Name.x))
+  players = transform(players, RAA.br =  RAA.br1 + RAA.br2 + RAA.br3)
+  players = transform(players, RAA.off = RAA.bat + RAA.br)
+  players = merge(x=players, y=war.pitch[,-c(2)], by.x="batterId", by.y="pitcherId", all=TRUE)
+  #players$Name = with(players, ifelse(is.na(Name.x), Name.y, Name.x))
   players = merge(x=players, y=war.P, by.x="batterId", by.y="pitcherId", all=TRUE)
   players = merge(x=players, y=war.C, by.x="batterId", by.y="playerId.C", all=TRUE)
   players = merge(x=players, y=war.1B, by.x="batterId", by.y="playerId.1B", all=TRUE)
@@ -242,7 +276,7 @@ getWAR = function (data, recompute = FALSE, ...) {
   players = transform(players, RAA.field = RAA.P + RAA.C + RAA.1B + RAA.2B + RAA.3B + RAA.SS + RAA.LF + RAA.CF + RAA.RF)
   players = transform(players, RAA = RAA.bat + RAA.br + RAA.pitch + RAA.field)
   players = transform(players, TPA = PA + BF)
-  players = players[, setdiff(names(players), c("Name.x", "Name.y"))]
+  #players = players[, setdiff(names(players), c("Name.x", "Name.y"))]
   return(players)
 }
 
@@ -290,16 +324,16 @@ getFielderRAA = function (data) {
   
   # Define RAA to be the residuals from the individual fielders models
   raa = -data.frame(mod.P$residuals, mod.C$residuals, mod.1B$residuals, mod.2B$residuals, mod.3B$residuals
-                   , mod.SS$residuals, mod.LF$residuals, mod.CF$residuals, mod.RF$residuals)
+                    , mod.SS$residuals, mod.LF$residuals, mod.CF$residuals, mod.RF$residuals)
   names(raa) = gsub("mod", "raa", gsub(".residuals", "", names(raa)))
   
   # The column-wise sums should all be zero
-#  colSums(raa)
+  #  colSums(raa)
   data = cbind(data, raa)
   return(data)
 }
-  
-  
+
+
 
 #' 
 #' @title getFieldResp
@@ -329,18 +363,18 @@ getFieldResp = function (data) {
   grid = list(range(data$our.x, na.rm=TRUE), range(data$our.y, na.rm=TRUE))
   fit.out <- bkde2D(outs, bandwidth = c(10,10), range.x = grid)
   fit.hit <- bkde2D(hits, bandwidth = c(10,10), range.x = grid)
-
+  
   field.smooth = data.frame(cbind(expand.grid(fit.out$x1, fit.out$x2), isOut = as.vector(fit.out$fhat)), isHit = as.vector(fit.hit$fhat))
   names(field.smooth)[1:2] = c("x", "y")
   # Plot the surfaces
-#  wireframe(isOut ~ x + y, data=field.smooth, scales = list(arrows = FALSE), drape = TRUE, colorkey = TRUE)
-#  wireframe(isHit ~ x + y, data=field.smooth, scales = list(arrows = FALSE), drape = TRUE, colorkey = TRUE)
-
+  #  wireframe(isOut ~ x + y, data=field.smooth, scales = list(arrows = FALSE), drape = TRUE, colorkey = TRUE)
+  #  wireframe(isHit ~ x + y, data=field.smooth, scales = list(arrows = FALSE), drape = TRUE, colorkey = TRUE)
+  
   # Make sure to add a small amount to avoid division by zero
   field.smooth = transform(field.smooth, wasFielded = isOut / (isOut + isHit + 0.00000001))
-# summary(field.smooth)
-# wireframe(wasFielded ~ x + y, data=field.smooth, scales = list(arrows = FALSE), drape = TRUE, colorkey = TRUE)
-
+  # summary(field.smooth)
+  # wireframe(wasFielded ~ x + y, data=field.smooth, scales = list(arrows = FALSE), drape = TRUE, colorkey = TRUE)
+  
   fit.all = function (x, y) {
     require(Hmisc)
     x.idx = whichClosest(field.smooth$x, x)
@@ -348,7 +382,7 @@ getFieldResp = function (data) {
     match = subset(field.smooth, x == field.smooth$x[x.idx] & y == field.smooth$y[y.idx])
     return(match$wasFielded)
   }
-
+  
   resp.field = mapply(fit.all, data$our.x, data$our.y)
   return(resp.field)
 }
@@ -395,18 +429,18 @@ getFielderResp = function (data, ...) {
   mod.CF = glm((fielderPos == "CF") ~ poly(our.x, 2) + poly(our.y, 2) + I(our.x * our.y), data=ds, family="binomial")
   mod.RF = glm((fielderPos == "RF") ~ poly(our.x, 2) + poly(our.y, 2) + I(our.x * our.y), data=ds, family="binomial")
   
-#   mod = mod.CF
-#   summary(mod)
-#   fit = makeFun(mod)
-#   plotFun(fit(x,y) ~ x + y, surface=TRUE, alpha=0.9
-#           , xlim = c(-350, 350), ylim = c(0, 550)
-#           , xlab = "Horizontal Distance from Home Plate (ft.)"
-#           , ylab = "Vertical Distance from Home Plate (ft.)"
-#           , zlab = "Probability of Making a Play"
-#   )
+  #   mod = mod.CF
+  #   summary(mod)
+  #   fit = makeFun(mod)
+  #   plotFun(fit(x,y) ~ x + y, surface=TRUE, alpha=0.9
+  #           , xlim = c(-350, 350), ylim = c(0, 550)
+  #           , xlab = "Horizontal Distance from Home Plate (ft.)"
+  #           , ylab = "Vertical Distance from Home Plate (ft.)"
+  #           , zlab = "Probability of Making a Play"
+  #   )
   
   out = data.frame(mod.P$fitted, mod.C$fitted, mod.1B$fitted, mod.2B$fitted, mod.3B$fitted
-              , mod.SS$fitted, mod.LF$fitted, mod.CF$fitted, mod.RF$fitted)
+                   , mod.SS$fitted, mod.LF$fitted, mod.CF$fitted, mod.RF$fitted)
   row.sums = apply(out, 1, sum)
   out = out / row.sums
   names(out) = c("resp.P", "resp.C", "resp.1B", "resp.2B", "resp.3B", "resp.SS", "resp.LF", "resp.CF", "resp.RF")
