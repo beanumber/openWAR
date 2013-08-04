@@ -66,7 +66,7 @@ makeWAR = function (data, method = "simple", ...) {
     data = transform(data, raa.bat = mod.bat$residuals)   
   } else {
     # Control for circumstances
-    mod.off = lm(delta ~ as.factor(batterPos) + stadium + (stand == throws), data=data)
+    mod.off = lm(delta ~ stadium + (stand == throws), data=data)
     # summary(mod.off)
     # delta.off is the contribution above average of the batter AND all of the runners
     data = transform(data, delta.off = mod.off$residuals)  
@@ -77,7 +77,8 @@ makeWAR = function (data, method = "simple", ...) {
     # Whatever is left over goes to the batter
     data$delta.bat = with(data, ifelse(is.na(delta.br), delta, delta - delta.br))
 #    data = transform(data, delta.bat = delta - delta.br)
-    data = transform(data, raa.bat = delta.bat)
+    mod.bat = lm(delta.bat ~ as.factor(batterPos), data=data)
+    data = transform(data, raa.bat = mod.bat$residuals)
   }
   
   # Step 5: Define RAA for the baserunners
