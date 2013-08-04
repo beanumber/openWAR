@@ -130,42 +130,76 @@ makeWAR = function (data, method = "simple", ...) {
   
   # Compute the empirical probabilities
   # events for the runner on third
-  ds3Tab <- ddply(ds3, basesAdvanced ~ event + startOuts + startCode, summarize, N=length(basesAdvanced))
-  ds3TabEvent <- ddply(ds3Tab, ~event + startOuts + startCode, summarize, Nevent=sum(N))
-  ds3Probs<-merge(ds3Tab,ds3TabEvent,by.x=c("event","startOuts","startCode"),by.y=c("event","startOuts","startCode"),all.x=TRUE)
-  ds3Probs$probs<-ds3Probs$N/ds3Probs$Nevent
-  ds3Probs$index<-paste(ds3Probs$event,ds3Probs$startOuts,ds3Probs$startCode,sep="-")
-  ds3Probs<-ds3Probs[order(ds3Probs$index,ds3Probs$basesAdvanced),]
-  cdf.br3 <- tapply(ds3Probs$probs, ds3Probs$index,cumsum)
-  ds3Probs<-cbind(ds3Probs,cdf.br3=unlist(cdf.br3))
-  ds3Probs<-ds3Probs[,c("startCode","startOuts","event","basesAdvanced","cdf.br3")]
-  data<-merge(data,ds3Probs,by.x=c("startCode","startOuts","event","br3.adv"),by.y=c("startCode","startOuts","event","basesAdvanced"),all.x=TRUE)
+#   ds3Tab <- ddply(ds3, basesAdvanced ~ event + startOuts + startCode, summarize, N=length(basesAdvanced))
+#   ds3TabEvent <- ddply(ds3Tab, ~event + startOuts + startCode, summarize, Nevent=sum(N))
+#   ds3Probs<-merge(ds3Tab,ds3TabEvent,by.x=c("event","startOuts","startCode"),by.y=c("event","startOuts","startCode"),all.x=TRUE)
+#   ds3Probs$probs<-ds3Probs$N/ds3Probs$Nevent
+#   ds3Probs$index<-paste(ds3Probs$event,ds3Probs$startOuts,ds3Probs$startCode,sep="-")
+#   ds3Probs<-ds3Probs[order(ds3Probs$index,ds3Probs$basesAdvanced),]
+#   cdf.br3 <- tapply(ds3Probs$probs, ds3Probs$index,cumsum)
+#   ds3Probs<-cbind(ds3Probs,cdf.br3=unlist(cdf.br3))
+#   ds3Probs<-ds3Probs[,c("startCode","startOuts","event","basesAdvanced","cdf.br3")]
+#   data<-merge(data,ds3Probs,by.x=c("startCode","startOuts","event","br3.adv"),by.y=c("startCode","startOuts","event","basesAdvanced"),all.x=TRUE)
+#   
+#   #events for the runner on second
+#   ds2Tab<-ddply(ds2, basesAdvanced~event+startOuts+startCode, summarize, N=length(basesAdvanced))
+#   ds2TabEvent<-ddply(ds2Tab,~event+startOuts+startCode,summarize,Nevent=sum(N))
+#   ds2Probs<-merge(ds2Tab,ds2TabEvent,by.x=c("event","startOuts","startCode"),by.y=c("event","startOuts","startCode"),all.x=TRUE)
+#   ds2Probs$probs<-ds2Probs$N/ds2Probs$Nevent
+#   ds2Probs$index<-paste(ds2Probs$event,ds2Probs$startOuts,ds2Probs$startCode,sep="-")
+#   ds2Probs<-ds2Probs[order(ds2Probs$index,ds2Probs$basesAdvanced),]
+#   cdf.br2<-tapply(ds2Probs$probs,ds2Probs$index,cumsum)
+#   ds2Probs<-cbind(ds2Probs,cdf.br2=unlist(cdf.br2))
+#   ds2Probs<-ds2Probs[,c("startCode","startOuts","event","basesAdvanced","cdf.br2")]
+#   data<-merge(data,ds2Probs,by.x=c("startCode","startOuts","event","br2.adv"),by.y=c("startCode","startOuts","event","basesAdvanced"),all.x=TRUE)
+#   
+#   
+#   #events for the runner on first
+#   ds1Tab<-ddply(ds1, basesAdvanced~event+startOuts+startCode, summarize, N=length(basesAdvanced))
+#   ds1TabEvent<-ddply(ds1Tab,~event+startOuts+startCode,summarize,Nevent=sum(N))
+#   ds1Probs<-merge(ds1Tab,ds1TabEvent,by.x=c("event","startOuts","startCode"),by.y=c("event","startOuts","startCode"),all.x=TRUE)
+#   ds1Probs$probs<-ds1Probs$N/ds1Probs$Nevent
+#   ds1Probs$index<-paste(ds1Probs$event,ds1Probs$startOuts,ds1Probs$startCode,sep="-")
+#   ds1Probs<-ds1Probs[order(ds1Probs$index,ds1Probs$basesAdvanced),]
+#   cdf.br1<-tapply(ds1Probs$probs,ds1Probs$index,cumsum)
+#   ds1Probs<-cbind(ds1Probs,cdf.br1=unlist(cdf.br1))
+#   ds1Probs<-ds1Probs[,c("startCode","startOuts","event","basesAdvanced","cdf.br1")]
+#   data<-merge(data,ds1Probs,by.x=c("startCode","startOuts","event","br1.adv"),by.y=c("startCode","startOuts","event","basesAdvanced"),all.x=TRUE)
+#   
+#   
+#   ds1Tab <- ddply(ds1, ~ event + startCode + startOuts + basesAdvanced, summarise, N = length(basesAdvanced))
+#   ds1TabEvent <- ddply(ds1Tab, ~ event + startCode + startOuts, summarise, Nevent = sum(N))
+#   ds1Probs <- merge(ds1Tab, ds1TabEvent, all.x=TRUE)
+#   ds1Probs = transform(ds1Probs, p = N / Nevent)
+#   ds1Probs <- ds1Probs[with(ds1Probs, order(event, startCode, startOuts, basesAdvanced)),]
+#   ds1Cdf = ddply(ds1Probs, ~ event + startCode + startOuts, summarise, cdf = c(0, cumsum(p[-length(p)])))
+#   ds1Probs$cdf = ds1Cdf$cdf
   
-  #events for the runner on second
-  ds2Tab<-ddply(ds2, basesAdvanced~event+startOuts+startCode, summarize, N=length(basesAdvanced))
-  ds2TabEvent<-ddply(ds2Tab,~event+startOuts+startCode,summarize,Nevent=sum(N))
-  ds2Probs<-merge(ds2Tab,ds2TabEvent,by.x=c("event","startOuts","startCode"),by.y=c("event","startOuts","startCode"),all.x=TRUE)
-  ds2Probs$probs<-ds2Probs$N/ds2Probs$Nevent
-  ds2Probs$index<-paste(ds2Probs$event,ds2Probs$startOuts,ds2Probs$startCode,sep="-")
-  ds2Probs<-ds2Probs[order(ds2Probs$index,ds2Probs$basesAdvanced),]
-  cdf.br2<-tapply(ds2Probs$probs,ds2Probs$index,cumsum)
-  ds2Probs<-cbind(ds2Probs,cdf.br2=unlist(cdf.br2))
-  ds2Probs<-ds2Probs[,c("startCode","startOuts","event","basesAdvanced","cdf.br2")]
-  data<-merge(data,ds2Probs,by.x=c("startCode","startOuts","event","br2.adv"),by.y=c("startCode","startOuts","event","basesAdvanced"),all.x=TRUE)
+#  ds = subset(ds1, event == "Double" & startCode == 3 & startOuts == 1)
   
+  getCDF = function (ds) {
+    events = ddply(ds, ~basesAdvanced, summarise, N = length(basesAdvanced))
+    events = transform(events, numObs = nrow(ds))
+    events = transform(events, p = N / numObs)
+    events$cdf = cumsum(events$p)
+    events$cdf.lag = c(0, cumsum(events$p[-nrow(events)]))
+    return(events)
+  }
   
-  #events for the runner on first
-  ds1Tab<-ddply(ds1, basesAdvanced~event+startOuts+startCode, summarize, N=length(basesAdvanced))
-  ds1TabEvent<-ddply(ds1Tab,~event+startOuts+startCode,summarize,Nevent=sum(N))
-  ds1Probs<-merge(ds1Tab,ds1TabEvent,by.x=c("event","startOuts","startCode"),by.y=c("event","startOuts","startCode"),all.x=TRUE)
-  ds1Probs$probs<-ds1Probs$N/ds1Probs$Nevent
-  ds1Probs$index<-paste(ds1Probs$event,ds1Probs$startOuts,ds1Probs$startCode,sep="-")
-  ds1Probs<-ds1Probs[order(ds1Probs$index,ds1Probs$basesAdvanced),]
-  cdf.br1<-tapply(ds1Probs$probs,ds1Probs$index,cumsum)
-  ds1Probs<-cbind(ds1Probs,cdf.br1=unlist(cdf.br1))
-  ds1Probs<-ds1Probs[,c("startCode","startOuts","event","basesAdvanced","cdf.br1")]
-  data<-merge(data,ds1Probs,by.x=c("startCode","startOuts","event","br1.adv"),by.y=c("startCode","startOuts","event","basesAdvanced"),all.x=TRUE)
+  ds3Probs = ddply(ds3, ~event + startCode + startOuts, getCDF)
+  ds2Probs = ddply(ds2, ~event + startCode + startOuts, getCDF)
+  ds1Probs = ddply(ds1, ~event + startCode + startOuts, getCDF)
   
+  # Merge onto the main data frame
+  join.idx = c("event", "startCode", "startOuts")
+  data = merge(x = data, y = ds3Probs[,c(join.idx, "basesAdvanced", "cdf.lag")], by.x = c(join.idx, "br3.adv"), by.y = c(join.idx, "basesAdvanced"), all.x=TRUE)
+  # Rename column
+  data = rename(data, c("cdf.lag" = "cdf.br3"))
+
+  data = merge(x = data, y = ds2Probs[,c(join.idx, "basesAdvanced", "cdf.lag")], by.x = c(join.idx, "br2.adv"), by.y = c(join.idx, "basesAdvanced"), all.x=TRUE)
+  data = rename(data, c("cdf.lag" = "cdf.br2"))
+  data = merge(x = data, y = ds1Probs[,c(join.idx, "basesAdvanced", "cdf.lag")], by.x = c(join.idx, "br1.adv"), by.y = c(join.idx, "basesAdvanced"), all.x=TRUE)
+  data = rename(data, c("cdf.lag" = "cdf.br1"))
   
   # Compute a share for each baserunner
   data$cdf.br1[is.na(data$cdf.br1)]<-0
@@ -173,17 +207,17 @@ makeWAR = function (data, method = "simple", ...) {
   data$cdf.br3[is.na(data$cdf.br3)]<-0
   
   #normalize the cdf probs
-  data$p.norm.br1<-data$cdf.br1/(data$cdf.br1+data$cdf.br2+data$cdf.br3)
-  data$p.norm.br2<-data$cdf.br2/(data$cdf.br1+data$cdf.br2+data$cdf.br3)
-  data$p.norm.br3<-data$cdf.br3/(data$cdf.br1+data$cdf.br2+data$cdf.br3)
+  data$share.br1<-data$cdf.br1 / (data$cdf.br1 + data$cdf.br2 + data$cdf.br3)
+  data$share.br2<-data$cdf.br2 / (data$cdf.br1 + data$cdf.br2 + data$cdf.br3)
+  data$share.br3<-data$cdf.br3 / (data$cdf.br1 + data$cdf.br2 + data$cdf.br3)
   
   
   
   #  data$delta.br0 = with(data, ifelse(basesAdvanced == 0, 0, delta.br * (br0.extra / basesAdvanced)))
   data$delta.br[is.na(data$delta.br)]<-0
-  data$raa.br1 = data$p.norm.br1*data$delta.br
-  data$raa.br2 = data$p.norm.br2*data$delta.br
-  data$raa.br3 = data$p.norm.br3*data$delta.br
+  data$raa.br1 = data$share.br1*data$delta.br
+  data$raa.br2 = data$share.br2*data$delta.br
+  data$raa.br3 = data$share.br3*data$delta.br
   
   #  mod.br3 = lm(basesAdvanced ~ event * as.factor(startOuts), data = ds3)
   #  mod.br2 = lm(basesAdvanced ~ event * as.factor(startOuts), data = ds2)
