@@ -15,7 +15,7 @@
 #' res = makeWAR(ds)
 #' 
 
-makeWAR = function (data, method = "simple", ...) {
+makeWAR = function (data, method = "simple", verbose = FALSE, ...) {
   # Step 1: Define \delta, the change in expected runs
   message("...Estimating Expected Runs...")
   fit.rem = getRunEx(data)
@@ -79,6 +79,10 @@ makeWAR = function (data, method = "simple", ...) {
 #    data = transform(data, delta.bat = delta - delta.br)
     mod.bat = lm(delta.bat ~ as.factor(batterPos), data=data)
     data = transform(data, raa.bat = mod.bat$residuals)
+  }
+  
+  if (verbose) {
+    cat(coef(mod.bat))
   }
   
   # Step 5: Define RAA for the baserunners
