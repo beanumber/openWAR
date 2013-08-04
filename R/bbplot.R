@@ -49,7 +49,7 @@ bbplot = function (data, ...) {
            panel.xyplot(x,y, alpha = 0.3, ...)
          }
        , auto.key=list(columns=4)
-       , xlim = c(-350, 350), ylim = c(NA, 525)
+       , xlim = c(-350, 350), ylim = c(-20, 525)
        , xlab = "Horizontal Distance from Home Plate (ft.)"
        , ylab = "Vertical Distance from Home Plate (ft.)"
   )
