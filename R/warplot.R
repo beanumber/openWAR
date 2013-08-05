@@ -126,7 +126,7 @@ warplot2 = function (playerIds, data, ...) {
                        panel.densityplot(x, plot.points=FALSE, ...)
                      }
                      , auto.key=list(columns=min(4, length(playerIds)), text = labels)
-                     , ylim = c(-0.01, 0.2)
+#                     , ylim = c(-0.01, 0.2)
                      , xlab = "Runs Above Average (RAA)"
   )
   return(plot)
