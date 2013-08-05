@@ -245,6 +245,44 @@ makeWAR = function (data, method = "simple", verbose = FALSE, ...) {
   return(data)
 }
 
+
+#' @title shakeWAR
+#' 
+#' @description resample a data.frame to obtain variance estimate for WAR
+#' 
+#' @details Resamples the rows of an MLBAM data set
+#' 
+#' @param data An MLBAM data.frame 
+#' @param N the number of resamples (default 5000)
+#' 
+#' @return a data.frame with RAA values 
+#' 
+#' @export
+#' @examples
+#' 
+#' ds = getData()
+#' ds = makeWAR()
+#' res = shakeWAR(ds)
+#' res = getWAR(ds)
+#' 
+
+shakeWAR = function (data, N = 10, ...) {
+  require(mosaic)
+  raa.fields = c("raa.bat", "raa.br1", "raa.br2", "raa.br3", "raa.pitch", "raa.P", "raa.C", "raa.1B"
+                 , "raa.2B", "raa.3B", "raa.SS", "raa.LF", "raa.CF", "raa.RF")
+  if (length(intersect(raa.fields, names(data))) < length(raa.fields)) {
+    ds = makeWAR(data)
+  } else {
+    ds = data
+  }
+  id.fields = c("batterId", "start1B", "start2B", "start3B", "pitcherId", "playerId.C", "playerId.1B"
+                , "playerId.2B", "playerId.3B", "playerId.SS", "playerId.LF", "playerId.CF", "playerId.RF"
+                , "batterName", "pitcherName", "gameId", "event")
+  ds.raa = ds[, c(id.fields, raa.fields)]
+  bstrap = do(N) * getWAR(resample(ds.raa))
+  return(bstrap)
+}
+
 #' @title getWAR
 #' 
 #' @description Retrieve openWAR
@@ -276,7 +314,7 @@ getWAR = function (data, recompute = FALSE, ...) {
   require(plyr)
   war.bat = ddply(ds, ~ batterId, summarise, Name = max(as.character(batterName))
                   , PA = length(batterId), G = length(unique(gameId)), HR = sum(event=="Home Run")
-                  , RAA = sum(delta, na.rm=TRUE), RAA.bat = sum(raa.bat, na.rm=TRUE))
+                  , RAA.bat = sum(raa.bat, na.rm=TRUE))
   # war.br0 = ddply(ds, ~batterId, summarise, RAA.br0 = sum(raa.br0, na.rm=TRUE))
   war.br1 = ddply(ds, ~start1B, summarise, RAA.br1 = sum(raa.br1, na.rm=TRUE))
   war.br2 = ddply(ds, ~start2B, summarise, RAA.br2 = sum(raa.br2, na.rm=TRUE))

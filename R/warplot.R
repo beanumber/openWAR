@@ -84,3 +84,50 @@ bstrap = function (x, N = 5000) {
     return(NULL)
   }
 }
+
+#' @title summary.war
+#' 
+#' @description Summarize WAR
+#' 
+#' @details Aggegrate the resampled WAR estimates
+#' 
+#' @param playerIds A vector of valid MLBAM player IDs present in the data argument
+#' @param data A dataset of resampled WAR components, aggregated by player
+#' 
+#' @return a data.frame
+#' 
+#' @export
+#' @examples
+#' 
+#' ds = getData()
+#' samp = shakeWAR(makeWAR(ds))
+#' summary.war(samp)
+
+summary.war = function (data, ...) {
+  require(plyr)  
+  players = ddply(data, ~Name, summarise, q0 = min(RAA), q2.5 = quantile(RAA, 0.025), q50 = mean(RAA), q97.5 = quantile(RAA, 0.975), q100 = max(RAA))
+  return(players[order(players$q50, decreasing=TRUE),])
+}
+
+warplot2 = function (playerIds, data, ...) {
+  require(mosaic)
+  bgcol = "darkgray"
+  playerIds = sort(playerIds)
+  # is it worth the trouble to filter the rows? 
+  rows = subset(data, batterId %in% playerIds)
+  # Remove unused factor levels
+  rows$Name = factor(rows$Name)
+  
+  lkup = unique(rows[,c("batterId", "Name")])
+  labels = as.character(lkup[order(lkup$batterId),]$Name)
+  
+  plot = densityplot(~RAA, groups=batterId, data=rows
+                     , panel = function(x,y,...) {
+                       panel.densityplot(x, plot.points=FALSE, ...)
+                     }
+                     , auto.key=list(columns=min(4, length(playerIds)), text = labels)
+                     , ylim = c(-0.01, 0.2)
+                     , xlab = "Runs Above Average (RAA)"
+  )
+  return(plot)
+}
