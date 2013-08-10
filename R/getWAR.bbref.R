@@ -1,4 +1,4 @@
-#' @title getWAR
+#' @title getWAR.bbref
 #' 
 #' @description Retrieves WAR from a database table
 #' 
@@ -35,7 +35,7 @@
 #' # Pull bWAR for the 1980s
 #' war = getWAR(con, start=1980, end=1989)
 #' 
-getWAR <- function (con, ids = NULL, start=2012, end=2012, group=FALSE) {
+getWAR.bbref <- function (con, ids = NULL, start=2012, end=2012, group=FALSE) {
   playerId.default = c("wrighda03", "reyesjo01")
   
   # Make sure the list of ids is valid

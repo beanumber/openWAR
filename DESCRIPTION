@@ -9,7 +9,6 @@ Description: This package is useful for computing WAR
 Depends:
     R (>= 1.8.0)
 Imports:
-    RMySQL,
     mosaic,
     XML,
     RCurl,
@@ -18,7 +17,6 @@ Imports:
 License: GPL (>=2)
 Collate:
     'getCon.R'
-    'getWAR.R'
     'reliability.R'
     'openWAR-package.R'
     'exWPct.R'
@@ -31,3 +29,4 @@ Collate:
     'warplot.R'
     'getRunEx.R'
     'makeWAR.R'
+    'getWAR.bbref.R'
