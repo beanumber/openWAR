@@ -33,7 +33,7 @@ warplot = function (playerIds, data, N = 5000, ...) {
   
   plot = densityplot(~result | component, groups=playerId, data=X
          , panel = function(x,y,...) {
-           panel.densityplot(x, plot.points=FALSE, ...)
+           panel.densityplot(x, plot.points=FALSE, lwd = 3, ...)
            if (length(bstraps) == 1) {
              quants = qdata(c(0.05, 0.5, 0.975), vals=x)
              h = 0.025
@@ -109,6 +109,24 @@ summary.war = function (data, ...) {
   return(players[order(players$q50, decreasing=TRUE),])
 }
 
+#' @title warplot2
+#' 
+#' @description Visualize variance estimates of WAR
+#' 
+#' @details Density Plot for WAR estimates
+#' 
+#' @param playerIds A vector of valid MLBAM player IDs present in the data argument
+#' @param data A dataset
+#' 
+#' @return an xyplot() 
+#' 
+#' @export
+#' @examples
+#' 
+#' ds = getData()
+#' samp = shakeWAR(ds)
+#' warplot2(samp)
+
 warplot2 = function (playerIds, data, ...) {
   require(mosaic)
   bgcol = "darkgray"
@@ -123,7 +141,7 @@ warplot2 = function (playerIds, data, ...) {
   
   plot = densityplot(~RAA, groups=batterId, data=rows
                      , panel = function(x,y,...) {
-                       panel.densityplot(x, plot.points=FALSE, ...)
+                       panel.densityplot(x, plot.points=FALSE, lwd = 3,...)
                      }
                      , auto.key=list(columns=min(4, length(playerIds)), text = labels)
 #                     , ylim = c(-0.01, 0.2)

@@ -2,7 +2,7 @@
 \alias{makeWAR}
 \title{makeWAR}
 \usage{
-  makeWAR(data, ...)
+  makeWAR(data, method = "simple", verbose = FALSE, ...)
 }
 \arguments{
   \item{data}{An MLBAM data.frame}

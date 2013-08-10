@@ -263,7 +263,6 @@ makeWAR = function (data, method = "simple", verbose = FALSE, ...) {
 #' ds = getData()
 #' ds = makeWAR()
 #' res = shakeWAR(ds)
-#' res = getWAR(ds)
 #' 
 
 shakeWAR = function (data, N = 10, ...) {
