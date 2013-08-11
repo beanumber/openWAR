@@ -16,17 +16,12 @@ Imports:
     stringr
 License: GPL (>=2)
 Collate:
-    'getCon.R'
-    'reliability.R'
     'openWAR-package.R'
     'exWPct.R'
-    'getBatting.R'
-    'getLinearWeights.R'
-    'getBattingWAR.R'
     'getData.R'
     'GameDay.R'
     'bbplot.R'
     'warplot.R'
     'getRunEx.R'
     'makeWAR.R'
-    'getWAR.bbref.R'
+    'summary.war.R'

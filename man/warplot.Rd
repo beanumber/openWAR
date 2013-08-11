@@ -2,18 +2,16 @@
 \alias{warplot}
 \title{warplot}
 \usage{
-  warplot(playerIds, data, N = 5000, ...)
+  warplot(playerIds, data, ...)
 }
 \arguments{
   \item{playerIds}{A vector of valid MLBAM player IDs
   present in the data argument}
 
-  \item{data}{A dataset}
-
-  \item{N}{the number of bootstrapped estimates}
+  \item{data}{A data.frame resulting from shakeWAR()}
 }
 \value{
-  an xyplot()
+  a faceted densityplot
 }
 \description{
   Visualize WAR
@@ -23,6 +21,9 @@
 }
 \examples{
 ds = getData()
-warplot(ds)
+# not run
+openWAR = makeWAR(ds)
+openWAR.sim = shakeWAR(openWAR)
+warplot(c(431151, 502517, 408234, 285078, 518774, 285079), data=openWAR.sim)
 }
 

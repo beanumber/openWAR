@@ -7,6 +7,6 @@
 #' @author Ben Baumer and Gregory Matthews
 #' 
 #' @docType package
-#' @import RMySQL mosaic
+#' @import mosaic plyr stringr XML RCurl
 #' @name openWAR
 NULL
