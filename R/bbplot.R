@@ -2,9 +2,11 @@
 #' 
 #' @description Visualize Balls in Play
 #' 
-#' @details Plot the balls in play from GameDay data
+#' @details Plots the balls in play from GameDay data. This function will plot (x,y)-coordinates
+#' with a generic baseball field plotted in the background. Other lattice options can be passed
+#' to xyplot().
 #' 
-#' @param start 
+#' @param data An MLBAM data set with fields "our.x" and "our.y"
 #' 
 #' @return an xyplot() 
 #' 
@@ -17,10 +19,14 @@
 bbplot = function (data, ...) {
   require(mosaic)
   bgcol = "darkgray"
+  xy.fields = c("our.x", "our.y")
+  if (!length(intersect(xy.fields, names(data))) == length(xy.fields)) {
+    stop("(x,y) coordinate locations not found.")
+  }
   ds = subset(data, !is.na(our.y) & !is.na(our.x))
   ds$event = factor(ds$event)
   plot = xyplot(our.y ~ our.x, groups=event, data=ds
-         , panel = function(x,y,...) {
+         , panel = function(x,y, ...) {
            panel.segments(0, 0, -400, 400, col=bgcol)   # LF line
            panel.segments(0, 0, 400, 400, col=bgcol)     # RF line
            bw = 2

@@ -1,9 +1,9 @@
-\name{getMonthlyData}
-\alias{getMonthlyData}
-\alias{getWeeklyData}
-\title{getMonthlyData}
+\name{getDataMonthly}
+\alias{getDataMonthly}
+\alias{getDataWeekly}
+\title{getDataMonthly}
 \usage{
-  getMonthlyData(yyyy = 2013, m = 5)
+  getDataMonthly(yyyy = 2013, m = 5)
 }
 \arguments{
   \item{yyyy}{A year}
@@ -14,12 +14,13 @@
   a data.frame consisting of play-by-play data
 }
 \description{
-  Retrieves MLBAM GameDay files for a single month
+  Retrieves MLBAM GameDay files for a single month (or
+  week)
 }
 \details{
   Given a year and month, this function will retrieve data
   from the GameDay server, and process them into a single
-  data.frame
+  data.frame.
 }
 \examples{
 ds = getData()

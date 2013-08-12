@@ -15,7 +15,7 @@
 }
 \details{
   Downloads information for a given day from the MLBAM
-  website and retrieves a list of valid gameIds
+  website and retrieves a list of valid gameIds.
 }
 \examples{
 getGameIds()

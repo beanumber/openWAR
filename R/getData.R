@@ -1,21 +1,25 @@
 #' @title getData
 #' 
-#' @description Retrieves MLBAM GameDay files for a time interval
+#' @description Retrieves MLBAM GameDay files for a specified time interval
 #' 
-#' @details Given a beginning and end date, this function will retrieve data from the 
-#' GameDay server, and process them into a single data.frame
+#' @details Given a beginning and end date, this function will retrieve data from the MLABM
+#' GameDay server, and process them into a single data.frame. 
 #' 
 #' @param start A valid date in yyyy-mm-dd format (default today)
 #' @param end A valid date in yyyy-mm-dd format (default start)
-#' @param drop.suspended a LOGICAL indicating whether games with fewer than 5 innings should be excluded
+#' @param drop.suspended Logical indicating whether games with fewer than 5 innings should be excluded
 #' 
 #' @return a data.frame consisting of play-by-play data 
 #' 
 #' @export
 #' @examples
 #' 
+#' # Get data from yesterday
 #' ds = getData()
-#' getData(start = "2013-05-21", end = Sys.Date())
+#' # Get data from the beginning of the year
+#' ds = getData(start = "2013-03-31", end = Sys.Date())
+#' # Get data over an arbitrary time interval
+#' ds = getData(start = "2013-05-21", end = "2013-05-31")
 
 getData <- function(start = Sys.Date()-1, end = NULL, gameIds = NULL, drop.suspended = TRUE) {
   if (is.null(gameIds)) {
@@ -50,13 +54,13 @@ getData <- function(start = Sys.Date()-1, end = NULL, gameIds = NULL, drop.suspe
 }
 
 
-#' @title getMonthlyData
-#' @aliases getWeeklyData
+#' @title getDataMonthly
+#' @aliases getDataWeekly
 #' 
-#' @description Retrieves MLBAM GameDay files for a single month
+#' @description Retrieves MLBAM GameDay files for a single month (or week)
 #' 
 #' @details Given a year and month, this function will retrieve data from the 
-#' GameDay server, and process them into a single data.frame
+#' GameDay server, and process them into a single data.frame.
 #' 
 #' @param yyyy A year
 #' @param m a numeric value corresponding to a month
@@ -64,19 +68,19 @@ getData <- function(start = Sys.Date()-1, end = NULL, gameIds = NULL, drop.suspe
 #' @return a data.frame consisting of play-by-play data 
 #' 
 #' @export
-#' @export getWeeklyData
+#' @export getDataWeekly
 #' @examples
 #' 
 #' ds = getData()
 #' getMonthlyData(2-13, 5)
 
-getMonthlyData <- function(yyyy = 2013, m = 5) {
+getDataMonthly <- function(yyyy = 2013, m = 5) {
   start = as.Date(paste(yyyy, m, "01", sep="-"), "%Y-%m-%d")
   end = as.Date(paste(yyyy, m + 1, "01", sep="-"), "%Y-%m-%d") - 1
   return(getData(start, end))
 }
 
-getWeeklyData <- function(start = Sys.Date() - 8) {
+getDataWeekly <- function(start = Sys.Date() - 8) {
   return(getData(as.Date(start), as.Date(start) + 6))
 }
 
@@ -86,7 +90,7 @@ getWeeklyData <- function(start = Sys.Date() - 8) {
 #' @description Retrieves MLBAM gameIds for a specified date
 #' 
 #' @details Downloads information for a given day from the MLBAM website and retrieves
-#' a list of valid gameIds
+#' a list of valid gameIds. 
 #' 
 #' @param date A date in "yyyy-mm-dd" format
 #'  
@@ -120,7 +124,7 @@ getGameIds <- function(date = Sys.Date()) {
 #' 
 #' @description Replaces data from a single game
 #' 
-#' @details Deletes, and then rbinds fresh information from a particular game
+#' @details Deletes, and then rbinds fresh information from a particular game.
 #' 
 #' @param gameId A valid MLBAM gameId
 #' @param data a data.frame returned by getData()
@@ -129,7 +133,7 @@ getGameIds <- function(date = Sys.Date()) {
 #' 
 #' @export
 #' @examples
-#' getData(start = "2013-0331", end = "2013-07-14")
+#' getData(start = "2013-03-31", end = "2013-07-14")
 #' ds = updateGame("gid_2013_04_16_nynmlb_colmlb_2")
 #' 
 

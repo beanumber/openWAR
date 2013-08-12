@@ -5,7 +5,8 @@
   bbplot(data, ...)
 }
 \arguments{
-  \item{start}{}
+  \item{data}{An MLBAM data set with fields "our.x" and
+  "our.y"}
 }
 \value{
   an xyplot()
@@ -14,7 +15,10 @@
   Visualize Balls in Play
 }
 \details{
-  Plot the balls in play from GameDay data
+  Plots the balls in play from GameDay data. This function
+  will plot (x,y)-coordinates with a generic baseball field
+  plotted in the background. Other lattice options can be
+  passed to xyplot().
 }
 \examples{
 ds = getData()

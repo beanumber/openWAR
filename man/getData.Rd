@@ -12,22 +12,27 @@
   \item{end}{A valid date in yyyy-mm-dd format (default
   start)}
 
-  \item{drop.suspended}{a LOGICAL indicating whether games
+  \item{drop.suspended}{Logical indicating whether games
   with fewer than 5 innings should be excluded}
 }
 \value{
   a data.frame consisting of play-by-play data
 }
 \description{
-  Retrieves MLBAM GameDay files for a time interval
+  Retrieves MLBAM GameDay files for a specified time
+  interval
 }
 \details{
   Given a beginning and end date, this function will
-  retrieve data from the GameDay server, and process them
-  into a single data.frame
+  retrieve data from the MLABM GameDay server, and process
+  them into a single data.frame.
 }
 \examples{
+# Get data from yesterday
 ds = getData()
-getData(start = "2013-05-21", end = Sys.Date())
+# Get data from the beginning of the year
+ds = getData(start = "2013-03-31", end = Sys.Date())
+# Get data over an arbitrary time interval
+ds = getData(start = "2013-05-21", end = "2013-05-31")
 }
 
