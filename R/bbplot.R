@@ -16,6 +16,7 @@
 #' ds = getData()
 #' bbplot(ds)
 
+#GREG
 bbplot = function (data, ...) {
   require(mosaic)
   bgcol = "darkgray"
