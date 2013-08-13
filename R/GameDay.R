@@ -269,6 +269,7 @@ readData.gameday = function (gd) {
     
     # add some convenience calculation fields
     out = transform(out, isPA = !event %in% c("Defensive Indiff", "Stolen Base 2B", "Runner Out"))
+    out = transform(out, isAB = isPA & !event %in% c("Walk", "Intent Walk", "Hit By Pitch", "Sac Fly", "Sac Bunt"))
     out = transform(out, isHit = event %in% c("Single", "Double", "Triple", "Home Run"))
     out = transform(out, isBIP = event != "Home Run" & !is.na(x) & !is.na(y))
     
