@@ -10,7 +10,7 @@ MetsBraves = gameday()
 save(MetsBraves, file = "data/MetsBraves.rda")
 
 # Get the data for the first half of 2013
-MLBAM2013 = getData(start = "03-31-2013", end = "07-14-2013")
+MLBAM2013 = getData(start = "2013-03-31", end = "2013-07-14")
 save(MLBAM2013, file = "data/MLBAM2013.rda")
 
 # Use the data from 2013 to compute WAR
