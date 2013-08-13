@@ -25,3 +25,4 @@ Collate:
     'makeWAR.R'
     'summary.war.R'
     'warplot.R'
+    'linearWeights.R'
