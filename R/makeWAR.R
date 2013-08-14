@@ -45,26 +45,26 @@ makeWAR = function (data, method = "simple", verbose = FALSE, ...) {
   message("...Estimating Batting Runs Above Average...")
   require(plyr)
   
-  if ( method == "ghostrunner") {
-    # Figure out the most common outcome for every beginning state and event type
-    getMostCommon = function(df) {
-      outcomes = ddply(df, ~endCode + endOuts + runsOnPlay, summarise, N = length(endCode))
-      outcomes$Pct = outcomes$N / nrow(df)
-      names(outcomes)[which(names(outcomes) %in% c("endCode", "endOuts", "runsOnPlay"))] = c("endBatCode", "endBatOuts", "batRunsOnPlay")
-      return(outcomes[which.max(outcomes$N),])
-    }
-    event.lkup = ddply(data, ~startCode + startOuts + event, getMostCommon)
-    #  densityplot(~Pct, data=event.lkup)
-    event.lkup = transform(event.lkup, bat.ExR = fit.rem(endBatCode, endBatOuts) + batRunsOnPlay)
-    data = merge(x=data, y=event.lkup[, c("startCode", "startOuts", "event", "endBatCode", "endBatOuts", "batRunsOnPlay", "bat.ExR")]
-                 , by = c("startCode", "startOuts", "event"), all.x=TRUE)
-    
-    # Assign that difference to the batter
-    data = transform(data, delta.bat = bat.ExR - startExR)     
-    mod.bat = lm(delta.bat ~ as.factor(batterPos) + stadium + (stand == throws), data=data)
-    #  summary(mod.bat)
-    data = transform(data, raa.bat = mod.bat$residuals)   
-  } else {
+#   if ( method == "ghostrunner") {
+#     # Figure out the most common outcome for every beginning state and event type
+#     getMostCommon = function(df) {
+#       outcomes = ddply(df, ~endCode + endOuts + runsOnPlay, summarise, N = length(endCode))
+#       outcomes$Pct = outcomes$N / nrow(df)
+#       names(outcomes)[which(names(outcomes) %in% c("endCode", "endOuts", "runsOnPlay"))] = c("endBatCode", "endBatOuts", "batRunsOnPlay")
+#       return(outcomes[which.max(outcomes$N),])
+#     }
+#     event.lkup = ddply(data, ~startCode + startOuts + event, getMostCommon)
+#     #  densityplot(~Pct, data=event.lkup)
+#     event.lkup = transform(event.lkup, bat.ExR = fit.rem(endBatCode, endBatOuts) + batRunsOnPlay)
+#     data = merge(x=data, y=event.lkup[, c("startCode", "startOuts", "event", "endBatCode", "endBatOuts", "batRunsOnPlay", "bat.ExR")]
+#                  , by = c("startCode", "startOuts", "event"), all.x=TRUE)
+#     
+#     # Assign that difference to the batter
+#     data = transform(data, delta.bat = bat.ExR - startExR)     
+#     mod.bat = lm(delta.bat ~ as.factor(batterPos) + stadium + (stand == throws), data=data)
+#     #  summary(mod.bat)
+#     data = transform(data, raa.bat = mod.bat$residuals)   
+#   } else {
     # Control for circumstances
     mod.off = lm(delta ~ stadium + (stand == throws), data=data)
     # summary(mod.off)
@@ -76,10 +76,10 @@ makeWAR = function (data, method = "simple", verbose = FALSE, ...) {
     data[br.idx, "delta.br"] = mod.br$residuals
     # Whatever is left over goes to the batter
     data$delta.bat = with(data, ifelse(is.na(delta.br), delta, delta - delta.br))
-#    data = transform(data, delta.bat = delta - delta.br)
+    # Control for defensive position
     mod.bat = lm(delta.bat ~ as.factor(batterPos), data=data)
     data = transform(data, raa.bat = mod.bat$residuals)
-  }
+#   }
   
   if (verbose) {
     cat(coef(mod.bat))
@@ -133,54 +133,6 @@ makeWAR = function (data, method = "simple", verbose = FALSE, ...) {
   data[br3.idx, "br3.adv"] = ds3$basesAdvanced
   
   # Compute the empirical probabilities
-  # events for the runner on third
-#   ds3Tab <- ddply(ds3, basesAdvanced ~ event + startOuts + startCode, summarize, N=length(basesAdvanced))
-#   ds3TabEvent <- ddply(ds3Tab, ~event + startOuts + startCode, summarize, Nevent=sum(N))
-#   ds3Probs<-merge(ds3Tab,ds3TabEvent,by.x=c("event","startOuts","startCode"),by.y=c("event","startOuts","startCode"),all.x=TRUE)
-#   ds3Probs$probs<-ds3Probs$N/ds3Probs$Nevent
-#   ds3Probs$index<-paste(ds3Probs$event,ds3Probs$startOuts,ds3Probs$startCode,sep="-")
-#   ds3Probs<-ds3Probs[order(ds3Probs$index,ds3Probs$basesAdvanced),]
-#   cdf.br3 <- tapply(ds3Probs$probs, ds3Probs$index,cumsum)
-#   ds3Probs<-cbind(ds3Probs,cdf.br3=unlist(cdf.br3))
-#   ds3Probs<-ds3Probs[,c("startCode","startOuts","event","basesAdvanced","cdf.br3")]
-#   data<-merge(data,ds3Probs,by.x=c("startCode","startOuts","event","br3.adv"),by.y=c("startCode","startOuts","event","basesAdvanced"),all.x=TRUE)
-#   
-#   #events for the runner on second
-#   ds2Tab<-ddply(ds2, basesAdvanced~event+startOuts+startCode, summarize, N=length(basesAdvanced))
-#   ds2TabEvent<-ddply(ds2Tab,~event+startOuts+startCode,summarize,Nevent=sum(N))
-#   ds2Probs<-merge(ds2Tab,ds2TabEvent,by.x=c("event","startOuts","startCode"),by.y=c("event","startOuts","startCode"),all.x=TRUE)
-#   ds2Probs$probs<-ds2Probs$N/ds2Probs$Nevent
-#   ds2Probs$index<-paste(ds2Probs$event,ds2Probs$startOuts,ds2Probs$startCode,sep="-")
-#   ds2Probs<-ds2Probs[order(ds2Probs$index,ds2Probs$basesAdvanced),]
-#   cdf.br2<-tapply(ds2Probs$probs,ds2Probs$index,cumsum)
-#   ds2Probs<-cbind(ds2Probs,cdf.br2=unlist(cdf.br2))
-#   ds2Probs<-ds2Probs[,c("startCode","startOuts","event","basesAdvanced","cdf.br2")]
-#   data<-merge(data,ds2Probs,by.x=c("startCode","startOuts","event","br2.adv"),by.y=c("startCode","startOuts","event","basesAdvanced"),all.x=TRUE)
-#   
-#   
-#   #events for the runner on first
-#   ds1Tab<-ddply(ds1, basesAdvanced~event+startOuts+startCode, summarize, N=length(basesAdvanced))
-#   ds1TabEvent<-ddply(ds1Tab,~event+startOuts+startCode,summarize,Nevent=sum(N))
-#   ds1Probs<-merge(ds1Tab,ds1TabEvent,by.x=c("event","startOuts","startCode"),by.y=c("event","startOuts","startCode"),all.x=TRUE)
-#   ds1Probs$probs<-ds1Probs$N/ds1Probs$Nevent
-#   ds1Probs$index<-paste(ds1Probs$event,ds1Probs$startOuts,ds1Probs$startCode,sep="-")
-#   ds1Probs<-ds1Probs[order(ds1Probs$index,ds1Probs$basesAdvanced),]
-#   cdf.br1<-tapply(ds1Probs$probs,ds1Probs$index,cumsum)
-#   ds1Probs<-cbind(ds1Probs,cdf.br1=unlist(cdf.br1))
-#   ds1Probs<-ds1Probs[,c("startCode","startOuts","event","basesAdvanced","cdf.br1")]
-#   data<-merge(data,ds1Probs,by.x=c("startCode","startOuts","event","br1.adv"),by.y=c("startCode","startOuts","event","basesAdvanced"),all.x=TRUE)
-#   
-#   
-#   ds1Tab <- ddply(ds1, ~ event + startCode + startOuts + basesAdvanced, summarise, N = length(basesAdvanced))
-#   ds1TabEvent <- ddply(ds1Tab, ~ event + startCode + startOuts, summarise, Nevent = sum(N))
-#   ds1Probs <- merge(ds1Tab, ds1TabEvent, all.x=TRUE)
-#   ds1Probs = transform(ds1Probs, p = N / Nevent)
-#   ds1Probs <- ds1Probs[with(ds1Probs, order(event, startCode, startOuts, basesAdvanced)),]
-#   ds1Cdf = ddply(ds1Probs, ~ event + startCode + startOuts, summarise, cdf = c(0, cumsum(p[-length(p)])))
-#   ds1Probs$cdf = ds1Cdf$cdf
-  
-#  ds = subset(ds1, event == "Double" & startCode == 3 & startOuts == 1)
-  
   getCDF = function (ds) {
     events = ddply(ds, ~basesAdvanced, summarise, N = length(basesAdvanced))
     events = transform(events, numObs = nrow(ds))
@@ -206,22 +158,20 @@ makeWAR = function (data, method = "simple", verbose = FALSE, ...) {
   data = rename(data, c("cdf.lag" = "cdf.br1"))
   
   # Compute a share for each baserunner
-  data$cdf.br1[is.na(data$cdf.br1)]<-0
-  data$cdf.br2[is.na(data$cdf.br2)]<-0
-  data$cdf.br3[is.na(data$cdf.br3)]<-0
+  data$cdf.br1[is.na(data$cdf.br1)] <- 0
+  data$cdf.br2[is.na(data$cdf.br2)] <- 0
+  data$cdf.br3[is.na(data$cdf.br3)] <- 0
   
   #normalize the cdf probs
-  data$share.br1<-data$cdf.br1 / (data$cdf.br1 + data$cdf.br2 + data$cdf.br3)
-  data$share.br2<-data$cdf.br2 / (data$cdf.br1 + data$cdf.br2 + data$cdf.br3)
-  data$share.br3<-data$cdf.br3 / (data$cdf.br1 + data$cdf.br2 + data$cdf.br3)
-  
-  
+  data$share.br1 <- data$cdf.br1 / (data$cdf.br1 + data$cdf.br2 + data$cdf.br3)
+  data$share.br2 <- data$cdf.br2 / (data$cdf.br1 + data$cdf.br2 + data$cdf.br3)
+  data$share.br3 <- data$cdf.br3 / (data$cdf.br1 + data$cdf.br2 + data$cdf.br3)
   
   #  data$delta.br0 = with(data, ifelse(basesAdvanced == 0, 0, delta.br * (br0.extra / basesAdvanced)))
-  data$delta.br[is.na(data$delta.br)]<-0
-  data$raa.br1 = data$share.br1*data$delta.br
-  data$raa.br2 = data$share.br2*data$delta.br
-  data$raa.br3 = data$share.br3*data$delta.br
+  data$delta.br[is.na(data$delta.br)] <- 0
+  data$raa.br1 = data$share.br1 * data$delta.br
+  data$raa.br2 = data$share.br2 * data$delta.br
+  data$raa.br3 = data$share.br3 * data$delta.br
   
   #  mod.br3 = lm(basesAdvanced ~ event * as.factor(startOuts), data = ds3)
   #  mod.br2 = lm(basesAdvanced ~ event * as.factor(startOuts), data = ds2)
