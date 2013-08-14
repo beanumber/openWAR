@@ -171,8 +171,19 @@ readData.gameday = function (gd) {
   dirname = file.path(find.package("openWAR"))
   labels = do.call("rbind", strsplit(basename(gd$url), split="\\."))[,1]
   for (i in 1:length(labels)) { 
-    cmd = paste("xsltproc ", dirname, "/xsl/", labels[i], ".xsl ", gd$url[i], sep="")
-    dat = try(system(cmd, intern=TRUE))
+    xsl = paste(dirname, "/xsl/", labels[i], ".xsl", sep="")
+    # Use the shell command 'xsltproc'
+#    cmd = paste("xsltproc", xsl, gd$url[i], sep=" ")
+#    dat = try(system(cmd, intern=TRUE))
+    # Alternative within R
+    require(Sxslt)
+    # apply the stylesheet to the XML
+    dat = str_split(saveXML(xsltApplyStyleSheet(gd$url[i], xsl)$doc), "\n")[[1]]
+    # remove the xml description on the first line
+    dat = dat[-1]
+    # remove any blank lines
+    dat = dat[dat != ""]
+    
     if (!is.null(attr(dat, "status"))) { break; }
     df = as.data.frame(do.call("rbind", strsplit(dat[-1], split="\\|")))
     if (nrow(df) == 0) { break; }

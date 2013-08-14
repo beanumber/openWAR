@@ -13,7 +13,8 @@ Imports:
     XML,
     RCurl,
     plyr,
-    stringr
+    stringr,
+    Sxslt
 License: GPL (>=2)
 Collate:
     'openWAR-package.R'

@@ -7,6 +7,6 @@
 #' @author Ben Baumer and Gregory Matthews
 #' 
 #' @docType package
-#' @import mosaic plyr stringr XML RCurl
+#' @import mosaic plyr stringr XML RCurl Sxslt
 #' @name openWAR
 NULL
