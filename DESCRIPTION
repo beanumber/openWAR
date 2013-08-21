@@ -27,3 +27,5 @@ Collate:
     'summary.war.R'
     'warplot.R'
     'linearWeights.R'
+    'WARclass.R'
+    'summaryWAR.R'
