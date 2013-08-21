@@ -1,18 +1,26 @@
-#' @title makeWAR
+#' @title WAR-class
 #' 
-#' @description Compute openWAR
+#' @description Contains the output from makeWAR
 #' 
-#' @details Computes openWAR, given an MLBAM data set
 #' 
-#' @param data An MLBAM data.frame 
 #' 
-#' @return a data.frame
 #' 
-#' @export
-#' @examples
 #' 
-#' ds = getData()
-#' res = makeWAR(ds)
+#' @section Slots:
+#'    \describe{
+#'    \item{\code{madeWAR}:}{Object of class \code{"data.frame"}.}
+#'    \item{\code{playerWAR}:}{Object of class \code{"data.frame"}.}
+#'}
+#'
+#' 
+#' 
+#' 
+#' 
+#'
+#' @examples showClass("WAR")
+#' 
+#' 
+#' 
 #' 
 
 setClass("WAR",representation(madeWAR="data.frame",playerWAR="data.frame"))

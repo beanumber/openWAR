@@ -1,20 +1,19 @@
-#' @title summary.war
+#' @title summary
 #' 
 #' @description Summarize WAR
 #' 
-#' @details Aggegrate the resampled WAR estimates
+#' @details Summary of players' WAR
 #' 
-#' @param playerIds A vector of valid MLBAM player IDs present in the data argument
-#' @param data A dataset of resampled WAR components, aggregated by player
+#' @param An object of class \code{"WAR"}
 #' 
-#' @return a data.frame
 #' 
-#' @export
+#' 
+#' 
 #' @examples
 #' 
 #' ds = getData()
-#' samp = shakeWAR(makeWAR(ds))
-#' summary.war(samp)
+#' out = (makeWAR(ds))
+#' summary(out)
 
 summary.war = function (data, ...) {
   require(plyr)  
