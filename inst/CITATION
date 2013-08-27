@@ -1,0 +1,17 @@
+bibentry("Manual",
+   title = "openWAR: An Open Source System for Overall Player Performance in Major League Baseball",
+   author = c(person("Ben Baumer", email="ben.baumer@gmail.com"), person("Gregory J. Matthews")),
+#   organization = "R Foundation for Statistical Computing",
+#   address      = "Vienna, Austria",
+   year   = version$year,
+   note   = "",
+   url    = "http://github.com/beanumber/openWAR/",
+
+   mheader = "To cite openWAR in publications use:",
+
+   mfooter = 
+     paste("We have invested a lot of time and effort in creating R,",
+      "please cite it when using it for data analysis.",
+      "See also", sQuote("citation(\"pkgname\")"),
+      "for citing R packages.", sep = " ")
+)
