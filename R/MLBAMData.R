@@ -107,7 +107,7 @@ summary.MLBAMData = function (data) {
 #' 
 #' @return A data.frame of seasonal totals for each team
 #' 
-#' @export
+#' @export tabulate, tabulate.MLBAMData
 #' @examples
 #' 
 #' ds = getData()

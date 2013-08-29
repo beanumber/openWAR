@@ -9,7 +9,7 @@
 #' @return The ratio of the Frobenius norm of the matrix of differences to the Frobenius norm of the matrix
 #' defined by the Lahman database. 
 #' 
-#' @export
+#' @export crosscheck, crosscheck.MLBAMData
 #' @examples
 #' 
 #' ds = getData()
@@ -36,6 +36,14 @@ crosscheck.MLBAMData = function (data) {
   lteams$teamId = with(lteams, ifelse(teamId == "laa", "ana", as.character(teamId)))
   
   match = merge(x=teams, y=lteams, by.x=c("yearId", "bat_team"), by.y=c("yearID", "teamId"), all.x=TRUE)
+  
+  # move this out of here eventually
+#  require(xtable)
+#  x = xtable(match[,c("bat_team", "G.x", "PA.x", "AB.x", "R.x", "H.x", "HR.x", "BB.x", "K.x", "G.y", "PA.y", "AB.y", "R.y", "H.y", "HR.y", "BB.y", "K.y")]
+#             , caption=c("Cross-check between MLBAM data (left) and Lahman data (right), 2012"), label="tab:crosscheck"
+#             , align = rep("c", 18))
+#  print(x, include.rownames=FALSE)
+  
   A = as.matrix(match[,c("G.x", "PA.x", "AB.x", "R.x", "H.x", "HR.x", "BB.x", "K.x")])
   B = as.matrix(match[,c("G.y", "PA.y", "AB.y", "R.y", "H.y", "HR.y", "BB.y", "K.y")])
   return(norm(A - B, "F") / norm(B, "F"))
