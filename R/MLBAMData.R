@@ -1,3 +1,15 @@
+#' @title MLBAMData
+#' 
+#' @description Contains the output from getData()
+#' 
+#' 
+#' @examples showClass("MLBAMData")
+
+setClass("MLBAMData", contains = "data.frame")
+
+
+
+
 #' @title plot.MLBAMData
 #' 
 #' @description Visualize Balls in Play

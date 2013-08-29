@@ -30,4 +30,4 @@ Collate:
     'summaryWAR.R'
     'getrWAR.R'
     'crosscheck.R'
-    'plot.MLBAMData.R'
+    'MLBAMData.R'

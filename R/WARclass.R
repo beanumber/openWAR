@@ -25,4 +25,3 @@
 
 setClass("WAR",representation(madeWAR="data.frame",playerWAR="data.frame"))
 
-setClass("MLBAMData", contains = "data.frame")
