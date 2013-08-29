@@ -48,8 +48,8 @@ getData <- function(start = Sys.Date()-1, end = NULL, gameIds = NULL, drop.suspe
     out = subset(out, !gameId %in% suspended)
   }
   
-
-  
+  # Set the class attribute
+  class(out) <- c("MLBAMData", "data.frame")
   return(out)
 }
 
