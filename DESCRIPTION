@@ -19,7 +19,6 @@ License: GPL (>=2)
 Collate:
     'openWAR-package.R'
     'GameDay.R'
-    'bbplot.R'
     'exWPct.R'
     'getData.R'
     'getRunEx.R'
@@ -31,3 +30,4 @@ Collate:
     'summaryWAR.R'
     'getrWAR.R'
     'crosscheck.R'
+    'plot.MLBAMData.R'

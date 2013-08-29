@@ -1,11 +1,11 @@
-\name{bbplot}
-\alias{bbplot}
-\title{bbplot}
+\name{plot.MLBAMData}
+\alias{plot.MLBAMData}
+\title{plot.MLBAMData}
 \usage{
-  bbplot(data, ...)
+  plot.MLBAMData(data, ...)
 }
 \arguments{
-  \item{data}{An MLBAM data set with fields "our.x" and
+  \item{data}{An MLBAMData set with fields "our.x" and
   "our.y"}
 }
 \value{
@@ -22,6 +22,6 @@
 }
 \examples{
 ds = getData()
-bbplot(ds)
+plot(ds)
 }
 

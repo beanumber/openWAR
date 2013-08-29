@@ -1,4 +1,4 @@
-#' @title bbplot
+#' @title plot.MLBAMData
 #' 
 #' @description Visualize Balls in Play
 #' 
@@ -6,7 +6,7 @@
 #' with a generic baseball field plotted in the background. Other lattice options can be passed
 #' to xyplot().
 #' 
-#' @param data An MLBAM data set with fields "our.x" and "our.y"
+#' @param data An MLBAMData set with fields "our.x" and "our.y"
 #' 
 #' @return an xyplot() 
 #' 
@@ -14,10 +14,9 @@
 #' @examples
 #' 
 #' ds = getData()
-#' bbplot(ds)
+#' plot(ds)
 
-#GREG
-bbplot = function (data, ...) {
+plot.MLBAMData = function (data, ...) {
   require(mosaic)
   bgcol = "darkgray"
   xy.fields = c("our.x", "our.y")
