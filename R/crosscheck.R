@@ -9,7 +9,7 @@
 #' @return The ratio of the Frobenius norm of the matrix of differences to the Frobenius norm of the matrix
 #' defined by the Lahman database. 
 #' 
-#' @export crosscheck, crosscheck.MLBAMData
+#' @export crosscheck.MLBAMData
 #' @examples
 #' 
 #' ds = getData()

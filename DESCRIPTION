@@ -14,7 +14,8 @@ Imports:
     RCurl,
     plyr,
     stringr,
-    Sxslt
+    Sxslt,
+    Lahman
 License: GPL (>=2)
 Collate:
     'openWAR-package.R'
