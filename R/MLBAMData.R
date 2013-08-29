@@ -73,3 +73,59 @@ plot.MLBAMData = function (data, ...) {
   )
   return(plot)
 }
+
+#' @title summary.MLBAMData
+#' 
+#' @description Summarize MLBAM data
+#' 
+#' @details Prints information about the contents of an MLBAMData set.
+#' 
+#' @param data An MLBAMData set
+#' 
+#' @return nothing
+#' 
+#' @export
+#' @examples
+#' 
+#' ds = getData()
+#' summary(ds)
+
+summary.MLBAMData = function (data) {
+  gIds = sort(unique(data$gameId))
+  message(paste("...Contains data from", length(gIds), "games"))
+  message(paste("...from", gIds[1], "to", gIds[length(gIds)]))
+  summary.data.frame(data)
+}
+
+#' @title tabulate.MLBAMData
+#' 
+#' @description Summarize MLBAM data
+#' 
+#' @details Tabulates Lahman-style statistics by team for the contents of an MLBAMData set.
+#' 
+#' @param data An MLBAMData set
+#' 
+#' @return A data.frame of seasonal totals for each team
+#' 
+#' @export
+#' @examples
+#' 
+#' ds = getData()
+#' tabulate(ds)
+
+tabulate = function (data) UseMethod("tabulate")
+
+tabulate.MLBAMData = function (data) {
+  data$bat_team = with(data, ifelse(half == "top", as.character(away_team), as.character(home_team)))
+  data = transform(data, yearId = as.numeric(substr(gameId, start=5, stop=8)))
+  teams = ddply(data, ~ yearId + bat_team, summarise, G = length(unique(gameId))
+                , PA = sum(isPA), AB = sum(isAB), R = sum(runsOnPlay), H = sum(isHit)
+                , HR = sum(event == "Home Run")
+                , BB = sum(event %in% c("Walk", "Intent Walk"))
+                , K = sum(event %in% c("Strikeout", "Strikeout - DP"))
+                , BA = sum(isHit) / sum(isAB)
+                , OBP = sum(isHit | event %in% c("Walk", "Intent Walk", "Hit By Pitch")) / sum(isPA & !event %in% c("Sac Bunt", "Sacrifice Bunt DP"))
+                , SLG = (sum(event == "Single") + 2*sum(event == "Double") + 3*sum(event == "Triple") + 4*sum(event == "Home Run") ) / sum(isAB)
+  )
+  return(teams)
+}
