@@ -1,0 +1,30 @@
+\name{getrWAR}
+\alias{getrWAR}
+\title{getrWAR}
+\usage{
+  getrWAR()
+}
+\value{
+  a data.frame consisting of rWAR
+}
+\description{
+  Retrieves rWAR from Baseball-Reference.com
+}
+\details{
+  Retrieves daily rWAR figures from Baseball-Reference.com
+  and stores it as a data.frame
+}
+\examples{
+# Get data from yesterday
+ds = getrWAR()
+require(mosaic)
+densityplot(~WAR, data=ds, plot.points=FALSE)
+
+# Leaders since 1954
+modern = subset(ds, yearId >= 1954)
+head(modern[order(modern$WAR, decreasing=TRUE),], 20)
+
+# Relationship between batting and fielding
+xyplot(RAA_field ~ RAA_bat, data=modern, type=c("p", "r", "smooth"))
+}
+
