@@ -11,12 +11,12 @@
 #' 
 #' @examples
 #' 
-#' ds = getData()
-#' out = (makeWAR(ds))
-#' summary(out)
+#' ds = makeWAR(ds)
+#' sim = shakeWAR(ds)
+#' summary(sim)
 
-summary.war = function (data, ...) {
+summary.do.RAA = function (data, n = 25, ...) {
   require(plyr)  
   players = ddply(data, ~Name, summarise, q0 = min(RAA), q2.5 = quantile(RAA, 0.025), q50 = mean(RAA), q97.5 = quantile(RAA, 0.975), q100 = max(RAA))
-  return(players[order(players$q50, decreasing=TRUE),])
+  print(head(players[order(players$q50, decreasing=TRUE),], n))
 }

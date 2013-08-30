@@ -3,7 +3,7 @@
 \alias{makeWAR.GameDayPlays}
 \title{makeWAR}
 \usage{
-  makeWAR(data, type, drop.incomplete = TRUE, ...)
+  makeWAR(data, re.mod = NULL, verbose = TRUE, ...)
 }
 \arguments{
   \item{data}{A GameDayPlays data set}
@@ -17,7 +17,7 @@
   the computation}
 }
 \value{
-  a data.frame
+  a GameDayPlaysExt data.frame
 }
 \description{
   Compute openWAR
