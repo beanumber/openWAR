@@ -49,7 +49,7 @@ getData <- function(start = Sys.Date()-1, end = NULL, gameIds = NULL, drop.suspe
   }
   
   # Set the class attribute
-  class(out) <- c("MLBAMData", "data.frame")
+  class(out) <- c("GameDayPlays", "data.frame")
   return(out)
 }
 

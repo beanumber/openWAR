@@ -1,11 +1,11 @@
 \name{tabulate}
 \alias{tabulate}
-\title{tabulate.MLBAMData}
+\title{tabulate.GameDayPlays}
 \usage{
   tabulate(data)
 }
 \arguments{
-  \item{data}{An MLBAMData set}
+  \item{data}{A GameDayPlays set}
 }
 \value{
   A data.frame of seasonal totals for each team
@@ -15,7 +15,7 @@
 }
 \details{
   Tabulates Lahman-style statistics by team for the
-  contents of an MLBAMData set.
+  contents of a GameDayPlays data set.
 }
 \examples{
 ds = getData()

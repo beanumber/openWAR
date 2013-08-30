@@ -31,4 +31,4 @@ Collate:
     'summaryWAR.R'
     'getrWAR.R'
     'crosscheck.R'
-    'MLBAMData.R'
+    'GameDayPlays.R'
