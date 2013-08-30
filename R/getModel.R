@@ -39,7 +39,7 @@ getModel.GameDayPlays = function (data, type, drop.incomplete = TRUE, ...) {
   require(mosaic)
   
   # Drop incomplete innings
-  if (drop.incomplete) {
+  if (type == "run-expectancy" & drop.incomplete) {
     ds <- subset(data, outsInInning == 3)
   } else {
     ds <- data

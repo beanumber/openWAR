@@ -114,7 +114,7 @@ makeWAR.GameDayPlays = function (data, re.mod = NULL, verbose = FALSE, ...) {
 #   }
   
   if (verbose) {
-    cat(coef(mod.bat))
+    print(coef(mod.bat))
   }
   
   # Step 5: Define RAA for the baserunners
