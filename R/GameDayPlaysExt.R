@@ -60,7 +60,7 @@ shakeWAR.GameDayPlaysExt = function (data, N = 10, ...) {
 #' 
 #' @return a data.frame of RAA values per player
 #' 
-#' @export
+#' @export getWAR.GameDayPlaysExt
 #' @examples
 #' 
 #' ds = getData()

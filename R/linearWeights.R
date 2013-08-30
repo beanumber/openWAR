@@ -17,6 +17,11 @@
 #' xr = getLinearWeightsModel(type = "xr")
 #' ds$woba = predict(woba, newdata=event)
 #' ds$xr = predict(xr, newdata=event)
+#' 
+#' braa = getLinearWeightsModelfromData(ds, type = "bp")
+#' bp.events = levels(as.factor(braa$model$event))
+#' event[which(!(event %in% bp.events))] <- NA
+#' ds$braa = predict(braa, newdata=event)
 #' leaders = ddply(ds, ~batterId, summarise, Name = batterName[1], PA = sum(isPA)
 #' , WOBA = sum(woba) / sum(isPA == TRUE), XR27 = sum(xr) * 25.5 / sum(isPA & !isHit))
 #' # The top 20
@@ -63,5 +68,14 @@ getLinearWeightsModel = function (type) {
     data = data.frame(val = c(val, rep(0, length(leftover))), event = c(woba.events, leftover))
   }
   mod = lm(val ~ 0 + event, data=data)
+  return(mod)
+}
+
+getLinearWeightsModelfromData = function (data, type = "bp") {
+  if (type == "bp") {
+    bp.events = c("Home Run", "Triple", "Double", "Single", "Walk", "Intent Walk", "Hit By Pitch", "Strikeout")
+    data$event = with(data, ifelse(event %in% bp.events, as.character(event), "Out"))
+  }
+  mod = lm(delta ~ 0 + event, data=data)
   return(mod)
 }
