@@ -32,3 +32,4 @@ Collate:
     'getrWAR.R'
     'crosscheck.R'
     'GameDayPlays.R'
+    'getModel.R'
