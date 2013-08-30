@@ -1,20 +1,22 @@
-#' @title linearWeights
+#' @title getLinearWeightsModel
 #' 
-#' @description Apply a linear weights formula to an MLBAM data set
+#' @description Retrieves a linear weights model object
 #' 
-#' @details Applies any of several linear weights formulae to an MLBAM data set
+#' @details Retrieves any of several linear weights formulae as \code{lm} objects
 #' 
-#' @param data An MLBAM data set
 #' @param type A string representing either "xr27", "woba"
 #'
-#' @return A numeric vector of linear weights values
+#' @return A \code{lm} object
 #' 
 #' @export
 #' @examples
 #' 
 #' ds = getData()
-#' ds$woba = linearWeights(ds, type = "woba")
-#' ds$xr = linearWeights(ds, type = "xr")
+#' event = data.frame(event = ds$event)
+#' woba = getLinearWeightsModel(type = "woba")
+#' xr = getLinearWeightsModel(type = "xr")
+#' ds$woba = predict(woba, newdata=event)
+#' ds$xr = predict(xr, newdata=event)
 #' leaders = ddply(ds, ~batterId, summarise, Name = batterName[1], PA = sum(isPA)
 #' , WOBA = sum(woba) / sum(isPA == TRUE), XR27 = sum(xr) * 25.5 / sum(isPA & !isHit))
 #' # The top 20
@@ -29,60 +31,37 @@
 #' xyplot(XR27 ~ WOBA, data = qualified)
 #' with(qualified, cor(WOBA, XR27))
 
-linearWeights = function (data, type = "xr", ...) {
-  lw = sapply(data$event, getLinearWeight, type = type)
-  return(lw)
-}
-
-getLinearWeight = function (event, type = "xr", ...) {
-  if (type == "woba") {
-    if (event == "Home Run") {
-      wgt = 1.95
-    } else if (event == "Triple") {
-      wgt = 1.56
-    } else if (event == "Double") {
-      wgt = 1.24
-    } else if (event == "Single") {
-      wgt = 0.9
-    } else if (event == "Hit By Pitch") {
-      wgt = 0.75
-    } else if (event == "Walk") {
-      wgt = 0.72
-    } else if (event %in% c("Field Error", "Error")) {
-      wgt = 0.92
-    } else {
-      wgt = 0
-    }
-  } else { # XR27
-    if (event == "Home Run") {
-      wgt = 1.44
-    } else if (event == "Triple") {
-      wgt = 1.04
-    } else if (event == "Double") {
-      wgt = 0.72
-    } else if (event == "Single") {
-      wgt = 0.5
-    } else if (event %in% c("Hit By Pitch", "Walk")) {
-      wgt = 0.34
-    } else if (event == "Intent Walk") {
-      wgt = 0.25
-    } else if (event == "Grounded Into DP") {
-      wgt = -0.37
-    } else if (event == "Sac Fly") {
-      wgt = 0.37
-    } else if (event == "Sac Bunt") {
-      wgt = 0.04
-    } else if (event %in% c("Strikeout", "Strikeout - DP")) {
-      wgt = -0.098
-    } else if (event %in% c("Bunt Groundout", "Bunt Lineout", "Bunt Pop Out"
-                            , "Error", "Field Error", "Fielders Choice", "Fielders Choice Out"
-                            , "Flyout", "Forceout", "Groundout", "Lineout", "Pop Out"
-                            , "Sac Fly DP", "Sacrifice Bunt DP", "Triple Play")) {
-      wgt = -0.09
-    } else {
-      wgt = 0
-    }
+getLinearWeightsModel = function (type) {
+  all.events = c("Balk","Batter Interference","Batter Turn","Bunt Groundout","Bunt Lineout"
+                 ,"Bunt Pop Out","Catcher Interference","Caught Stealing 2B","Caught Stealing 3B"
+                 ,"Caught Stealing Home","Defensive Indiff","Defensive Sub","Defensive Switch","Double"
+                 ,"Double Play","Ejection","Error","Fan interference","Field Error","Fielders Choice"
+                 ,"Fielders Choice Out","Flyout","Forceout","Game Advisory","Grounded Into DP"
+                 ,"Groundout","Hit By Pitch","Home Run","Intent Walk","Lineout","Offensive sub"
+                 ,"Passed Ball","Picked off stealing 2B","Picked off stealing 3B","Picked off stealing home"
+                 ,"Pickoff 1B","Pickoff 2B ","Pickoff 3B","Pickoff Error 1B","Pickoff Error 2B"
+                 ,"Pickoff Error 3B","Pitching Substitution","Player Injured","Pop Out","Runner Advance"
+                 ,"Runner Out","Sac Bunt","Sac Fly","Sac Fly DP","Sacrifice Bunt DP","Single","Stolen Base 2B"
+                 ,"Stolen Base 3B","Strikeout","Strikeout - DP","Triple","Triple Play","Umpire Substitution"
+                 ,"Walk","Wild Pitch" )
+  if (type == "xr") {
+    event = c("Home Run", "Triple", "Double", "Single", "Walk", "Hit By Pitch", "Intent Walk"
+               , "Grounded Into DP", "Sac Fly", "Sac Bunt", "Strikeout", "Strikeout - DP")
+    bip.outs = c("Bunt Groundout", "Bunt Lineout", "Bunt Pop Out"
+                 , "Error", "Field Error", "Fielders Choice", "Fielders Choice Out"
+                 , "Flyout", "Forceout", "Groundout", "Lineout", "Pop Out"
+                 , "Sac Fly DP", "Sacrifice Bunt DP", "Triple Play")
+    xr.events = c(event, bip.outs)
+    leftover = setdiff(all.events, xr.events)
+    val = c(1.44, 1.04, 0.72, 0.5, 0.34, 0.34, 0.25, -0.37, 0.37, 0.04, -0.098, -0.098, rep(-0.09, length(bip.outs)))
+    data = data.frame(val = c(val, rep(0, length(leftover))), event = c(xr.events, leftover))
   }
-  return(wgt)
+  if (type == "woba") {
+    woba.events = c("Home Run", "Triple", "Double", "Single", "Walk", "Hit By Pitch", "Field Error", "Error")
+    leftover = setdiff(all.events, woba.events)
+    val = c(1.95, 1.56, 1.24, 0.9, 0.75, 0.72, 0.92, 0.92)
+    data = data.frame(val = c(val, rep(0, length(leftover))), event = c(woba.events, leftover))
+  }
+  mod = lm(val ~ 0 + event, data=data)
+  return(mod)
 }
-

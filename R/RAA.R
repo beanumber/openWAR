@@ -2,7 +2,7 @@
 #' 
 #' @description Contains the output from getWAR()
 #' 
-#' 
+#' @exportClass RAA
 #' @examples showClass("RAA")
 
 setClass("RAA", contains = "data.frame")
@@ -22,8 +22,7 @@ setClass("RAA", contains = "data.frame")
 #' out = (makeWAR(ds))
 #' summary(out)
 
-summary.RAA = function (data, ...) {
-  require(plyr)  
-  players = ddply(data, ~Name, summarise, q0 = min(RAA), q2.5 = quantile(RAA, 0.025), q50 = mean(RAA), q97.5 = quantile(RAA, 0.975), q100 = max(RAA))
-  return(players[order(players$q50, decreasing=TRUE),])
+summary.RAA = function (data, n = 25, ...) {
+  cat(paste("Displaying information for", nrow(data), "players, of whom", nrow(subset(data, RAA.pitch != 0)), "have pitched\n"))
+  head(data[order(data$RAA, decreasing=TRUE), c("Name", "TPA", "RAA", "RAA.bat", "RAA.br", "RAA.field", "RAA.pitch")], n)
 }

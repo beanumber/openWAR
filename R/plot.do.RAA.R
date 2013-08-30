@@ -1,11 +1,11 @@
-#' @title warplot
+#' @title plot.do.RAA
 #' 
 #' @description Visualize WAR
 #' 
 #' @details Density Plot for WAR estimates
 #' 
 #' @param playerIds A vector of valid MLBAM player IDs present in the data argument
-#' @param data A data.frame resulting from shakeWAR()
+#' @param data A data.frame resulting from shakeWAR() of class \code{do.RAA}
 #' 
 #' @return a faceted densityplot
 #' 
@@ -16,7 +16,43 @@
 #' # not run
 #' openWAR = makeWAR(ds)
 #' openWAR.sim = shakeWAR(openWAR)
-#' warplot(c(431151, 502517, 408234, 285078, 518774, 285079), data=openWAR.sim)
+#' plot(data=openWAR.sim, playerIds = c(431151, 502517, 408234, 285078, 518774, 285079))
+
+plot.do.RAA = function (data, playerIds = c(431151, 285079), ...) {
+  require(mosaic)
+  playerIds = sort(playerIds)
+  # is it worth the trouble to filter the rows? 
+  rows = subset(data, batterId %in% playerIds)
+  # Remove unused factor levels
+  rows$Name = factor(rows$Name)
+  
+  lkup = unique(rows[,c("batterId", "Name")])
+  labels = as.character(lkup[order(lkup$batterId),]$Name)
+  
+  sims.long = reshape(rows[,c("batterId", "Name", "RAA", "RAA.bat", "RAA.br", "RAA.field", "RAA.pitch")], varying = 3:7
+          , timevar = "component", direction = "long")
+  
+  plot = densityplot(~RAA | component, groups=batterId, data=sims.long
+                     , panel = function(x,y,...) {
+                       panel.densityplot(x, plot.points=FALSE, lwd = 3,...)
+                     }
+                     , auto.key=list(columns=min(4, length(playerIds)), text = labels)
+                     , ylim = c(-0.01, 0.2)
+                     , xlab = "Runs Above Average (RAA)"
+  )
+  return(plot)
+}
+
+
+
+
+
+
+
+
+
+
+# Deprecated
 
 # warplot = function (playerIds, data, N = 5000, ...) {
 #   require(mosaic)
@@ -56,29 +92,3 @@
 #   )
 #   return(plot)
 # }
-
-
-warplot = function (playerIds, data, ...) {
-  require(mosaic)
-  playerIds = sort(playerIds)
-  # is it worth the trouble to filter the rows? 
-  rows = subset(data, batterId %in% playerIds)
-  # Remove unused factor levels
-  rows$Name = factor(rows$Name)
-  
-  lkup = unique(rows[,c("batterId", "Name")])
-  labels = as.character(lkup[order(lkup$batterId),]$Name)
-  
-  sims.long = reshape(rows[,c("batterId", "Name", "RAA", "RAA.bat", "RAA.br", "RAA.field", "RAA.pitch")], varying = 3:7
-          , timevar = "component", direction = "long")
-  
-  plot = densityplot(~RAA | component, groups=batterId, data=sims.long
-                     , panel = function(x,y,...) {
-                       panel.densityplot(x, plot.points=FALSE, lwd = 3,...)
-                     }
-                     , auto.key=list(columns=min(4, length(playerIds)), text = labels)
-                     , ylim = c(-0.01, 0.2)
-                     , xlab = "Runs Above Average (RAA)"
-  )
-  return(plot)
-}

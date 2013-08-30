@@ -2,7 +2,7 @@
 \alias{summary.RAA}
 \title{summary.RAA}
 \usage{
-  summary.RAA(data, ...)
+  summary.RAA(data, n = 25, ...)
 }
 \arguments{
   \item{data}{An object of class \code{"RAA"}}

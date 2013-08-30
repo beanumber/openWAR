@@ -24,7 +24,6 @@ Collate:
     'getData.R'
     'getRunEx.R'
     'makeWAR.R'
-    'warplot.R'
     'linearWeights.R'
     'WARclass.R'
     'summaryWAR.R'
@@ -35,3 +34,4 @@ Collate:
     'GameDayPlaysExt.R'
     'RAA.R'
     'summary.do.RAA.R'
+    'plot.do.RAA.R'

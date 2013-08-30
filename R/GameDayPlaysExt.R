@@ -2,7 +2,7 @@
 #' 
 #' @description Contains the output from makeWAR()
 #' 
-#' 
+#' @exportClass GameDayPlaysExt
 #' @examples showClass("GameDayPlaysExt")
 
 setClass("GameDayPlaysExt", contains = "GameDayPlays")
@@ -47,7 +47,6 @@ shakeWAR.GameDayPlaysExt = function (data, N = 10, ...) {
                 , "batterName", "pitcherName", "gameId", "event")
   ds.raa = ds[, c(id.fields, raa.fields)]
   bstrap = do(N) * getWAR(resample(ds.raa))
-  class(bstrap) = c("RAAsim", "data.frame")
   return(bstrap)
 }
 

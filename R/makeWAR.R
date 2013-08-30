@@ -23,7 +23,7 @@
 
 makeWAR = function (data, re.mod = NULL, verbose = TRUE, ...) UseMethod("makeWAR")
 
-makeWAR.GameDayPlays = function (data, re.mod = NULL, verbose = FALSE, ...) {
+makeWAR.GameDayPlays = function (data, re.mod = NULL, verbose = TRUE, ...) {
   # Step 1: Define \delta, the change in expected runs
   message("...Estimating Expected Runs...")
   

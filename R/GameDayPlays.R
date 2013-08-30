@@ -2,7 +2,7 @@
 #' 
 #' @description Contains the output from getData()
 #' 
-#' 
+#' @exportClass GameDayPlays
 #' @examples showClass("GameDayPlays")
 
 setClass("GameDayPlays", contains = "data.frame")
