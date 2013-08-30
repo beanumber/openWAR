@@ -35,3 +35,4 @@ Collate:
     'RAA.R'
     'summary.do.RAA.R'
     'plot.do.RAA.R'
+    'getIDMap.R'

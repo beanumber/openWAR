@@ -24,6 +24,11 @@ woba = getLinearWeightsModel(type = "woba")
 xr = getLinearWeightsModel(type = "xr")
 ds$woba = predict(woba, newdata=event)
 ds$xr = predict(xr, newdata=event)
+
+braa = getLinearWeightsModelfromData(ds, type = "bp")
+bp.events = levels(as.factor(braa$model$event))
+event[which(!(event \%in\% bp.events))] <- NA
+ds$braa = predict(braa, newdata=event)
 leaders = ddply(ds, ~batterId, summarise, Name = batterName[1], PA = sum(isPA)
 , WOBA = sum(woba) / sum(isPA == TRUE), XR27 = sum(xr) * 25.5 / sum(isPA & !isHit))
 # The top 20
