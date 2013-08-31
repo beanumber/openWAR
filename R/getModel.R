@@ -35,20 +35,28 @@
 
 getModel = function (data, type, drop.incomplete = TRUE, ...) UseMethod("getModel")
 
-getModel.GameDayPlays = function (data, type, drop.incomplete = TRUE, ...) {
+getModel.GameDayPlays = function (data, type, ...) {
+  require(mosaic)
+  
+  if (type == "run-expectancy") {
+    mod = getModelRunExpectancy(ds, ...)
+  }
+  
+  return(mod)
+}
+
+getModelRunExpectancy = function (data, type, drop.incomplete = TRUE, ...) UseMethod("getModelRunExpectancy")
+
+getModelRunExpectancy.GameDayPlays = function (data, drop.incomplete = TRUE, ...) {
   require(mosaic)
   
   # Drop incomplete innings
-  if (type == "run-expectancy" & drop.incomplete) {
+  if (drop.incomplete) {
     ds <- subset(data, outsInInning == 3)
   } else {
     ds <- data
   }
-    
-  if (type == "run-expectancy") {
-    mod = lm(runsFuture ~ as.factor(startCode) * as.factor(startOuts), data=ds)
-  }
-  
+  mod = lm(runsFuture ~ as.factor(startCode) * as.factor(startOuts), data=ds)
   return(mod)
 }
 

@@ -3,14 +3,13 @@
 \alias{makeWAR.GameDayPlays}
 \title{makeWAR}
 \usage{
-  makeWAR(data, re.mod = NULL, verbose = TRUE, ...)
+  makeWAR(data, models = list(), verbose = TRUE, ...)
 }
 \arguments{
   \item{data}{A GameDayPlays data set}
 
-  \item{re.mod}{A run expectancy model with a predict()
-  method. Expects to take the two variables startCode and
-  startOuts}
+  \item{models}{A named list of models, each with a
+  predict() method. See Details.}
 
   \item{verbose}{A LOGICAL indicating whether you want
   various messages and information to be displayed during

@@ -6,8 +6,7 @@
 #' @details Computes openWAR, given an MLBAM data set
 #' 
 #' @param data A GameDayPlays data set
-#' @param re.mod A run expectancy model with a predict() method. Expects to take the two variables 
-#' startCode and startOuts
+#' @param models A named list of models, each with a predict() method. See Details.
 #' @param verbose A LOGICAL indicating whether you want various messages and information to be displayed
 #' during the computation
 #' 
@@ -21,38 +20,38 @@
 #' res = makeWAR(ds)
 #' 
 
-makeWAR = function (data, re.mod = NULL, verbose = TRUE, ...) UseMethod("makeWAR")
+makeWAR = function (data, models = list(), verbose = TRUE, ...) UseMethod("makeWAR")
 
-makeWAR.GameDayPlays = function (data, re.mod = NULL, verbose = TRUE, ...) {
+makeWAR.GameDayPlays = function (data, models = list(), verbose = TRUE, ...) {
   # Step 1: Define \delta, the change in expected runs
   message("...Estimating Expected Runs...")
   
   # Check to see whether the supplied run expectancy model has a predict() method
-  if (!paste("predict", class(re.mod), sep=".") %in% methods(predict)) {
+  if (!with(models, exists("run-expectancy")) | !paste("predict", class(models[["run-expectancy"]]), sep=".") %in% methods(predict)) {
     message("....Supplied Run Expectancy model does not have a predict method...")
     message("....Building in-sample Run Expectancy Model...")
-    re.mod = getModel(data, type = "run-expectancy")
+    mod.re = getModelRunExpectancy(data)
+  } else {
+    mod.re = models[["run-expectancy"]]
   }
   
   if (verbose) {
     message("....Run Expectancy Model....")
     states = expand.grid(startCode = 0:7, startOuts = 0:2)
-    print(matrix(predict(re.mod, newdata=states), ncol=3))
+    print(matrix(predict(mod.re, newdata=states), ncol=3))
   }
-   
+     
   begin.states = data[,c("startCode", "startOuts")]
   end.states = data[,c("endCode", "endOuts")]
   end.states$endOuts = with(end.states, ifelse(endOuts == 3, NA, endOuts))
   names(end.states) = names(begin.states)
   
-  data = transform(data, startExR = predict(re.mod, newdata=begin.states))
-  data = transform(data, endExR = predict(re.mod, newdata=end.states))
+  data = transform(data, startExR = predict(mod.re, newdata=begin.states))
+  data = transform(data, endExR = predict(mod.re, newdata=end.states))
   data$endExR = with(data, ifelse(is.na(endExR), 0, endExR))
 
-  # The old way
-#  fit.rem = getRunEx(data)
-#  data = transform(data, startExR = fit.rem(startCode, startOuts))
-#  data = transform(data, endExR = fit.rem(endCode, endOuts))
+  break;
+
   data = transform(data, delta = endExR - startExR + runsOnPlay)
   
   # Step 2: Define RAA for the defense
