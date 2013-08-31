@@ -3,7 +3,23 @@
 #' 
 #' @description Compute openWAR
 #' 
-#' @details Computes openWAR, given an MLBAM data set
+#' @details Computes openWAR, given an MLBAM data set. If no \code{models} argument is supplied, then all
+#' models necessary for the computation of openWAR will be generated on the data set given. 
+#' 
+#' If \code{verbose == TRUE}, then various pieces of information will be displayed during the comuptation
+#' 
+#' Elements of \code{models}:
+#' run-expectancy: a model for assigning a run expectancy value to any of the 24 (base,out) states. Variables
+#' must be "startCode" [0-7] and "startOuts" [0-2]
+#' pitching: a model for the expected outcome of a plate appearance attributable to the pitcher. Variables
+#' must be "stadium", "throws" [L/R], and "stands" [L/R]
+#' offense: a model for the expected outcome of a plate appearance attributable to the offense. Variables
+#' must be "stadium", "throws" [L/R], and "stands" [L/R]
+#' baserunning: a model for the expected contribution of the baserunners to a plate appearance. Variables
+#' must be "event" (the type of batting event), "startCode" [0-7], and "startOuts" [0-2]
+#' batting: a model for the expected contribution of the batter to a plate appearance. Variables
+#' must be "batterPos" (the defensive position of the batter)
+#' 
 #' 
 #' @param data A GameDayPlays data set
 #' @param models A named list of models, each with a predict() method. See Details.
@@ -50,8 +66,6 @@ makeWAR.GameDayPlays = function (data, models = list(), verbose = TRUE, ...) {
   data = transform(data, endExR = predict(mod.re, newdata=end.states))
   data$endExR = with(data, ifelse(is.na(endExR), 0, endExR))
 
-  break;
-
   data = transform(data, delta = endExR - startExR + runsOnPlay)
   
   # Step 2: Define RAA for the defense
@@ -68,59 +82,87 @@ makeWAR.GameDayPlays = function (data, models = list(), verbose = TRUE, ...) {
   # Step 3: Define RAA for the pitcher
   message("...Estimating Pitching Runs Above Average...")
   data$delta.pitch = with(data, ifelse(is.na(delta.field), delta, delta - delta.field))
-  mod.pitch = lm(delta.pitch ~ stadium + (throws == stand), data = data)
-  #  summary(mod.pitch)
-  data$raa.pitch = -mod.pitch$residuals
+  
+  if (!with(models, exists("pitching")) | !paste("predict", class(models[["pitching"]]), sep=".") %in% methods(predict)) {
+    message("....Supplied Pitching model does not have a predict method...")
+    message("....Building in-sample Pitching Model...")
+    mod.pitch = getModelPitching(data[,c("delta.pitch", "stadium", "throws", "stand")])
+    data$raa.pitch = -mod.pitch$residuals
+  } else {
+    mod.pitch = models[["pitching"]]
+    data$raa.pitch = predict(mod.pitch, newdata=data[,c("stadium", "throws", "stand")]) - data$delta.pitch
+  }
+  
+  if (verbose) {
+    message("....Pitching Model....")
+    print(sort(coef(mod.pitch)))
+  }
   
   # Step 4: Define RAA for the batter
   message("...Estimating Batting Runs Above Average...")
-  require(plyr)
-  
-#   if ( method == "ghostrunner") {
-#     # Figure out the most common outcome for every beginning state and event type
-#     getMostCommon = function(df) {
-#       outcomes = ddply(df, ~endCode + endOuts + runsOnPlay, summarise, N = length(endCode))
-#       outcomes$Pct = outcomes$N / nrow(df)
-#       names(outcomes)[which(names(outcomes) %in% c("endCode", "endOuts", "runsOnPlay"))] = c("endBatCode", "endBatOuts", "batRunsOnPlay")
-#       return(outcomes[which.max(outcomes$N),])
-#     }
-#     event.lkup = ddply(data, ~startCode + startOuts + event, getMostCommon)
-#     #  densityplot(~Pct, data=event.lkup)
-#     event.lkup = transform(event.lkup, bat.ExR = fit.rem(endBatCode, endBatOuts) + batRunsOnPlay)
-#     data = merge(x=data, y=event.lkup[, c("startCode", "startOuts", "event", "endBatCode", "endBatOuts", "batRunsOnPlay", "bat.ExR")]
-#                  , by = c("startCode", "startOuts", "event"), all.x=TRUE)
-#     
-#     # Assign that difference to the batter
-#     data = transform(data, delta.bat = bat.ExR - startExR)     
-#     mod.bat = lm(delta.bat ~ as.factor(batterPos) + stadium + (stand == throws), data=data)
-#     #  summary(mod.bat)
-#     data = transform(data, raa.bat = mod.bat$residuals)   
-#   } else {
-    # Control for circumstances
-    mod.off = lm(delta ~ stadium + (stand == throws), data=data)
-    # summary(mod.off)
-    # delta.off is the contribution above average of the batter AND all of the runners
+
+  # Control for circumstances
+  if (!with(models, exists("offense")) | !paste("predict", class(models[["offense"]]), sep=".") %in% methods(predict)) {
+    message("....Supplied Offense model does not have a predict method...")
+    message("....Building in-sample Offense Model...")
+    mod.off = getModelOffense(data[,c("delta", "stadium", "throws", "stand")])
     data = transform(data, delta.off = mod.off$residuals)  
-    # Siphon off the portion attributable to the baserunners
-    br.idx = which(data$startCode > 0)
-    mod.br = lm(delta.off ~ event * as.factor(startCode) * as.factor(startOuts), data=data[br.idx,])
-    data[br.idx, "delta.br"] = mod.br$residuals
-    # Whatever is left over goes to the batter
-    data$delta.bat = with(data, ifelse(is.na(delta.br), delta, delta - delta.br))
-    # Control for defensive position
-    mod.bat = lm(delta.bat ~ as.factor(batterPos), data=data)
-    data = transform(data, raa.bat = mod.bat$residuals)
-#   }
-  
+  } else {
+    mod.off = models[["offensive"]]
+    data$delta.off = data$delta - predict(mod.off, newdata=data[,c("stadium", "throws", "stand")])
+  }
+  # delta.off is the contribution above average of the batter AND all of the runners
   if (verbose) {
+    message("....Offense Model....")
+    print(sort(coef(mod.off)))
+  }
+  
+  # Siphon off the portion attributable to the baserunners    
+  br.idx = which(data$startCode > 0)
+  if (!with(models, exists("baserunning")) | !paste("predict", class(models[["baserunning"]]), sep=".") %in% methods(predict)) {
+    message("....Supplied Baserunning model does not have a predict method...")
+    message("....Building in-sample Baserunning Model...")
+    mod.br = getModelBaserunning(data[br.idx, c("delta.off", "event", "startCode", "startOuts")])
+    data[br.idx, "delta.br"] = mod.br$residuals
+  } else {
+    mod.br = models[["baserunning"]]
+    data[br.idx, "delta.br"] = data[br.idx, "delta.off"] - predict(mod.br, newdata=data[br.idx, c("event", "startCode", "startOuts")])
+  }
+  # delta.off is the contribution above average of the batter AND all of the runners
+  if (verbose) {
+    message("....Baserunning Model....")
+    message(paste("....", length(coef(mod.br)), "coefficients -- suppressing output..."))
+#    print(sort(coef(mod.br)))
+  }
+  
+  # Whatever is left over goes to the batter -- just control for defensive position
+  data$delta.bat = with(data, ifelse(is.na(delta.br), delta, delta - delta.br))
+  
+  if (!with(models, exists("batting")) | !paste("predict", class(models[["batting"]]), sep=".") %in% methods(predict)) {
+    message("....Supplied Batting model does not have a predict method...")
+    message("....Building in-sample Batting Model...")
+    mod.bat = getModelBatting(data[, c("delta.bat", "batterPos")])
+    data$raa.bat = mod.bat$residuals
+  } else {
+    mod.bat = models[["batting"]]
+    data$raa.bat = data$delta.bat - predict(mod.bat, newdata=data[, c("batterPos")])
+  }
+  # delta.off is the contribution above average of the batter AND all of the runners
+  if (verbose) {
+    message("....Batting Model....")
     print(sort(coef(mod.bat)))
   }
+  
   
   # Step 5: Define RAA for the baserunners
   message("...Estimating Baserunning Runs Above Average...")
   
+  require(plyr)
   require(MASS)
   require(stringr)
+  
+  break;
+  
   # Figure out what happened to the runner on 3B
   data$dest.br3 = with(data, ifelse(str_count(runnerMovement, paste(start3B, ":3B::T:", sep="")), "H", NA))
   data$dest.br3 = with(data, ifelse(!is.na(start3B) & !is.na(end3B) & start3B == end3B, "3B", dest.br3))

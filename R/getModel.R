@@ -45,11 +45,9 @@ getModel.GameDayPlays = function (data, type, ...) {
   return(mod)
 }
 
-getModelRunExpectancy = function (data, type, drop.incomplete = TRUE, ...) UseMethod("getModelRunExpectancy")
+getModelRunExpectancy = function (data, drop.incomplete = TRUE, ...) UseMethod("getModelRunExpectancy")
 
 getModelRunExpectancy.GameDayPlays = function (data, drop.incomplete = TRUE, ...) {
-  require(mosaic)
-  
   # Drop incomplete innings
   if (drop.incomplete) {
     ds <- subset(data, outsInInning == 3)
@@ -59,5 +57,26 @@ getModelRunExpectancy.GameDayPlays = function (data, drop.incomplete = TRUE, ...
   mod = lm(runsFuture ~ as.factor(startCode) * as.factor(startOuts), data=ds)
   return(mod)
 }
+
+getModelPitching = function (data) {
+  mod = lm(delta.pitch ~ stadium + (throws == stand), data = data)
+  return(mod)
+}
+
+getModelOffense = function (data) {
+  mod = lm(delta ~ stadium + (throws == stand), data = data)
+  return(mod)
+}
+
+getModelBaserunning = function (data) {
+  mod = lm(delta.off ~ event * as.factor(startCode) * as.factor(startOuts), data=data)
+  return(mod)
+}
+
+getModelBatting = function (data) {
+  mod = lm(delta.bat ~ as.factor(batterPos), data=data)
+  return(mod)
+}
+
 
 
