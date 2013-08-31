@@ -78,5 +78,61 @@ getModelBatting = function (data) {
   return(mod)
 }
 
+getModelFieldingPitcher = function (data) {
+  mod = glm((fielderPos == "P") ~ poly(our.x, 2) + poly(our.y, 2) + I(our.x * our.y), data=data, family="binomial")
+  return(mod)
+}
+
+#' 
+#' @title getModelFieldingCollective
+#' 
+#' @description Determine the responsibility of the fielders, collectively
+#' 
+#' @details Computes a 2D kernel smoothed estimate of the probability that *any* of the 9 fielders
+#' will make a play on a ball in play
+#' 
+#' @param data An MLBAM data.frame 
+#' 
+#' @return a vector representing the probability that each ball in play will be fielded
+#' 
+#' @export
+#' @examples
+#' 
+#' ds = getData()
+#' ds$resp.field = getModelFieldingCollective(ds)
+#' 
+
+getModelFieldingCollective = function (data) {
+  require(KernSmooth)
+  outs = subset(data, !is.na(fielderId), select=c("our.x", "our.y"))
+  hits = subset(data, is.na(fielderId), select=c("our.x", "our.y"))
+  # Find 2D kernel density estimates for hits and outs
+  # Make sure to specify the range, so that they over estimated over the same grid
+  grid = list(range(data$our.x, na.rm=TRUE), range(data$our.y, na.rm=TRUE))
+  fit.out <- bkde2D(outs, bandwidth = c(10,10), range.x = grid)
+  fit.hit <- bkde2D(hits, bandwidth = c(10,10), range.x = grid)
+  
+  field.smooth = data.frame(cbind(expand.grid(fit.out$x1, fit.out$x2), isOut = as.vector(fit.out$fhat)), isHit = as.vector(fit.hit$fhat))
+  names(field.smooth)[1:2] = c("x", "y")
+  # Plot the surfaces
+  #  wireframe(isOut ~ x + y, data=field.smooth, scales = list(arrows = FALSE), drape = TRUE, colorkey = TRUE)
+  #  wireframe(isHit ~ x + y, data=field.smooth, scales = list(arrows = FALSE), drape = TRUE, colorkey = TRUE)
+  
+  # Make sure to add a small amount to avoid division by zero
+  field.smooth = transform(field.smooth, wasFielded = isOut / (isOut + isHit + 0.00000001))
+  # summary(field.smooth)
+  # wireframe(wasFielded ~ x + y, data=field.smooth, scales = list(arrows = FALSE), drape = TRUE, colorkey = TRUE)
+  
+  fit.all = function (x, y) {
+    require(Hmisc)
+    x.idx = whichClosest(field.smooth$x, x)
+    y.idx = whichClosest(field.smooth$y, y)
+    match = subset(field.smooth, x == field.smooth$x[x.idx] & y == field.smooth$y[y.idx])
+    return(match$wasFielded)
+  }
+  
+  resp.field = mapply(fit.all, data$our.x, data$our.y)
+  return(resp.field)
+}
 
 
