@@ -39,6 +39,7 @@
 makeWAR = function (data, models = list(), verbose = TRUE, ...) UseMethod("makeWAR")
 
 makeWAR.GameDayPlays = function (data, models = list(), verbose = TRUE, ...) {
+  data$idx = 1:nrow(data)
   # Step 1: Define \delta, the change in expected runs
   deltas = makeWARre24(data[, c("outsInInning", "runsFuture", "startCode", "startOuts", "endCode", "endOuts", "runsOnPlay")]
                        , models[["run-expectancy"]], verbose)
@@ -59,169 +60,21 @@ makeWAR.GameDayPlays = function (data, models = list(), verbose = TRUE, ...) {
   data$raa.pitch = makeWARPitching(data[,c("delta.pitch", "stadium", "throws", "stand")], models[["pitching"]], verbose)
   
   # Step 4: Define RAA for the batter
-  message("...Estimating Batting Runs Above Average...")
-
-  # Control for circumstances
-  if (!with(models, exists("offense")) | !paste("predict", class(models[["offense"]]), sep=".") %in% methods(predict)) {
-    message("....Supplied Offense model does not have a predict method...")
-    message("....Building in-sample Offense Model...")
-    mod.off = getModelOffense(data[,c("delta", "stadium", "throws", "stand")])
-    data = transform(data, delta.off = mod.off$residuals)  
-  } else {
-    mod.off = models[["offensive"]]
-    data$delta.off = data$delta - predict(mod.off, newdata=data[,c("stadium", "throws", "stand")])
-  }
-  # delta.off is the contribution above average of the batter AND all of the runners
-  if (verbose) {
-    message("....Offense Model....")
-    print(sort(coef(mod.off)))
-  }
+  data$delta.off = makeWAROffense(data[,c("delta", "stadium", "throws", "stand")], models[["offense"]], verbose)
   
-  # Siphon off the portion attributable to the baserunners    
+  # If runners are on base, partition delta between the batter and baserunners
   br.idx = which(data$startCode > 0)
-  if (!with(models, exists("baserunning")) | !paste("predict", class(models[["baserunning"]]), sep=".") %in% methods(predict)) {
-    message("....Supplied Baserunning model does not have a predict method...")
-    message("....Building in-sample Baserunning Model...")
-    mod.br = getModelBaserunning(data[br.idx, c("delta.off", "event", "startCode", "startOuts")])
-    data[br.idx, "delta.br"] = mod.br$residuals
-  } else {
-    mod.br = models[["baserunning"]]
-    data[br.idx, "delta.br"] = data[br.idx, "delta.off"] - predict(mod.br, newdata=data[br.idx, c("event", "startCode", "startOuts")])
-  }
-  # delta.off is the contribution above average of the batter AND all of the runners
-  if (verbose) {
-    message("....Baserunning Model....")
-    message(paste("....", length(coef(mod.br)), "coefficients -- suppressing output..."))
-#    print(sort(coef(mod.br)))
-  }
+  data[br.idx, "delta.br"] = makeWARBaserunningSplit(data[br.idx, c("delta.off", "event", "startCode", "startOuts")], models[["baserunning"]], verbose)
   
   # Whatever is left over goes to the batter -- just control for defensive position
   data$delta.bat = with(data, ifelse(is.na(delta.br), delta, delta - delta.br))
-  
-  if (!with(models, exists("batting")) | !paste("predict", class(models[["batting"]]), sep=".") %in% methods(predict)) {
-    message("....Supplied Batting model does not have a predict method...")
-    message("....Building in-sample Batting Model...")
-    mod.bat = getModelBatting(data[, c("delta.bat", "batterPos")])
-    data$raa.bat = mod.bat$residuals
-  } else {
-    mod.bat = models[["batting"]]
-    data$raa.bat = data$delta.bat - predict(mod.bat, newdata=data[, c("batterPos")])
-  }
-  # delta.off is the contribution above average of the batter AND all of the runners
-  if (verbose) {
-    message("....Batting Model....")
-    print(sort(coef(mod.bat)))
-  }
-  
-  
+  data$raa.bat = makeWARBatting(data[, c("delta.bat", "batterPos")], models[["batting"]], verbose)
+ 
   # Step 5: Define RAA for the baserunners
-  message("...Estimating Baserunning Runs Above Average...")
-  
-  require(plyr)
-  require(MASS)
-  require(stringr)
-  
-  # Figure out what happened to the runner on 3B
-  data$dest.br3 = with(data, ifelse(str_count(runnerMovement, paste(start3B, ":3B::T:", sep="")), "H", NA))
-  data$dest.br3 = with(data, ifelse(!is.na(start3B) & !is.na(end3B) & start3B == end3B, "3B", dest.br3))
-  
-  br3.idx = which(!is.na(data$start3B))
-  ds3 = data[br3.idx,]
-  br3.scored = with(ds3, str_count(runnerMovement, paste(start3B, ":3B::T:", sep="")))
-  br3.out = with(ds3, str_count(runnerMovement, paste(start3B, ":3B:::", sep="")))
-  ds3$basesAdvanced = ifelse(br3.scored == 1, 1, ifelse(br3.out == 1, -3, 0))
-  
-  # Figure out what happened to the runner on 2B
-  data$dest.br2 = with(data, ifelse(str_count(runnerMovement, paste(start2B, ":2B::T:", sep="")), "H", NA))
-  data$dest.br2 = with(data, ifelse(!is.na(start2B) & !is.na(end3B) & start2B == end3B, "3B", dest.br2))
-  data$dest.br2 = with(data, ifelse(!is.na(start2B) & !is.na(end2B) & start2B == end2B, "2B", dest.br2))
-  
-  br2.idx = which(!is.na(data$start2B))
-  ds2 = data[br2.idx,]
-  br2.scored = with(ds2, str_count(runnerMovement, paste(start2B, ":2B::T:", sep="")))
-  br2.out = with(ds2, str_count(runnerMovement, paste(start2B, ":2B:::", sep="")))
-  br2.advanced = with(ds2, str_count(runnerMovement, paste(start2B, ":2B:3B::", sep="")))
-  ds2$basesAdvanced = ifelse(br2.scored == 1, 2, ifelse(br2.out == 1, -2, ifelse(br2.advanced == 1, 1, 0)))
-  
-  # Figure out what happened to the runner on 1B
-  data$dest.br1 = with(data, ifelse(str_count(runnerMovement, paste(start1B, ":1B::T:", sep="")), "H", NA))
-  data$dest.br1 = with(data, ifelse(!is.na(start1B) & !is.na(end3B) & start1B == end3B, "3B", dest.br1))
-  data$dest.br1 = with(data, ifelse(!is.na(start1B) & !is.na(end2B) & start1B == end2B, "2B", dest.br1))
-  data$dest.br1 = with(data, ifelse(!is.na(start1B) & !is.na(end1B) & start1B == end1B, "1B", dest.br1))
-  
-  br1.idx = which(!is.na(data$start1B))
-  ds1 = data[br1.idx,]
-  br1.scored = with(ds1, str_count(runnerMovement, paste(start1B, ":1B::T:", sep="")))
-  br1.out = with(ds1, str_count(runnerMovement, paste(start1B, ":1B:::", sep="")))
-  br1.advanced.one = with(ds1, str_count(runnerMovement, paste(start1B, ":1B:2B::", sep="")))
-  br1.advanced.two = with(ds1, str_count(runnerMovement, paste(start1B, ":1B:3B::", sep="")))
-  ds1$basesAdvanced = ifelse(br1.scored == 1, 3, ifelse(br1.out == 1, -1, ifelse(br1.advanced.one == 1, 1, ifelse(br1.advanced.two == 1, 2, 0))))
-  
-  # Compute the number of bases advanced by each baserunner
-  # data$br0.adv = ifelse(br0.scored == 1, 4, ifelse(br0.advanced.one == 1, 1, ifelse(br0.advanced.two == 1, 2, ifelse(br0.advanced.three == 1, 3, 0))))
-  data[br1.idx, "br1.adv"] = ds1$basesAdvanced
-  data[br2.idx, "br2.adv"] = ds2$basesAdvanced
-  data[br3.idx, "br3.adv"] = ds3$basesAdvanced
-  
-  # Compute the empirical probabilities
-  getCDF = function (ds) {
-    events = ddply(ds, ~basesAdvanced, summarise, N = length(basesAdvanced))
-    events = transform(events, numObs = nrow(ds))
-    events = transform(events, p = N / numObs)
-    events$cdf = cumsum(events$p)
-    events$cdf.lag = c(0, cumsum(events$p[-nrow(events)]))
-    return(events)
-  }
-  
-  ds3Probs = ddply(ds3, ~event + startCode + startOuts, getCDF)
-  ds2Probs = ddply(ds2, ~event + startCode + startOuts, getCDF)
-  ds1Probs = ddply(ds1, ~event + startCode + startOuts, getCDF)
-  
-  # Merge onto the main data frame
-  join.idx = c("event", "startCode", "startOuts")
-  data = merge(x = data, y = ds3Probs[,c(join.idx, "basesAdvanced", "cdf.lag")], by.x = c(join.idx, "br3.adv"), by.y = c(join.idx, "basesAdvanced"), all.x=TRUE)
-  # Rename column
-  data = rename(data, c("cdf.lag" = "cdf.br3"))
-
-  data = merge(x = data, y = ds2Probs[,c(join.idx, "basesAdvanced", "cdf.lag")], by.x = c(join.idx, "br2.adv"), by.y = c(join.idx, "basesAdvanced"), all.x=TRUE)
-  data = rename(data, c("cdf.lag" = "cdf.br2"))
-  data = merge(x = data, y = ds1Probs[,c(join.idx, "basesAdvanced", "cdf.lag")], by.x = c(join.idx, "br1.adv"), by.y = c(join.idx, "basesAdvanced"), all.x=TRUE)
-  data = rename(data, c("cdf.lag" = "cdf.br1"))
-  
-  # Compute a share for each baserunner
-  data$cdf.br1[is.na(data$cdf.br1)] <- 0
-  data$cdf.br2[is.na(data$cdf.br2)] <- 0
-  data$cdf.br3[is.na(data$cdf.br3)] <- 0
-  
-  #normalize the cdf probs
-  data$share.br1 <- data$cdf.br1 / (data$cdf.br1 + data$cdf.br2 + data$cdf.br3)
-  data$share.br2 <- data$cdf.br2 / (data$cdf.br1 + data$cdf.br2 + data$cdf.br3)
-  data$share.br3 <- data$cdf.br3 / (data$cdf.br1 + data$cdf.br2 + data$cdf.br3)
-  
-  #  data$delta.br0 = with(data, ifelse(basesAdvanced == 0, 0, delta.br * (br0.extra / basesAdvanced)))
-  data$delta.br[is.na(data$delta.br)] <- 0
-  data$raa.br1 = data$share.br1 * data$delta.br
-  data$raa.br2 = data$share.br2 * data$delta.br
-  data$raa.br3 = data$share.br3 * data$delta.br
-  
-  #  mod.br3 = lm(basesAdvanced ~ event * as.factor(startOuts), data = ds3)
-  #  mod.br2 = lm(basesAdvanced ~ event * as.factor(startOuts), data = ds2)
-  #  mod.br1 = lm(basesAdvanced ~ event * as.factor(startOuts), data = ds1)
-  #  mod.br0 = lm(br0.adv ~ event * as.factor(startOuts), data = data)
-  #  bwplot(mod.br3$resid ~ event, data=ds3)
-  #  bwplot(mod.br2$resid ~ event, data=ds2)
-  
-  #mod.br3 = lm(delta.br3 ~ event * as.factor(startOuts), data = data)
-  #mod.br2 = lm(delta.br2 ~ event * as.factor(startOuts), data = data)
-  #mod.br1 = lm(delta.br1 ~ event * as.factor(startOuts), data = data)
-  #  mod.br0 = lm(delta.br0 ~ event + as.factor(startOuts), data = data)
-  
-  # Placeholder in case we want to use this later on
-  #  data$raa.br0 = mod.br0$residuals
-  #data$raa.br0 = 0
-  #data[!is.na(data$delta.br3), "raa.br3"] = mod.br3$residuals
-  #data[!is.na(data$delta.br2), "raa.br2"] = mod.br2$residuals
-  #data[!is.na(data$delta.br1), "raa.br1"] = mod.br1$residuals
+  br.fields = c("idx", "delta.br", "start1B", "start2B", "start3B", "end1B", "end2B", "end3B"
+                , "runnerMovement", "event", "startCode", "startOuts")
+  raa.br = makeWARBaserunning(data[br.idx, br.fields], models[["baserunning"]], verbose)
+  data = merge(x=data, y=raa.br, by="idx", all.x=TRUE)
   
   # Add the new class
   class(data) = c("GameDayPlaysExt", "GameDayPlays", "data.frame")
@@ -389,7 +242,7 @@ getFielderResp = function (data, ...) {
 makeWARPitching = function (data, mod.pitch = NULL, verbose = TRUE, ...) {
   message("...Estimating Pitching Runs Above Average...")
   
-  if (!paste("predict", class(models[["pitching"]]), sep=".") %in% methods(predict)) {
+  if (!paste("predict", class(mod.pitch), sep=".") %in% methods(predict)) {
     message("....Supplied Pitching model does not have a predict method...")
     message("....Building in-sample Pitching Model...")
     mod.pitch = getModelPitching(data[,c("delta.pitch", "stadium", "throws", "stand")])
@@ -406,4 +259,164 @@ makeWARPitching = function (data, mod.pitch = NULL, verbose = TRUE, ...) {
   return(raa.pitch)
 }
 
+makeWAROffense = function (data, mod.off = NULL, verbose = TRUE, ...) {
+  message("...Building model for offense...")
+  
+  # Control for circumstances
+  if (!paste("predict", class(mod.off), sep=".") %in% methods(predict)) {
+    message("....Supplied Offense model does not have a predict method...")
+    message("....Building in-sample Offense Model...")
+    mod.off = getModelOffense(data[,c("delta", "stadium", "throws", "stand")])
+    delta.off = mod.off$residuals  
+  } else {
+    mod.off = models[["offensive"]]
+    delta.off = data$delta - predict(mod.off, newdata=data[,c("stadium", "throws", "stand")])
+  }
+  # delta.off is the contribution above average of the batter AND all of the runners
+  if (verbose) {
+    message("....Offense Model....")
+    print(sort(coef(mod.off)))
+  }
+  return(delta.off)
+}
+
+makeWARBaserunningSplit = function (data, mod.br = NULL, verbose = TRUE, ...) {
+  message("...Partitioning Offense into Batting and Baserunning...")
+  
+  # Siphon off the portion attributable to the baserunners   
+  if (!paste("predict", class(mod.br), sep=".") %in% methods(predict)) {
+    message("....Supplied Baserunning model does not have a predict method...")
+    message("....Building in-sample Baserunning Model...")
+    mod.br = getModelBaserunning(data[, c("delta.off", "event", "startCode", "startOuts")])
+    delta.br = mod.br$residuals
+  } else {
+    mod.br = models[["baserunning"]]
+    delta.br = data$delta.off - predict(mod.br, newdata=data[, c("event", "startCode", "startOuts")])
+  }
+  # delta.off is the contribution above average of the batter AND all of the runners
+  if (verbose) {
+    message("....Baserunning Model....")
+    message(paste("....", length(coef(mod.br)), "coefficients -- suppressing output..."))
+    #    print(sort(coef(mod.br)))
+  }
+  return(delta.br)
+}
+
+makeWARBatting = function (data, mod.bat, verbose = TRUE, ...) {
+  message("...Estimating Batting Runs Above Average...")
+  
+  if (!paste("predict", class(mod.bat), sep=".") %in% methods(predict)) {
+    message("....Supplied Batting model does not have a predict method...")
+    message("....Building in-sample Batting Model...")
+    mod.bat = getModelBatting(data[, c("delta.bat", "batterPos")])
+    raa.bat = mod.bat$residuals
+  } else {
+    mod.bat = models[["batting"]]
+    raa.bat = data$delta.bat - predict(mod.bat, newdata=data[, c("batterPos")])
+  }
+  # delta.off is the contribution above average of the batter AND all of the runners
+  if (verbose) {
+    message("....Batting Model....")
+    print(sort(coef(mod.bat)))
+  }
+  return(raa.bat)
+}
+
+
+makeWARBaserunning = function (data, mod.bat, verbose = TRUE, ...) {
+  message("...Estimating Baserunning Runs Above Average...")
+  
+  require(plyr)
+  require(MASS)
+  require(stringr)
+  
+  # Figure out what happened to the runner on 3B
+  data$dest.br3 = with(data, ifelse(str_count(runnerMovement, paste(start3B, ":3B::T:", sep="")), "H", NA))
+  data$dest.br3 = with(data, ifelse(!is.na(start3B) & !is.na(end3B) & start3B == end3B, "3B", dest.br3))
+  
+  br3.idx = which(!is.na(data$start3B))
+  ds3 = data[br3.idx,]
+  br3.scored = with(ds3, str_count(runnerMovement, paste(start3B, ":3B::T:", sep="")))
+  br3.out = with(ds3, str_count(runnerMovement, paste(start3B, ":3B:::", sep="")))
+  ds3$basesAdvanced = ifelse(br3.scored == 1, 1, ifelse(br3.out == 1, -3, 0))
+  
+  # Figure out what happened to the runner on 2B
+  data$dest.br2 = with(data, ifelse(str_count(runnerMovement, paste(start2B, ":2B::T:", sep="")), "H", NA))
+  data$dest.br2 = with(data, ifelse(!is.na(start2B) & !is.na(end3B) & start2B == end3B, "3B", dest.br2))
+  data$dest.br2 = with(data, ifelse(!is.na(start2B) & !is.na(end2B) & start2B == end2B, "2B", dest.br2))
+  
+  br2.idx = which(!is.na(data$start2B))
+  ds2 = data[br2.idx,]
+  br2.scored = with(ds2, str_count(runnerMovement, paste(start2B, ":2B::T:", sep="")))
+  br2.out = with(ds2, str_count(runnerMovement, paste(start2B, ":2B:::", sep="")))
+  br2.advanced = with(ds2, str_count(runnerMovement, paste(start2B, ":2B:3B::", sep="")))
+  ds2$basesAdvanced = ifelse(br2.scored == 1, 2, ifelse(br2.out == 1, -2, ifelse(br2.advanced == 1, 1, 0)))
+  
+  # Figure out what happened to the runner on 1B
+  data$dest.br1 = with(data, ifelse(str_count(runnerMovement, paste(start1B, ":1B::T:", sep="")), "H", NA))
+  data$dest.br1 = with(data, ifelse(!is.na(start1B) & !is.na(end3B) & start1B == end3B, "3B", dest.br1))
+  data$dest.br1 = with(data, ifelse(!is.na(start1B) & !is.na(end2B) & start1B == end2B, "2B", dest.br1))
+  data$dest.br1 = with(data, ifelse(!is.na(start1B) & !is.na(end1B) & start1B == end1B, "1B", dest.br1))
+  
+  br1.idx = which(!is.na(data$start1B))
+  ds1 = data[br1.idx,]
+  br1.scored = with(ds1, str_count(runnerMovement, paste(start1B, ":1B::T:", sep="")))
+  br1.out = with(ds1, str_count(runnerMovement, paste(start1B, ":1B:::", sep="")))
+  br1.advanced.one = with(ds1, str_count(runnerMovement, paste(start1B, ":1B:2B::", sep="")))
+  br1.advanced.two = with(ds1, str_count(runnerMovement, paste(start1B, ":1B:3B::", sep="")))
+  ds1$basesAdvanced = ifelse(br1.scored == 1, 3, ifelse(br1.out == 1, -1, ifelse(br1.advanced.one == 1, 1, ifelse(br1.advanced.two == 1, 2, 0))))
+  
+  # Compute the number of bases advanced by each baserunner
+  # data$br0.adv = ifelse(br0.scored == 1, 4, ifelse(br0.advanced.one == 1, 1, ifelse(br0.advanced.two == 1, 2, ifelse(br0.advanced.three == 1, 3, 0))))
+  data[br1.idx, "br1.adv"] = ds1$basesAdvanced
+  data[br2.idx, "br2.adv"] = ds2$basesAdvanced
+  data[br3.idx, "br3.adv"] = ds3$basesAdvanced
+  
+  # Compute the empirical probabilities
+  getCDF = function (ds) {
+    events = ddply(ds, ~basesAdvanced, summarise, N = length(basesAdvanced))
+    events = transform(events, numObs = nrow(ds))
+    events = transform(events, p = N / numObs)
+    events$cdf = cumsum(events$p)
+    events$cdf.lag = c(0, cumsum(events$p[-nrow(events)]))
+    return(events)
+  }
+  
+  ds3Probs = ddply(ds3, ~event + startCode + startOuts, getCDF)
+  ds2Probs = ddply(ds2, ~event + startCode + startOuts, getCDF)
+  ds1Probs = ddply(ds1, ~event + startCode + startOuts, getCDF)
+  
+  # Merge onto the main data frame
+  join.idx = c("event", "startCode", "startOuts")
+  data = merge(x = data, y = ds3Probs[,c(join.idx, "basesAdvanced", "cdf.lag")], by.x = c(join.idx, "br3.adv"), by.y = c(join.idx, "basesAdvanced"), all.x=TRUE)
+  # Rename column
+  data = rename(data, c("cdf.lag" = "cdf.br3"))
+  
+  data = merge(x = data, y = ds2Probs[,c(join.idx, "basesAdvanced", "cdf.lag")], by.x = c(join.idx, "br2.adv"), by.y = c(join.idx, "basesAdvanced"), all.x=TRUE)
+  data = rename(data, c("cdf.lag" = "cdf.br2"))
+  data = merge(x = data, y = ds1Probs[,c(join.idx, "basesAdvanced", "cdf.lag")], by.x = c(join.idx, "br1.adv"), by.y = c(join.idx, "basesAdvanced"), all.x=TRUE)
+  data = rename(data, c("cdf.lag" = "cdf.br1"))
+  
+  # Make sure that baserunners who get out have a non-zero share
+  data$cdf.br1[data$cdf.br1 == 0] <- 0.00000001
+  data$cdf.br2[data$cdf.br2 == 0] <- 0.00000001
+  data$cdf.br3[data$cdf.br3 == 0] <- 0.00000001
+  # Give zeros to the bases that were not occupied
+  data$cdf.br1[is.na(data$cdf.br1)] <- 0
+  data$cdf.br2[is.na(data$cdf.br2)] <- 0
+  data$cdf.br3[is.na(data$cdf.br3)] <- 0
+  
+  #normalize the cdf probs
+  data$share.br1 <- data$cdf.br1 / (data$cdf.br1 + data$cdf.br2 + data$cdf.br3)
+  data$share.br2 <- data$cdf.br2 / (data$cdf.br1 + data$cdf.br2 + data$cdf.br3)
+  data$share.br3 <- data$cdf.br3 / (data$cdf.br1 + data$cdf.br2 + data$cdf.br3)
+  
+  #  data$delta.br0 = with(data, ifelse(basesAdvanced == 0, 0, delta.br * (br0.extra / basesAdvanced)))
+  data$delta.br[is.na(data$delta.br)] <- 0
+  data$raa.br1 = data$share.br1 * data$delta.br
+  data$raa.br2 = data$share.br2 * data$delta.br
+  data$raa.br3 = data$share.br3 * data$delta.br
+  
+  return(data[, c("idx", "raa.br1", "raa.br2", "raa.br3")])
+}
 
