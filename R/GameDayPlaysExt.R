@@ -21,7 +21,8 @@ setClass("GameDayPlaysExt", contains = "GameDayPlays")
 #' 
 #' @return a data.frame with RAA values 
 #' 
-#' @export
+#' @export shakeWAR
+#' @export shakeWAR.GameDayPlaysExt
 #' @examples
 #' 
 #' ds = getData()
@@ -44,7 +45,7 @@ shakeWAR.GameDayPlaysExt = function (data, N = 10, ...) {
   }
   id.fields = c("batterId", "start1B", "start2B", "start3B", "pitcherId", "playerId.C", "playerId.1B"
                 , "playerId.2B", "playerId.3B", "playerId.SS", "playerId.LF", "playerId.CF", "playerId.RF"
-                , "batterName", "pitcherName", "gameId", "event")
+                , "batterName", "pitcherName", "gameId", "event", "isPA")
   ds.raa = ds[, c(id.fields, raa.fields)]
   bstrap = do(N) * getWAR(resample(ds.raa))
   return(bstrap)
@@ -61,6 +62,7 @@ shakeWAR.GameDayPlaysExt = function (data, N = 10, ...) {
 #' @return a data.frame of RAA values per player
 #' 
 #' @export getWAR.GameDayPlaysExt
+#' @export getWAR
 #' @examples
 #' 
 #' ds = getData()
