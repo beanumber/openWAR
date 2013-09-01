@@ -40,63 +40,23 @@ makeWAR = function (data, models = list(), verbose = TRUE, ...) UseMethod("makeW
 
 makeWAR.GameDayPlays = function (data, models = list(), verbose = TRUE, ...) {
   # Step 1: Define \delta, the change in expected runs
-  message("...Estimating Expected Runs...")
-  
-  # Check to see whether the supplied run expectancy model has a predict() method
-  if (!with(models, exists("run-expectancy")) | !paste("predict", class(models[["run-expectancy"]]), sep=".") %in% methods(predict)) {
-    message("....Supplied Run Expectancy model does not have a predict method...")
-    message("....Building in-sample Run Expectancy Model...")
-    mod.re = getModelRunExpectancy(data)
-  } else {
-    mod.re = models[["run-expectancy"]]
-  }
-  
-  if (verbose) {
-    message("....Run Expectancy Model....")
-    states = expand.grid(startCode = 0:7, startOuts = 0:2)
-    print(matrix(predict(mod.re, newdata=states), ncol=3))
-  }
-     
-  begin.states = data[,c("startCode", "startOuts")]
-  end.states = data[,c("endCode", "endOuts")]
-  end.states$endOuts = with(end.states, ifelse(endOuts == 3, NA, endOuts))
-  names(end.states) = names(begin.states)
-  
-  data = transform(data, startExR = predict(mod.re, newdata=begin.states))
-  data = transform(data, endExR = predict(mod.re, newdata=end.states))
-  data$endExR = with(data, ifelse(is.na(endExR), 0, endExR))
-
-  data = transform(data, delta = endExR - startExR + runsOnPlay)
+  deltas = makeWARre24(data[, c("outsInInning", "runsFuture", "startCode", "startOuts", "endCode", "endOuts", "runsOnPlay")]
+                       , models[["run-expectancy"]], verbose)
+  data = cbind(data, deltas)
   
   # Step 2: Define RAA for the defense
-  message("...Estimating Fielding Runs Above Average...")
   # Work only with the subset of data for which the ball is in play and keep track of the indices
   bip.idx = which(data$isBIP == TRUE)
   ds.field = data[bip.idx,]
-  ds.field = getFielderRAA(ds.field)
-  new.names = names(ds.field)[!names(ds.field) %in% names(data)]
-  for(col.name in new.names) {
-    data[bip.idx, col.name] = ds.field[,col.name]
+  fielding = makeWARFielding(ds.field, models, verbose)
+  
+  for(col.name in names(fielding)) {
+    data[bip.idx, col.name] = fielding[,col.name]
   }
   
   # Step 3: Define RAA for the pitcher
-  message("...Estimating Pitching Runs Above Average...")
   data$delta.pitch = with(data, ifelse(is.na(delta.field), delta, delta - delta.field))
-  
-  if (!with(models, exists("pitching")) | !paste("predict", class(models[["pitching"]]), sep=".") %in% methods(predict)) {
-    message("....Supplied Pitching model does not have a predict method...")
-    message("....Building in-sample Pitching Model...")
-    mod.pitch = getModelPitching(data[,c("delta.pitch", "stadium", "throws", "stand")])
-    data$raa.pitch = -mod.pitch$residuals
-  } else {
-    mod.pitch = models[["pitching"]]
-    data$raa.pitch = predict(mod.pitch, newdata=data[,c("stadium", "throws", "stand")]) - data$delta.pitch
-  }
-  
-  if (verbose) {
-    message("....Pitching Model....")
-    print(sort(coef(mod.pitch)))
-  }
+  data$raa.pitch = makeWARPitching(data[,c("delta.pitch", "stadium", "throws", "stand")], models[["pitching"]], verbose)
   
   # Step 4: Define RAA for the batter
   message("...Estimating Batting Runs Above Average...")
@@ -269,6 +229,60 @@ makeWAR.GameDayPlays = function (data, models = list(), verbose = TRUE, ...) {
 }
 
 
+makeWARre24 = function (data, mod.re = NULL, verbose=TRUE, ...) {
+  message("...Estimating Expected Runs...")
+  
+  # Check to see whether the supplied run expectancy model has a predict() method
+  if (!paste("predict", class(mod.re), sep=".") %in% methods(predict)) {
+    message("....Supplied Run Expectancy model does not have a predict method...")
+    message("....Building in-sample Run Expectancy Model...")
+    mod.re = getModelRunExpectancy(data[, c("outsInInning", "runsFuture", "startCode", "startOuts")])
+  }
+  
+  if (verbose) {
+    message("....Run Expectancy Model....")
+    states = expand.grid(startCode = 0:7, startOuts = 0:2)
+    print(matrix(predict(mod.re, newdata=states), ncol=3))
+  }
+  
+  begin.states = data[,c("startCode", "startOuts")]
+  end.states = data[,c("endCode", "endOuts")]
+  end.states$endOuts = with(end.states, ifelse(endOuts == 3, NA, endOuts))
+  names(end.states) = names(begin.states)
+  
+  startExR = predict(mod.re, newdata=begin.states)
+  endExR = predict(mod.re, newdata=end.states)
+  endExR = ifelse(is.na(endExR), 0, endExR)
+
+  out = data.frame(startExR, endExR)
+  out$delta = endExR - startExR + data$runsOnPlay
+  return(out)
+}
+
+
+makeWARFielding = function (data, models = list(), verbose=TRUE, ...) {
+  message("...Estimating Fielding Runs Above Average...")
+  
+  data = transform(data, wasFielded = !is.na(fielderId))
+  # Compute the collective responsibility of all fielders
+  p.hat = getModelFieldingCollective(data[, c("wasFielded", "our.x", "our.y")])
+  # Step 2a: Define \delta.field for the defense, collectively
+  delta.field = data$delta * p.hat
+  
+  # Compute the individual responsibility of each fielder
+  P = getFielderResp(data)
+  # Step 2b: Define \delta.field for the defense, individually
+  delta.fielders = delta.field * P
+  names(delta.fielders) = gsub("resp", "delta", names(delta.fielders))
+  
+  out = data.frame(p.hat, delta.field, delta.fielders)
+  
+  # Normalize the delta's into RAA's
+  raa.field = getFielderRAA(cbind(out, stadium = data$stadium))
+  return(cbind(out, raa.field))
+}
+
+
 #' 
 #' @title getFielderRAA
 #' 
@@ -288,18 +302,6 @@ makeWAR.GameDayPlays = function (data, models = list(), verbose = TRUE, ...) {
 #' 
 
 getFielderRAA = function (data) {
-  # Compute the collective responsibility of all fielders
-  data$resp.field = getModelFieldingCollective(data)
-  # Compute the individual responsibility of each fielder
-  resp.fielders = getFielderResp(data)
-  
-  # Step 2a: Define \delta.field for the defense, collectively
-  data$delta.field = with(data, delta * resp.field)
-  # Step 2b: Define \delta.field for the defense, individually
-  delta.fielders = data$delta.field * resp.fielders
-  names(delta.fielders) = gsub("resp", "delta", names(delta.fielders))
-  data = cbind(data, delta.fielders)
-  
   # Build a model for each fielder's expected change in runs
   mod.P = lm(delta.P ~ stadium, data = data)
   mod.C = lm(delta.C ~ stadium, data = data)
@@ -318,8 +320,7 @@ getFielderRAA = function (data) {
   
   # The column-wise sums should all be zero
   #  colSums(raa)
-  data = cbind(data, raa)
-  return(data)
+  return(raa)
 }
 
 
@@ -343,9 +344,8 @@ getFielderRAA = function (data) {
 #' ds = getData()
 #' setBIPresp(ds)
 
-getFielderResp = function (data, ...) {
-  require(mosaic)
-  ds = transform(data, wasFielded = !is.na(fielderId))
+getFielderResp = function (data, ...) {  
+  ds = data
   ds$fielderPos = with(ds, ifelse(is.na(fielderId), "Hit", "Out"))
   ds$fielderPos = with(ds, ifelse(!is.na(fielderId) & fielderId == pitcherId, "P", fielderPos))
   ds$fielderPos = with(ds, ifelse(!is.na(fielderId) & fielderId == playerId.C, "C", fielderPos))
@@ -357,15 +357,16 @@ getFielderResp = function (data, ...) {
   ds$fielderPos = with(ds, ifelse(!is.na(fielderId) & fielderId == playerId.CF, "CF", fielderPos))
   ds$fielderPos = with(ds, ifelse(!is.na(fielderId) & fielderId == playerId.RF, "RF", fielderPos))
   
+  message("....Building a fielding model for each position...")
   mod.P = getModelFieldingPitcher(ds[, c("fielderPos", "our.x", "our.y")])
-  mod.C = glm((fielderPos == "C") ~ poly(our.x, 2) + poly(our.y, 2) + I(our.x * our.y), data=ds, family="binomial")
-  mod.1B = glm((fielderPos == "1B") ~ poly(our.x, 2) + poly(our.y, 2), data=ds, family="binomial")
-  mod.2B = glm((fielderPos == "2B") ~ poly(our.x, 2) + poly(our.y, 2) + I(our.x * our.y), data=ds, family="binomial")
-  mod.3B = glm((fielderPos == "3B") ~ poly(our.x, 2) + poly(our.y, 2) + I(our.x * our.y), data=ds, family="binomial")
-  mod.SS = glm((fielderPos == "SS") ~ poly(our.x, 2) + poly(our.y, 2) + I(our.x * our.y), data=ds, family="binomial")
-  mod.LF = glm((fielderPos == "LF") ~ poly(our.x, 2) + poly(our.y, 2) + I(our.x * our.y), data=ds, family="binomial")
-  mod.CF = glm((fielderPos == "CF") ~ poly(our.x, 2) + poly(our.y, 2) + I(our.x * our.y), data=ds, family="binomial")
-  mod.RF = glm((fielderPos == "RF") ~ poly(our.x, 2) + poly(our.y, 2) + I(our.x * our.y), data=ds, family="binomial")
+  mod.C = getModelFieldingCatcher(ds[, c("fielderPos", "our.x", "our.y")])
+  mod.1B = getModelFielding1B(ds[, c("fielderPos", "our.x", "our.y")])
+  mod.2B = getModelFielding2B(ds[, c("fielderPos", "our.x", "our.y")])
+  mod.3B = getModelFielding3B(ds[, c("fielderPos", "our.x", "our.y")])
+  mod.SS = getModelFieldingSS(ds[, c("fielderPos", "our.x", "our.y")])
+  mod.LF = getModelFieldingLF(ds[, c("fielderPos", "our.x", "our.y")])
+  mod.CF = getModelFieldingCF(ds[, c("fielderPos", "our.x", "our.y")])
+  mod.RF = getModelFieldingRF(ds[, c("fielderPos", "our.x", "our.y")])
   
   #   mod = mod.CF
   #   summary(mod)
@@ -384,3 +385,25 @@ getFielderResp = function (data, ...) {
   names(out) = c("resp.P", "resp.C", "resp.1B", "resp.2B", "resp.3B", "resp.SS", "resp.LF", "resp.CF", "resp.RF")
   return(out)
 }
+
+makeWARPitching = function (data, mod.pitch = NULL, verbose = TRUE, ...) {
+  message("...Estimating Pitching Runs Above Average...")
+  
+  if (!paste("predict", class(models[["pitching"]]), sep=".") %in% methods(predict)) {
+    message("....Supplied Pitching model does not have a predict method...")
+    message("....Building in-sample Pitching Model...")
+    mod.pitch = getModelPitching(data[,c("delta.pitch", "stadium", "throws", "stand")])
+    raa.pitch = -mod.pitch$residuals
+  } else {
+    mod.pitch = models[["pitching"]]
+    raa.pitch = predict(mod.pitch, newdata=data[,c("stadium", "throws", "stand")]) - data$delta.pitch
+  }
+  
+  if (verbose) {
+    message("....Pitching Model....")
+    print(sort(coef(mod.pitch)))
+  }
+  return(raa.pitch)
+}
+
+

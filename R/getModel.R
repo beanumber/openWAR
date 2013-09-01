@@ -78,8 +78,53 @@ getModelBatting = function (data) {
   return(mod)
 }
 
+getModelFieldingPosition = function (data, position) {
+  mod = glm((fielderPos == position) ~ poly(our.x, 2) + poly(our.y, 2) + I(our.x * our.y), data=data, family="binomial")
+  return(mod)
+}
+
 getModelFieldingPitcher = function (data) {
   mod = glm((fielderPos == "P") ~ poly(our.x, 2) + poly(our.y, 2) + I(our.x * our.y), data=data, family="binomial")
+  return(mod)
+}
+
+getModelFieldingCatcher = function (data) {
+  mod = glm((fielderPos == "C") ~ poly(our.x, 2) + poly(our.y, 2) + I(our.x * our.y), data=data, family="binomial")
+  return(mod)
+}
+
+getModelFielding1B = function (data) {
+  mod = glm((fielderPos == "1B") ~ poly(our.x, 2) + poly(our.y, 2), data=data, family="binomial")
+  return(mod)
+}
+
+getModelFielding2B = function (data) {
+  mod = glm((fielderPos == "2B") ~ poly(our.x, 2) + poly(our.y, 2) + I(our.x * our.y), data=data, family="binomial")
+  return(mod)
+}
+
+getModelFielding3B = function (data) {
+  mod = glm((fielderPos == "3B") ~ poly(our.x, 2) + poly(our.y, 2) + I(our.x * our.y), data=data, family="binomial")
+  return(mod)
+}
+
+getModelFieldingSS = function (data) {
+  mod = glm((fielderPos == "SS") ~ poly(our.x, 2) + poly(our.y, 2) + I(our.x * our.y), data=data, family="binomial")
+  return(mod)
+}
+
+getModelFieldingLF = function (data) {
+  mod = glm((fielderPos == "LF") ~ poly(our.x, 2) + poly(our.y, 2) + I(our.x * our.y), data=data, family="binomial")
+  return(mod)
+}
+
+getModelFieldingCF = function (data) {
+  mod = glm((fielderPos == "CF") ~ poly(our.x, 2) + poly(our.y, 2) + I(our.x * our.y), data=data, family="binomial")
+  return(mod)
+}
+
+getModelFieldingRF = function (data) {
+  mod = glm((fielderPos == "RF") ~ poly(our.x, 2) + poly(our.y, 2) + I(our.x * our.y), data=data, family="binomial")
   return(mod)
 }
 
@@ -104,8 +149,9 @@ getModelFieldingPitcher = function (data) {
 
 getModelFieldingCollective = function (data) {
   require(KernSmooth)
-  outs = subset(data, !is.na(fielderId), select=c("our.x", "our.y"))
-  hits = subset(data, is.na(fielderId), select=c("our.x", "our.y"))
+  message("....Computing the collective fielding model...")
+  outs = subset(data, wasFielded, select=c("our.x", "our.y"))
+  hits = subset(data, !wasFielded, select=c("our.x", "our.y"))
   # Find 2D kernel density estimates for hits and outs
   # Make sure to specify the range, so that they over estimated over the same grid
   grid = list(range(data$our.x, na.rm=TRUE), range(data$our.y, na.rm=TRUE))
@@ -131,6 +177,7 @@ getModelFieldingCollective = function (data) {
     return(match$wasFielded)
   }
   
+  message("....Applying the collective fielding model...")
   resp.field = mapply(fit.all, data$our.x, data$our.y)
   return(resp.field)
 }

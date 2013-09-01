@@ -79,11 +79,17 @@ getWAR.GameDayPlaysExt = function (data, recompute = FALSE, ...) {
   } else {
     ds = data
   }
+  # Work only with the columns of the data that we need
+  ds = ds[, c("batterId", "batterName", "pitcherId", "pitcherName"
+              , "start1B", "start2B", "start3B"
+              , "playerId.C", "playerId.1B", "playerId.2B", "playerId.3B"
+              , "playerId.SS", "playerId.LF", "playerId.CF", "playerId.RF"
+              , "gameId", "isPA", "event", raa.fields)]
   
   message("...Tabulating RAA per player...")
   require(plyr)
   war.bat = ddply(ds, ~ batterId, summarise, Name = max(as.character(batterName))
-                  , PA = length(batterId), G = length(unique(gameId)), HR = sum(event=="Home Run")
+                  , PA = sum(isPA), G = length(unique(gameId)), HR = sum(event=="Home Run")
                   , RAA.bat = sum(raa.bat, na.rm=TRUE))
   # war.br0 = ddply(ds, ~batterId, summarise, RAA.br0 = sum(raa.br0, na.rm=TRUE))
   war.br1 = ddply(ds, ~start1B, summarise, RAA.br1 = sum(raa.br1, na.rm=TRUE))
@@ -99,7 +105,7 @@ getWAR.GameDayPlaysExt = function (data, recompute = FALSE, ...) {
   war.LF = ddply(ds, ~playerId.LF, summarise, RAA.LF = sum(raa.LF, na.rm=TRUE))
   war.CF = ddply(ds, ~playerId.CF, summarise, RAA.CF = sum(raa.CF, na.rm=TRUE))
   war.RF = ddply(ds, ~playerId.RF, summarise, RAA.RF = sum(raa.RF, na.rm=TRUE))
-  war.pitch = ddply(ds, ~ pitcherId, summarise, Name = max(as.character(pitcherName)), BF = length(pitcherId), RAA.pitch = sum(raa.pitch))
+  war.pitch = ddply(ds, ~ pitcherId, summarise, Name = max(as.character(pitcherName)), BF = sum(isPA), RAA.pitch = sum(raa.pitch))
   
   # players = merge(x=war.bat, y=war.br0, by.x="batterId", by.y="batterId", all=TRUE)
   players = merge(x=war.bat, y=war.br1, by.x="batterId", by.y="start1B", all=TRUE)
