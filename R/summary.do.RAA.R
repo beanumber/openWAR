@@ -7,7 +7,7 @@
 #' @param An object of class \code{"WAR"}
 #' 
 #' 
-#' 
+#' @export summary.do.RAA
 #' 
 #' @examples
 #' 

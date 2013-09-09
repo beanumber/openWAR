@@ -36,3 +36,4 @@ Collate:
     'plot.do.RAA.R'
     'getIDMap.R'
     'getModels.R'
+    'openWARPlays.R'

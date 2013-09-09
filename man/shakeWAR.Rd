@@ -2,10 +2,13 @@
 \alias{shakeWAR}
 \title{shakeWAR}
 \usage{
-  shakeWAR(data, N = 10, ...)
+  shakeWAR(data, resample = "plays", N = 10, ...)
 }
 \arguments{
   \item{data}{An MLBAM data.frame}
+
+  \item{resample}{An element of \code{c("plays", "models",
+  "both")}}
 
   \item{N}{the number of resamples (default 5000)}
 }
@@ -20,7 +23,7 @@
 }
 \examples{
 ds = getData()
-ds = makeWAR()
-res = shakeWAR(ds)
+res = shakeWAR(ds, resample="plays", N=10)
+summary(res)
 }
 

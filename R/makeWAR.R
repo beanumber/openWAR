@@ -39,6 +39,7 @@
 makeWAR = function (data, models = list(), verbose = TRUE, ...) UseMethod("makeWAR")
 
 makeWAR.GameDayPlays = function (data, models = list(), verbose = TRUE, ...) {
+  orig = data
   data$idx = 1:nrow(data)
   ###########################################################################################
   # Step 1: Define \delta, the change in expected runs
@@ -121,7 +122,16 @@ makeWAR.GameDayPlays = function (data, models = list(), verbose = TRUE, ...) {
   ###########################################################################################
   # Add the new class
   class(data) = c("GameDayPlaysExt", "GameDayPlays", "data.frame")
-  return(list(data, models.used))
+  # include the computations as a separate data.frame
+  id.fields = c("batterId", "start1B", "start2B", "start3B", "pitcherId", "playerId.C", "playerId.1B"
+                , "playerId.2B", "playerId.3B", "playerId.SS", "playerId.LF", "playerId.CF", "playerId.RF"
+                , "batterName", "pitcherName", "gameId", "event", "isPA")
+  delta.fields = c("delta", "delta.field", "delta.pitch", "delta.br", "delta.bat")
+  raa.fields = c("raa.bat", "raa.br1", "raa.br2", "raa.br3", "raa.pitch", "raa.P", "raa.C", "raa.1B"
+                 , "raa.2B", "raa.3B", "raa.SS", "raa.LF", "raa.CF", "raa.RF")
+  openWARPlays = data[, c(id.fields, delta.fields, raa.fields)]
+  class(openWARPlays) = c("openWARPlays", "data.frame")
+  return(list("plays" = orig, "data" = data, "models.used" = models.used, "openWAR" = openWARPlays))
 }
 
 

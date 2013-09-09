@@ -2,23 +2,25 @@
 \alias{getWAR}
 \title{getWAR}
 \usage{
-  getWAR(data, recompute = FALSE, ...)
+  getWAR(data, ...)
 }
 \arguments{
-  \item{data}{An MLBAM data.frame}
+  \item{data}{An openWARPlays data.frame}
 }
 \value{
-  a data.frame of RAA values per player
+  an RAA object
 }
 \description{
-  Retrieve openWAR
+  Tabulates RAA values per player
 }
 \details{
-  Retrieves openWAR, aggregated by player, given an MLBAM
-  data set
+  takes an openWARPlays data.frame and consolidates the RAA
+  values by player
 }
 \examples{
-ds = getData()
-res = getWAR(ds)
+data = getData()
+ds = makeWAR(data)
+players = getWAR(ds$openWAR)
+summary(players)
 }
 

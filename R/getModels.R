@@ -14,6 +14,8 @@
 #' 
 #' @export getModels
 #' @export getModels.GameDayPlays
+#' @export getModelRunExpectancy
+#' @export getModelRunExpectancy.GameDayPlays
 #' @examples
 #' 
 #' data(MLBAM2013)
@@ -42,7 +44,7 @@ getModels.GameDayPlays = function (data, ...) {
   return(models)
 }
 
-getModelRunExpectancy = function (data, drop.incomplete = TRUE, ...) UseMethod("getModelRunExpectancy")
+getModelRunExpectancy = function (data, mod.re = NULL, verbose=TRUE, drop.incomplete = TRUE, ...) UseMethod("getModelRunExpectancy")
 
 getModelRunExpectancy.GameDayPlays = function (data, mod.re = NULL, verbose=TRUE, drop.incomplete = TRUE, ...) {
   # Check to see whether the supplied run expectancy model has a predict() method

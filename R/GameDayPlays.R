@@ -129,3 +129,66 @@ tabulate.GameDayPlays = function (data) {
   )
   return(teams)
 }
+
+
+
+#' @title shakeWAR
+#' 
+#' @description resample a data.frame to obtain variance estimate for WAR
+#' 
+#' @details Resamples the rows of an MLBAM data set
+#' 
+#' @param data An MLBAM data.frame 
+#' @param resample An element of \code{c("plays", "models", "both")}
+#' @param N the number of resamples (default 5000)
+#' 
+#' @return a data.frame with RAA values 
+#' 
+#' @export shakeWAR
+#' @export shakeWAR.GameDayPlays
+#' @examples
+#' 
+#' ds = getData()
+#' res = shakeWAR(ds, resample="plays", N=10)
+#' summary(res)
+#' 
+
+shakeWAR = function (data, resample = "plays", N = 10, ...) UseMethod("shakeWAR")
+
+shakeWAR.GameDayPlays = function (data, resample = "plays", N = 10, ...) {
+  require(mosaic)
+  ext = makeWAR(data)
+  
+  # Keep track of the original data
+  reality = ext$plays
+  # Keep track of the models built on the original data
+  reality.models = ext$models
+  # Keep track of the original RAA values
+  reality.raa = ext$openWAR
+  
+  if (resample == "plays") {
+    # assume the models are fixed, and resample the RAA values
+    # this captures the sampling error
+    bstrap = do(N) * getWAR(resample(reality.raa), verbose=FALSE)
+  } else {
+    # resample the actual plays AND rebuild the models each time
+    # this captures both measurement error and sampling error
+    sims = do(N) * makeWAR(resample(reality))
+    if (resample == "models") {
+      # to isolate the measurement error, use the models we built on the resampled rows
+      # but apply them exclusively to the real data
+      ext.list = lapply(sims$models, makeWAR, data = reality, verbose=FALSE)
+      raa.list = lapply(ext.list, "[[", "openWAR")
+    } else {
+      # otherwise, just take the resampled models applied to the resampled data
+      raa.list = sims$openWAR
+    }
+    war.list = t(lapply(raa.list, getWAR))
+    bstrap = do.call("rbind", war.list)
+    class(bstrap) = c("do.RAA", class(bstrap))
+  }
+  # bstrap should be a data.frame of class "do.RAA"
+  # with roughly N * M rows, where M is the numbers of players
+  return(bstrap)
+}
+
