@@ -40,11 +40,15 @@ makeWAR = function (data, models = list(), verbose = TRUE, ...) UseMethod("makeW
 
 makeWAR.GameDayPlays = function (data, models = list(), verbose = TRUE, ...) {
   data$idx = 1:nrow(data)
+  ###########################################################################################
   # Step 1: Define \delta, the change in expected runs
-  deltas = makeWARre24(data[, c("outsInInning", "runsFuture", "startCode", "startOuts", "endCode", "endOuts", "runsOnPlay")]
-                       , models[["run-expectancy"]], verbose)
+  mod.re = getModelRunExpectancy(data[, c("outsInInning", "runsFuture", "startCode", "startOuts")]
+                    , models[["run-expectancy"]], verbose)
+  models.used = list("run-expectancy" = mod.re)
+  deltas = makeWARre24(data[, c("startCode", "startOuts", "endCode", "endOuts", "runsOnPlay")], mod.re, verbose)
   data = cbind(data, deltas)
   
+  ###########################################################################################
   # Step 2: Define RAA for the defense
   # Work only with the subset of data for which the ball is in play and keep track of the indices
   bip.idx = which(data$isBIP == TRUE)
@@ -55,51 +59,77 @@ makeWAR.GameDayPlays = function (data, models = list(), verbose = TRUE, ...) {
     data[bip.idx, col.name] = fielding[,col.name]
   }
   
+  ###########################################################################################
   # Step 3: Define RAA for the pitcher
   data$delta.pitch = with(data, ifelse(is.na(delta.field), delta, delta - delta.field))
-  data$raa.pitch = makeWARPitching(data[,c("delta.pitch", "stadium", "throws", "stand")], models[["pitching"]], verbose)
+  message("...Estimating Pitching Runs Above Average...")
+  mod.pitch = getModelPitching(data[,c("delta.pitch", "stadium", "throws", "stand")], models[["pitching"]], verbose)
+  if (verbose) {
+    message("....Pitching Model....")
+    print(sort(coef(mod.pitch)))
+  }
+  models.used[["pitching"]] = mod.pitch
+  # Note the pitcher RAA's are the negative residuals!
+  data$raa.pitch = predict(mod.pitch, newdata=data[,c("stadium", "throws", "stand")]) - data$delta.pitch  
   
+  ###########################################################################################
   # Step 4: Define RAA for the batter
-  data$delta.off = makeWAROffense(data[,c("delta", "stadium", "throws", "stand")], models[["offense"]], verbose)
+  message("...Building model for offense...")
+  mod.off = getModelOffense(data[,c("delta", "stadium", "throws", "stand")], models[["offense"]], verbose)
+  if (verbose) {
+    message("....Offense Model....")
+    print(sort(coef(mod.off)))
+  }
+  models.used[["offense"]] = mod.off
+  # delta.off is the contribution above average of the batter AND all of the runners
+  data$delta.off = data$delta - predict(mod.off, newdata=data[,c("stadium", "throws", "stand")])
   
   # If runners are on base, partition delta between the batter and baserunners
   br.idx = which(data$startCode > 0)
-  data[br.idx, "delta.br"] = makeWARBaserunningSplit(data[br.idx, c("delta.off", "event", "startCode", "startOuts")], models[["baserunning"]], verbose)
+  message("...Partitioning Offense into Batting and Baserunning...")
+  mod.br = getModelBaserunning(data[br.idx, c("delta.off", "event", "startCode", "startOuts")], models[["baserunning"]], verbose)
+  if (verbose) {
+    message("....Baserunning Model....")
+    message(paste("....", length(coef(mod.br)), "coefficients -- suppressing output..."))
+    #    print(sort(coef(mod.br)))
+  }
+  models.used[["baserunning"]] = mod.br
+  # delta.br is the contribution of the baserunners beyond the event type
+  data[br.idx, "delta.br"] = data[br.idx, "delta.off"] - predict(mod.br, newdata=data[br.idx, c("event", "startCode", "startOuts")])
   
   # Whatever is left over goes to the batter -- just control for defensive position
   data$delta.bat = with(data, ifelse(is.na(delta.br), delta, delta - delta.br))
-  data$raa.bat = makeWARBatting(data[, c("delta.bat", "batterPos")], models[["batting"]], verbose)
- 
+  message("...Estimating Batting Runs Above Average...")
+  mod.bat = getModelBatting(data[, c("delta.bat", "batterPos")], models[["batting"]], verbose)
+  if (verbose) {
+    message("....Batting Model....")
+    print(sort(coef(mod.bat)))
+  }
+  models.used[["batting"]] = mod.bat
+  # Control for batter position
+  # Note that including "idx" is not necessary -- it just ensure that the argument passed is a data.frame
+  data$raa.bat = data$delta.bat - predict(mod.bat, newdata=data[, c("batterPos", "idx")])
+
+  
+  ###########################################################################################
   # Step 5: Define RAA for the baserunners
   br.fields = c("idx", "delta.br", "start1B", "start2B", "start3B", "end1B", "end2B", "end3B"
                 , "runnerMovement", "event", "startCode", "startOuts")
   raa.br = makeWARBaserunning(data[br.idx, br.fields], models[["baserunning"]], verbose)
   data = merge(x=data, y=raa.br, by="idx", all.x=TRUE)
   
+  ###########################################################################################
   # Add the new class
   class(data) = c("GameDayPlaysExt", "GameDayPlays", "data.frame")
-  return(data)
+  return(list(data, models.used))
 }
 
 
 makeWARre24 = function (data, mod.re = NULL, verbose=TRUE, ...) {
   message("...Estimating Expected Runs...")
   
-  # Check to see whether the supplied run expectancy model has a predict() method
-  if (!paste("predict", class(mod.re), sep=".") %in% methods(predict)) {
-    message("....Supplied Run Expectancy model does not have a predict method...")
-    message("....Building in-sample Run Expectancy Model...")
-    mod.re = getModelRunExpectancy(data[, c("outsInInning", "runsFuture", "startCode", "startOuts")])
-  }
-  
-  if (verbose) {
-    message("....Run Expectancy Model....")
-    states = expand.grid(startCode = 0:7, startOuts = 0:2)
-    print(matrix(predict(mod.re, newdata=states), ncol=3))
-  }
-  
-  begin.states = data[,c("startCode", "startOuts")]
-  end.states = data[,c("endCode", "endOuts")]
+  begin.states = data[, c("startCode", "startOuts")]
+  end.states = data[, c("endCode", "endOuts")]
   end.states$endOuts = with(end.states, ifelse(endOuts == 3, NA, endOuts))
   names(end.states) = names(begin.states)
   
@@ -237,89 +267,6 @@ getFielderResp = function (data, ...) {
   out = out / row.sums
   names(out) = c("resp.P", "resp.C", "resp.1B", "resp.2B", "resp.3B", "resp.SS", "resp.LF", "resp.CF", "resp.RF")
   return(out)
-}
-
-makeWARPitching = function (data, mod.pitch = NULL, verbose = TRUE, ...) {
-  message("...Estimating Pitching Runs Above Average...")
-  
-  if (!paste("predict", class(mod.pitch), sep=".") %in% methods(predict)) {
-    message("....Supplied Pitching model does not have a predict method...")
-    message("....Building in-sample Pitching Model...")
-    mod.pitch = getModelPitching(data[,c("delta.pitch", "stadium", "throws", "stand")])
-    raa.pitch = -mod.pitch$residuals
-  } else {
-    mod.pitch = models[["pitching"]]
-    raa.pitch = predict(mod.pitch, newdata=data[,c("stadium", "throws", "stand")]) - data$delta.pitch
-  }
-  
-  if (verbose) {
-    message("....Pitching Model....")
-    print(sort(coef(mod.pitch)))
-  }
-  return(raa.pitch)
-}
-
-makeWAROffense = function (data, mod.off = NULL, verbose = TRUE, ...) {
-  message("...Building model for offense...")
-  
-  # Control for circumstances
-  if (!paste("predict", class(mod.off), sep=".") %in% methods(predict)) {
-    message("....Supplied Offense model does not have a predict method...")
-    message("....Building in-sample Offense Model...")
-    mod.off = getModelOffense(data[,c("delta", "stadium", "throws", "stand")])
-    delta.off = mod.off$residuals  
-  } else {
-    mod.off = models[["offensive"]]
-    delta.off = data$delta - predict(mod.off, newdata=data[,c("stadium", "throws", "stand")])
-  }
-  # delta.off is the contribution above average of the batter AND all of the runners
-  if (verbose) {
-    message("....Offense Model....")
-    print(sort(coef(mod.off)))
-  }
-  return(delta.off)
-}
-
-makeWARBaserunningSplit = function (data, mod.br = NULL, verbose = TRUE, ...) {
-  message("...Partitioning Offense into Batting and Baserunning...")
-  
-  # Siphon off the portion attributable to the baserunners   
-  if (!paste("predict", class(mod.br), sep=".") %in% methods(predict)) {
-    message("....Supplied Baserunning model does not have a predict method...")
-    message("....Building in-sample Baserunning Model...")
-    mod.br = getModelBaserunning(data[, c("delta.off", "event", "startCode", "startOuts")])
-    delta.br = mod.br$residuals
-  } else {
-    mod.br = models[["baserunning"]]
-    delta.br = data$delta.off - predict(mod.br, newdata=data[, c("event", "startCode", "startOuts")])
-  }
-  # delta.off is the contribution above average of the batter AND all of the runners
-  if (verbose) {
-    message("....Baserunning Model....")
-    message(paste("....", length(coef(mod.br)), "coefficients -- suppressing output..."))
-    #    print(sort(coef(mod.br)))
-  }
-  return(delta.br)
-}
-
-makeWARBatting = function (data, mod.bat, verbose = TRUE, ...) {
-  message("...Estimating Batting Runs Above Average...")
-  
-  if (!paste("predict", class(mod.bat), sep=".") %in% methods(predict)) {
-    message("....Supplied Batting model does not have a predict method...")
-    message("....Building in-sample Batting Model...")
-    mod.bat = getModelBatting(data[, c("delta.bat", "batterPos")])
-    raa.bat = mod.bat$residuals
-  } else {
-    mod.bat = models[["batting"]]
-    raa.bat = data$delta.bat - predict(mod.bat, newdata=data[, c("batterPos")])
-  }
-  # delta.off is the contribution above average of the batter AND all of the runners
-  if (verbose) {
-    message("....Batting Model....")
-    print(sort(coef(mod.bat)))
-  }
-  return(raa.bat)
 }
 
 

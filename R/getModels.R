@@ -44,35 +44,66 @@ getModels.GameDayPlays = function (data, ...) {
 
 getModelRunExpectancy = function (data, drop.incomplete = TRUE, ...) UseMethod("getModelRunExpectancy")
 
-getModelRunExpectancy.GameDayPlays = function (data, drop.incomplete = TRUE, ...) {
-  # Drop incomplete innings
-  if (drop.incomplete) {
-    ds <- subset(data, outsInInning == 3)
-  } else {
-    ds <- data
+getModelRunExpectancy.GameDayPlays = function (data, mod.re = NULL, verbose=TRUE, drop.incomplete = TRUE, ...) {
+  # Check to see whether the supplied run expectancy model has a predict() method
+  if (!paste("predict", class(mod.re), sep=".") %in% methods(predict)) {
+    message("....Supplied Run Expectancy model does not have a predict method...")
+    message("....Building in-sample Run Expectancy Model...")
+    # Drop incomplete innings
+    if (drop.incomplete) {
+      ds <- subset(data, outsInInning == 3)
+    } else {
+      ds <- data
+    }
+    # use model=FALSE option to decrease memory footprint
+    # Note that qr=TRUE is necessary to use predict() later
+    mod.re = lm(runsFuture ~ as.factor(startCode) * as.factor(startOuts), data=ds, model=FALSE)
   }
-  mod = lm(runsFuture ~ as.factor(startCode) * as.factor(startOuts), data=ds)
-  return(mod)
+  
+  if (verbose) {
+    message("....Run Expectancy Model....")
+    states = expand.grid(startCode = 0:7, startOuts = 0:2)
+    print(matrix(predict(mod.re, newdata=states), ncol=3))
+  }
+  return(mod.re)
 }
 
-getModelPitching = function (data) {
-  mod = lm(delta.pitch ~ stadium + (throws == stand), data = data)
-  return(mod)
+getModelPitching = function (data, mod.pitch = NULL, verbose = TRUE) {  
+  if (!paste("predict", class(mod.pitch), sep=".") %in% methods(predict)) {
+    message("....Supplied Pitching model does not have a predict method...")
+    message("....Building in-sample Pitching Model...")  
+    mod.pitch = lm(delta.pitch ~ stadium + (throws == stand), data = data[,c("delta.pitch", "stadium", "throws", "stand")])
+  } 
+  return(mod.pitch)
 }
 
-getModelOffense = function (data) {
-  mod = lm(delta ~ stadium + (throws == stand), data = data)
-  return(mod)
+getModelOffense = function (data, mod.off = NULL, verbose = TRUE) {
+  # Control for circumstances
+  if (!paste("predict", class(mod.off), sep=".") %in% methods(predict)) {
+    message("....Supplied Offense model does not have a predict method...")
+    message("....Building in-sample Offense Model...")
+    mod.off = lm(delta ~ stadium + (throws == stand), data = data[,c("delta", "stadium", "throws", "stand")])
+  } 
+  return(mod.off)
 }
 
-getModelBaserunning = function (data) {
-  mod = lm(delta.off ~ event * as.factor(startCode) * as.factor(startOuts), data=data)
-  return(mod)
+getModelBaserunning = function (data, mod.br = NULL, verbose = TRUE) {  
+  # Siphon off the portion attributable to the baserunners   
+  if (!paste("predict", class(mod.br), sep=".") %in% methods(predict)) {
+    message("....Supplied Baserunning model does not have a predict method...")
+    message("....Building in-sample Baserunning Model...")
+    mod.br = lm(delta.off ~ event * as.factor(startCode) * as.factor(startOuts), data=data[, c("delta.off", "event", "startCode", "startOuts")])
+  }
+  return(mod.br)
 }
 
-getModelBatting = function (data) {
-  mod = lm(delta.bat ~ as.factor(batterPos), data=data)
-  return(mod)
+getModelBatting = function (data, mod.bat = NULL, verbose = TRUE) {
+  if (!paste("predict", class(mod.bat), sep=".") %in% methods(predict)) {
+    message("....Supplied Batting model does not have a predict method...")
+    message("....Building in-sample Batting Model...")
+    mod.bat = lm(delta.bat ~ as.factor(batterPos), data = data[, c("delta.bat", "batterPos")])
+  }
+  return(mod.bat)
 }
 
 getModelFieldingPosition = function (data, position) {
