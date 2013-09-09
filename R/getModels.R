@@ -1,5 +1,5 @@
-#' @title getModel
-#' @aliases getModel.GameDayPlays
+#' @title getModels
+#' @aliases getModels.GameDayPlays
 #' 
 #' @description Retrieve various models trained on GameDayPlays data
 #' 
@@ -12,8 +12,8 @@
 #' 
 #' @return A model object with a predict() method 
 #' 
-#' @export getModel
-#' @export getModel.GameDayPlays
+#' @export getModels
+#' @export getModels.GameDayPlays
 #' @examples
 #' 
 #' data(MLBAM2013)
@@ -33,16 +33,13 @@
 #' 
 #' 
 
-getModel = function (data, type, drop.incomplete = TRUE, ...) UseMethod("getModel")
+getModels = function (data,...) UseMethod("getModel")
 
-getModel.GameDayPlays = function (data, type, ...) {
-  require(mosaic)
+getModels.GameDayPlays = function (data, ...) {
+  models = list()
+  models[["run-expectancy"]] = getModelRunExpectancy(data)
   
-  if (type == "run-expectancy") {
-    mod = getModelRunExpectancy(ds, ...)
-  }
-  
-  return(mod)
+  return(models)
 }
 
 getModelRunExpectancy = function (data, drop.incomplete = TRUE, ...) UseMethod("getModelRunExpectancy")

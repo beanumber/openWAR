@@ -1,9 +1,9 @@
-\name{getModel}
-\alias{getModel}
-\alias{getModel.GameDayPlays}
-\title{getModel}
+\name{getModels}
+\alias{getModels}
+\alias{getModels.GameDayPlays}
+\title{getModels}
 \usage{
-  getModel(data, type, drop.incomplete = TRUE, ...)
+  getModels(data, ...)
 }
 \arguments{
   \item{data}{a GameDayPlays dataset}
