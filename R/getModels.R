@@ -33,7 +33,7 @@
 #' 
 #' 
 
-getModels = function (data,...) UseMethod("getModel")
+getModels = function (data,...) UseMethod("getModels")
 
 getModels.GameDayPlays = function (data, ...) {
   models = list()
