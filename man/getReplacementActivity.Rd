@@ -1,0 +1,29 @@
+\name{getReplacementActivity}
+\alias{getReplacementActivity}
+\title{getReplacementActivity}
+\usage{
+  getReplacementActivity(data, replacementIds)
+}
+\arguments{
+  \item{data}{An openWARPlays data.frame}
+
+  \item{replacementIds}{A vector of playerIds for
+  replacement-level players}
+}
+\value{
+  a list of RAA values for each type of activity
+}
+\description{
+  Isolates the plays involving replacement-level players
+}
+\details{
+  Returns only the RAA values involving replacement-level
+  players
+}
+\examples{
+data = getData()
+ds = makeWAR(data)
+players = getWAR(ds$openWAR)
+summary(players)
+}
+
