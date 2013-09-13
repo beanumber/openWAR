@@ -53,7 +53,10 @@ summary.openWARPlayers = function (data, n = 25, ...) {
 
 summary.do.openWARPlayers = function (data, n = 25, ...) {
   require(plyr)  
-  players = ddply(data, ~Name, summarise, q0 = min(RAA), q2.5 = quantile(RAA, 0.025), q50 = mean(RAA), q97.5 = quantile(RAA, 0.975), q100 = max(RAA))
+  players = ddply(data, ~Name, summarise, q0 = min(WAR), q2.5 = quantile(WAR, 0.025)
+                  , q25 = quantile(WAR, 0.25)
+                  , q50 = mean(WAR)
+                  , q75 = quantile(WAR, 0.75), q97.5 = quantile(WAR, 0.975), q100 = max(WAR))
   print(head(players[order(players$q50, decreasing=TRUE),], n))
 }
 
