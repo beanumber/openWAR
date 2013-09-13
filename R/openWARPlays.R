@@ -180,7 +180,7 @@ getPlayingTime.openWARPlays = function (data, playerIds) {
 
 getReplacementMeans = function (data) UseMethod("getReplacementMeans")
 
-getReplacementMeans = function (data) {
+getReplacementMeans.openWARPlays = function (data) {
   replIds = getReplacementPlayers(getWAR(data))
   repl = getReplacementActivity(data, replIds)
   repl.means = sapply(repl, mean, na.rm=TRUE)
