@@ -73,6 +73,50 @@ getRAA.openWARPlays = function (data, ...) {
   players = transform(players, RAA = RAA.bat + RAA.br + RAA.pitch + RAA.field)
   players = transform(players, TPA = PA + BF)
   players = players[, setdiff(names(players), c("Name.x", "Name.y"))]
-  class(players) = c("RAA", "data.frame")
+  class(players) = c("openWARPlayers", "data.frame")
   return(players)
+}
+
+#' @title getWAR
+#' 
+#' @description Tabulates WAR
+#' 
+#' @details Compute each player's WAR, given their RAA values
+#' 
+#' @param data An object of class \code{"openWARPlays"}
+#' 
+#' @export getWAR
+#' @export getWAR.openWARPlays
+#' 
+#' @examples
+#' 
+#' ds = getData()
+#' out = makeWAR(ds)
+#' raa = getRAA(out$openWAR)
+#' war = getWAR(raa)
+
+getWAR = function (data, verbose=TRUE, ...) UseMethod("getWAR")
+
+getWAR.openWARPlays = function (data, verbose=TRUE, ...) {
+  # Get the replacement level players
+  players = getRAA(data)
+  replIds = getReplacementPlayers(players)
+  repl = subset(players, batterId %in% replIds)
+  
+  if (verbose) {
+    message(paste("...identified", nrow(repl), "replacement-level players..."))
+  }
+  
+  # Find the playing time matrix for all players
+  message(paste("...determining playing time for all", nrow(players), "players..."))
+  message("...this may take some time...")
+  pt.mat = getPlayingTime(data, players$batterId)
+  repl.means = getReplacementMeans(data, replIds)
+  repl.value = pt.mat %*% repl.means
+  
+  # Attach the replacement values to the list of players
+  war = merge(x=players, y=data.frame(batterId = row.names(repl.value), repl = repl.value), all.x = TRUE)
+  war = transform(war, WAR = (RAA - repl) / 10)
+  class(war) = c("openWARPlayers", class(war))
+  return(war)
 }
