@@ -1,15 +1,16 @@
-\name{plot.do.RAA}
-\alias{plot.do.RAA}
-\title{plot.do.RAA}
+\name{plot.do.openWARPlayers}
+\alias{plot.do.openWARPlayers}
+\title{plot.do.openWARPlayers}
 \usage{
-  plot.do.RAA(data, playerIds = c(431151, 285079), ...)
+  plot.do.openWARPlayers(data,
+    playerIds = c(431151, 285079), ...)
 }
 \arguments{
   \item{playerIds}{A vector of valid MLBAM player IDs
   present in the data argument}
 
   \item{data}{A data.frame resulting from shakeWAR() of
-  class \code{do.RAA}}
+  class \code{do.openWARPlayers}}
 }
 \value{
   a faceted densityplot

@@ -185,9 +185,9 @@ shakeWAR.GameDayPlays = function (data, resample = "plays", N = 10, ...) {
     }
     war.list = t(lapply(raa.list, getWAR))
     bstrap = do.call("rbind", war.list)
-    class(bstrap) = c("do.RAA", class(bstrap))
+    class(bstrap) = c("do.openWARPlayers", class(bstrap))
   }
-  # bstrap should be a data.frame of class "do.RAA"
+  # bstrap should be a data.frame of class "do.openWARPlayers"
   # with roughly N * M rows, where M is the numbers of players
   return(bstrap)
 }

@@ -2,7 +2,7 @@
 \alias{getReplacementMeans}
 \title{getReplacementMeans}
 \usage{
-  getReplacementMeans(data)
+  getReplacementMeans(data, replIds)
 }
 \arguments{
   \item{data}{An openWARPlays data.frame}

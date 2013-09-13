@@ -1,0 +1,21 @@
+\name{summary.do.openWARPlayers}
+\alias{summary.do.openWARPlayers}
+\title{summary.do.openWARPlayers}
+\usage{
+  summary.do.openWARPlayers(data, n = 25, ...)
+}
+\arguments{
+  \item{An}{object of class \code{"openWARPlayers"}}
+}
+\description{
+  Summarize WAR
+}
+\details{
+  Summary of players' WAR
+}
+\examples{
+ds = makeWAR(ds)
+sim = shakeWAR(ds)
+summary(sim)
+}
+

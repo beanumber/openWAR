@@ -1,8 +1,10 @@
 \name{getReplacementPlayers}
 \alias{getReplacementPlayers}
+\alias{getReplacementPlayers.RAA}
+\alias{getReplacementPlayers.openWARPlays}
 \title{getReplacementPlayers}
 \usage{
-  getReplacementPlayers(data)
+  getReplacementPlayers(data, ...)
 }
 \arguments{
   \item{data}{An object of class \code{"RAA"}}

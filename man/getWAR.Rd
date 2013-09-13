@@ -2,25 +2,21 @@
 \alias{getWAR}
 \title{getWAR}
 \usage{
-  getWAR(data, ...)
+  getWAR(data, verbose = TRUE, ...)
 }
 \arguments{
-  \item{data}{An openWARPlays data.frame}
-}
-\value{
-  an RAA object
+  \item{data}{An object of class \code{"openWARPlays"}}
 }
 \description{
-  Tabulates RAA values per player
+  Tabulates WAR
 }
 \details{
-  takes an openWARPlays data.frame and consolidates the RAA
-  values by player
+  Compute each player's WAR, given their RAA values
 }
 \examples{
-data = getData()
-ds = makeWAR(data)
-players = getWAR(ds$openWAR)
-summary(players)
+ds = getData()
+out = makeWAR(ds)
+raa = getRAA(out$openWAR)
+war = getWAR(raa)
 }
 
