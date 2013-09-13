@@ -24,15 +24,15 @@ getReplacementPlayers = function (data, ...) UseMethod("getReplacementPlayers")
 
 getReplacementPlayers.openWARPlayers = function (data) {
   # Get the list of all playerIds
-  playerIds = data$batterId
+  playerIds = data$playerId
   # Order by plate appearances
-  universe = data[order(data$PA, decreasing=TRUE),]
+  universe = data[order(data$PA.bat, decreasing=TRUE),]
   # Find the players with the most plate appearances, 13 for each club
   mlb.pos.playerIds = universe$batterId[1:(30 * 13)]
   
   universe = data[order(data$BF, decreasing=TRUE),]
   # Find the players with the most batters faced, 12 per club
-  mlb.pitcherIds = universe$batterId[1:(30*12)]
+  mlb.pitcherIds = universe$pitcherId[1:(30*12)]
   
   # Their union are the MLB players
   mlb.playerIds = union(mlb.pos.playerIds, mlb.pitcherIds)
@@ -91,48 +91,6 @@ getReplacementActivity.openWARPlays = function (data, replacementIds) {
 }
 
 
-
-#' @title getPlayingTime
-#' @aliases getPlayingTimeOnce
-#' 
-#' @description Identify the playing time for all players
-#' 
-#' @details Returns a matrix of playing time at each activity for each player
-#' 
-#' @param data An openWARPlays data.frame
-#' @param playerIds A vector of playerIds 
-#' 
-#' @return a matrix of playing time counts for each player at each position
-#' 
-#' @export getPlayingTime
-#' @export getPlayingTime.openWARPlays
-#' @export getPlayingTimeOnce
-#' @export getPlayingTimeOnce.openWARPlays
-#' 
-#' @examples
-#' 
-#' data = getData()
-#' ds = makeWAR(data)
-#' players = getWAR(ds$openWAR)
-#' summary(players)
-#' 
-
-
-getPlayingTimeOnce = function (data, playerIds) UseMethod("getPlayingTimeOnce")
-
-getPlayingTimeOnce.openWARPlays = function (data, playerId) {
-  reality = data[c("batterId", "start1B", "start2B", "start3B", "pitcherId", "pitcherId", "playerId.C", "playerId.1B"
-                   , "playerId.2B", "playerId.3B", "playerId.SS", "playerId.LF", "playerId.CF", "playerId.RF")]
-  is.player = (reality == playerId)
-  pt = apply(is.player, 2, sum, na.rm=TRUE)
-  return(pt)
-}
-
-getPlayingTime = function (data, playerIds) UseMethod("getPlayingTime")
-
-getPlayingTime.openWARPlays = function (data, playerIds) {
-  out = t(sapply(playerIds, getPlayingTimeOnce.openWARPlays, data=data))
-}
 
 #' @title getReplacementMeans
 #' 
