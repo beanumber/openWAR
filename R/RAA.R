@@ -44,9 +44,11 @@ summary.RAA = function (data, n = 25, ...) {
 #' summary(out)
 #' replacementIds = getReplacementPlayers(players)
 
+getReplacementPlayers = function (data, ...) UseMethod("getReplacementPlayers")
+
 getReplacementPlayers = function (data) {
   # Get the list of all playerIds
-  playerIds = universe$batterId
+  playerIds = data$batterId
   # Order by plate appearances
   universe = data[order(data$PA, decreasing=TRUE),]
   # Find the players with the most plate appearances, 13 for each club
