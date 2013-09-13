@@ -76,3 +76,115 @@ getWAR.openWARPlays = function (data, ...) {
   class(players) = c("RAA", "data.frame")
   return(players)
 }
+
+#' @title getReplacementActivity
+#' 
+#' @description Isolates the plays involving replacement-level players
+#' 
+#' @details Returns only the RAA values involving replacement-level players
+#' 
+#' @param data An openWARPlays data.frame
+#' @param replacementIds A vector of playerIds for replacement-level players
+#' 
+#' @return a list of RAA values for each type of activity
+#' 
+#' @export getReplacementActivity
+#' @export getReplacementActivity.openWARPlays
+#' @examples
+#' 
+#' data = getData()
+#' ds = makeWAR(data)
+#' players = getWAR(ds$openWAR)
+#' summary(players)
+#' 
+
+
+getReplacementActivity = function (data, replacementIds) UseMethod("getReplacementActivity")
+
+getReplacementActivity.openWARPlays = function (data, replacementIds) {
+  out = list()
+  out[["bat"]] = subset(data, batterId %in% replacementIds, select="raa.bat")
+  out[["br1"]] = subset(data, start1B %in% replacementIds, select="raa.br1")
+  out[["br2"]] = subset(data, start2B %in% replacementIds, select="raa.br2")
+  out[["br3"]] = subset(data, start3B %in% replacementIds, select="raa.br3")
+  out[["pitch"]] = subset(data, pitcherId %in% replacementIds, select="raa.pitch")
+  out[["P"]] = subset(data, pitcherId %in% replacementIds, select="raa.P")
+  out[["C"]] = subset(data, playerId.C %in% replacementIds, select="raa.C")
+  out[["1B"]] = subset(data, playerId.1B %in% replacementIds, select="raa.1B")
+  out[["2B"]] = subset(data, playerId.2B %in% replacementIds, select="raa.2B")
+  out[["3B"]] = subset(data, playerId.3B %in% replacementIds, select="raa.3B")
+  out[["SS"]] = subset(data, playerId.SS %in% replacementIds, select="raa.SS")
+  out[["LF"]] = subset(data, playerId.LF %in% replacementIds, select="raa.LF")
+  out[["CF"]] = subset(data, playerId.CF %in% replacementIds, select="raa.CF")
+  out[["RF"]] = subset(data, playerId.RF %in% replacementIds, select="raa.RF")
+  return(out)
+}
+
+
+
+#' @title getPlayingTime
+#' @aliases getPlayingTimeOnce
+#' 
+#' @description Identify the playing time for all players
+#' 
+#' @details Returns a matrix of playing time at each activity for each player
+#' 
+#' @param data An openWARPlays data.frame
+#' @param playerIds A vector of playerIds 
+#' 
+#' @return a matrix of playing time counts for each player at each position
+#' 
+#' @export getPlayingTime
+#' @export getPlayingTime.openWARPlays
+#' @examples
+#' 
+#' data = getData()
+#' ds = makeWAR(data)
+#' players = getWAR(ds$openWAR)
+#' summary(players)
+#' 
+
+
+getPlayingTimeOnce.openWARPlays = function (data, playerId) {
+  reality = data[c("batterId", "start1B", "start2B", "start3B", "pitcherId", "pitcherId", "playerId.C", "playerId.1B"
+                   , "playerId.2B", "playerId.3B", "playerId.SS", "playerId.LF", "playerId.CF", "playerId.RF")]
+  is.player = (reality == playerId)
+  pt = apply(is.player, 2, sum, na.rm=TRUE)
+  return(pt)
+}
+
+getPlayingTime = function (data, playerIds) UseMethod("getPlayingTime")
+
+getPlayingTime.openWARPlays = function (data, playerIds) {
+  out = t(sapply(playerIds, getPlayingTimeOnce.openWARPlays, data=data))
+}
+
+#' @title getReplacementMeans
+#' 
+#' @description Compute the mean RAA for replacement-level players
+#' 
+#' @details Identifies replacement-level players, and then compute their contribution
+#' 
+#' @param data An openWARPlays data.frame
+#' 
+#' @return a vector of mean contributions per activity for replacement-level players
+#' 
+#' @export getReplacementMeans
+#' @export getReplacementMeans.openWARPlays
+#' @examples
+#' 
+#' data = getData()
+#' ds = makeWAR(data)
+#' getReplacementMeans(ds$openWAR)
+#' 
+
+getReplacementMeans = function (data) UseMethod("getReplacementMeans")
+
+getReplacementMeans = function (data) {
+  replIds = getReplacementPlayers(getWAR(data))
+  repl = getReplacementActivity(data, replIds)
+  repl.means = sapply(repl, mean, na.rm=TRUE)
+  return(repl.means)
+}
+
+

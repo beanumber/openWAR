@@ -157,7 +157,7 @@ shakeWAR = function (data, resample = "plays", N = 10, ...) UseMethod("shakeWAR"
 
 shakeWAR.GameDayPlays = function (data, resample = "plays", N = 10, ...) {
   require(mosaic)
-  ext = makeWAR(data)
+  ext = makeWAR(data, verbose=FALSE)
   
   # Keep track of the original data
   reality = ext$plays
