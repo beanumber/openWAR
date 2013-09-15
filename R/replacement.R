@@ -32,7 +32,7 @@ getReplacementPlayers.openWARPlayers = function (data) {
   
   universe = data[order(data$BF, decreasing=TRUE),]
   # Find the players with the most batters faced, 12 per club
-  mlb.pitcherIds = universe$pitcherId[1:(30*12)]
+  mlb.pitcherIds = universe$playerId[1:(30*12)]
   
   # Their union are the MLB players
   mlb.playerIds = union(mlb.pos.playerIds, mlb.pitcherIds)

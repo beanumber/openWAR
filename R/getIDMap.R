@@ -18,3 +18,5 @@ getIDMap = function () {
   ids = merge(x=Lahman::Master, y=bp.ids, by.x="retroID", by.y="retroId", all=TRUE)
   return(ids)
 }
+
+
