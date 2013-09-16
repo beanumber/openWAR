@@ -39,7 +39,7 @@ getrWAR <- function () {
   rWAR = rename(rWAR, replace=c("runs_above_avg_off" = "RAA_bat", "runs_above_avg_def" = "RAA_field"
                                 , "runs_above_avg.y" = "RAA_pitch", "player_ID" = "playerId"
                                 , "year_ID" = "yearId", "stint_ID" = "stintId"))
-  rWAR$BF = with(rWAR, ifelse(is.na(PA), 0, PA) + ifelse(is.na(BFP), 0, BFP))
+  rWAR$TPA = with(rWAR, ifelse(is.na(PA), 0, PA) + ifelse(is.na(BFP), 0, BFP))
   rWAR$RAR = with(rWAR, ifelse(is.na(runs_above_rep.x), 0, runs_above_rep.x) + ifelse(is.na(runs_above_rep.y), 0, runs_above_rep.y))
   rWAR$RAA = with(rWAR, ifelse(is.na(runs_above_avg.x), 0, runs_above_avg.x) + ifelse(is.na(RAA_pitch), 0, RAA_pitch))  
   rWAR$repl = with(rWAR, RAA - RAR)
