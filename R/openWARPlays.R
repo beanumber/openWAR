@@ -95,12 +95,12 @@ getRAA.openWARPlays = function (data, ...) {
 #' raa = getRAA(out$openWAR)
 #' war = getWAR(raa)
 
-getWAR = function (data, verbose=TRUE, ...) UseMethod("getWAR")
+getWAR = function (data, nteams = 30, verbose=TRUE, ...) UseMethod("getWAR")
 
-getWAR.openWARPlays = function (data, verbose=TRUE, ...) {
+getWAR.openWARPlays = function (data, nteams = 30, verbose=TRUE, ...) {
   # Get the replacement level players
   players = getRAA(data)
-  replIds = getReplacementPlayers(players)
+  replIds = getReplacementPlayers(players, nteams)
   repl = subset(players, playerId %in% replIds)
   
   if (verbose) {
