@@ -74,7 +74,7 @@ getModelPitching = function (data, mod.pitch = NULL, verbose = TRUE) {
   if (!paste("predict", class(mod.pitch), sep=".") %in% methods(predict)) {
     message("....Supplied Pitching model does not have a predict method...")
     message("....Building in-sample Pitching Model...")  
-    mod.pitch = lm(delta.pitch ~ stadium + (throws == stand), data = data[,c("delta.pitch", "stadium", "throws", "stand")])
+    mod.pitch = lm(delta.pitch ~ factor(venueId) + (throws == stand), data = data[,c("delta.pitch", "venueId", "throws", "stand")])
   } 
   return(mod.pitch)
 }
@@ -84,7 +84,7 @@ getModelOffense = function (data, mod.off = NULL, verbose = TRUE) {
   if (!paste("predict", class(mod.off), sep=".") %in% methods(predict)) {
     message("....Supplied Offense model does not have a predict method...")
     message("....Building in-sample Offense Model...")
-    mod.off = lm(delta ~ stadium + (throws == stand), data = data[,c("delta", "stadium", "throws", "stand")])
+    mod.off = lm(delta ~ factor(venueId) + (throws == stand), data = data[,c("delta", "venueId", "throws", "stand")])
   } 
   return(mod.off)
 }

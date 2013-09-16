@@ -12,9 +12,9 @@
 #' run-expectancy: a model for assigning a run expectancy value to any of the 24 (base,out) states. Variables
 #' must be "startCode" [0-7] and "startOuts" [0-2]
 #' pitching: a model for the expected outcome of a plate appearance attributable to the pitcher. Variables
-#' must be "stadium", "throws" [L/R], and "stands" [L/R]
+#' must be "venueId", "throws" [L/R], and "stands" [L/R]
 #' offense: a model for the expected outcome of a plate appearance attributable to the offense. Variables
-#' must be "stadium", "throws" [L/R], and "stands" [L/R]
+#' must be "venueId", "throws" [L/R], and "stands" [L/R]
 #' baserunning: a model for the expected contribution of the baserunners to a plate appearance. Variables
 #' must be "event" (the type of batting event), "startCode" [0-7], and "startOuts" [0-2]
 #' batting: a model for the expected contribution of the batter to a plate appearance. Variables
@@ -64,26 +64,27 @@ makeWAR.GameDayPlays = function (data, models = list(), verbose = TRUE, ...) {
   # Step 3: Define RAA for the pitcher
   data$delta.pitch = with(data, ifelse(is.na(delta.field), delta, delta - delta.field))
   message("...Estimating Pitching Runs Above Average...")
-  mod.pitch = getModelPitching(data[,c("delta.pitch", "stadium", "throws", "stand")], models[["pitching"]], verbose)
+  mod.pitch = getModelPitching(data[,c("delta.pitch", "venueId", "throws", "stand")], models[["pitching"]], verbose)
   if (verbose) {
     message("....Pitching Model....")
     print(sort(coef(mod.pitch)))
   }
+  
   models.used[["pitching"]] = mod.pitch
   # Note the pitcher RAA's are the negative residuals!
-  data$raa.pitch = predict(mod.pitch, newdata=data[,c("stadium", "throws", "stand")]) - data$delta.pitch  
+  data$raa.pitch = predict(mod.pitch, newdata=data[,c("venueId", "throws", "stand")]) - data$delta.pitch  
   
   ###########################################################################################
   # Step 4: Define RAA for the batter
   message("...Building model for offense...")
-  mod.off = getModelOffense(data[,c("delta", "stadium", "throws", "stand")], models[["offense"]], verbose)
+  mod.off = getModelOffense(data[,c("delta", "venueId", "throws", "stand")], models[["offense"]], verbose)
   if (verbose) {
     message("....Offense Model....")
     print(sort(coef(mod.off)))
   }
   models.used[["offense"]] = mod.off
   # delta.off is the contribution above average of the batter AND all of the runners
-  data$delta.off = data$delta - predict(mod.off, newdata=data[,c("stadium", "throws", "stand")])
+  data$delta.off = data$delta - predict(mod.off, newdata=data[,c("venueId", "throws", "stand")])
   
   # If runners are on base, partition delta between the batter and baserunners
   br.idx = which(data$startCode > 0)
@@ -171,7 +172,7 @@ makeWARFielding = function (data, models = list(), verbose=TRUE, ...) {
   out = data.frame(p.hat, delta.field, delta.fielders)
   
   # Normalize the delta's into RAA's
-  raa.field = getFielderRAA(cbind(out, stadium = data$stadium))
+  raa.field = getFielderRAA(cbind(out, venueId = data$venueId))
   return(cbind(out, raa.field))
 }
 
@@ -196,15 +197,15 @@ makeWARFielding = function (data, models = list(), verbose=TRUE, ...) {
 
 getFielderRAA = function (data) {
   # Build a model for each fielder's expected change in runs
-  mod.P = lm(delta.P ~ stadium, data = data)
-  mod.C = lm(delta.C ~ stadium, data = data)
-  mod.1B = lm(delta.1B ~ stadium, data = data)
-  mod.2B = lm(delta.2B ~ stadium, data = data)
-  mod.3B = lm(delta.3B ~ stadium, data = data)
-  mod.SS = lm(delta.SS ~ stadium, data = data)
-  mod.LF = lm(delta.LF ~ stadium, data = data)
-  mod.CF = lm(delta.CF ~ stadium, data = data)
-  mod.RF = lm(delta.RF ~ stadium, data = data)
+  mod.P = lm(delta.P ~ factor(venueId), data = data)
+  mod.C = lm(delta.C ~ factor(venueId), data = data)
+  mod.1B = lm(delta.1B ~ factor(venueId), data = data)
+  mod.2B = lm(delta.2B ~ factor(venueId), data = data)
+  mod.3B = lm(delta.3B ~ factor(venueId), data = data)
+  mod.SS = lm(delta.SS ~ factor(venueId), data = data)
+  mod.LF = lm(delta.LF ~ factor(venueId), data = data)
+  mod.CF = lm(delta.CF ~ factor(venueId), data = data)
+  mod.RF = lm(delta.RF ~ factor(venueId), data = data)
   
   # Define RAA to be the residuals from the individual fielders models
   raa = -data.frame(mod.P$residuals, mod.C$residuals, mod.1B$residuals, mod.2B$residuals, mod.3B$residuals
