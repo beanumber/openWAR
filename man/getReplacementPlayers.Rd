@@ -4,7 +4,7 @@
 \alias{getReplacementPlayers.openWARPlays}
 \title{getReplacementPlayers}
 \usage{
-  getReplacementPlayers(data, ...)
+  getReplacementPlayers(data, nteams = 30, ...)
 }
 \arguments{
   \item{data}{An object of class \code{"RAA"}}

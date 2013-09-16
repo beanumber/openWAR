@@ -2,7 +2,7 @@
 \alias{getWAR}
 \title{getWAR}
 \usage{
-  getWAR(data, verbose = TRUE, ...)
+  getWAR(data, nteams = 30, verbose = TRUE, ...)
 }
 \arguments{
   \item{data}{An object of class \code{"openWARPlays"}}

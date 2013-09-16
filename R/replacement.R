@@ -28,11 +28,11 @@ getReplacementPlayers.openWARPlayers = function (data, nteams = 30, ...) {
   # Order by plate appearances
   universe = data[order(data$PA.bat, decreasing=TRUE),]
   # Find the players with the most plate appearances, 13 for each club
-  mlb.pos.playerIds = universe$batterId[1:(nteams * 13)]
+  mlb.pos.playerIds = universe$batterId[1:round(nteams * 13)]
   
   universe = data[order(data$BF, decreasing=TRUE),]
   # Find the players with the most batters faced, 12 per club
-  mlb.pitcherIds = universe$playerId[1:(nteams * 12)]
+  mlb.pitcherIds = universe$playerId[1:round(nteams * 12)]
   
   # Their union are the MLB players
   mlb.playerIds = union(mlb.pos.playerIds, mlb.pitcherIds)
