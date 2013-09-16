@@ -26,7 +26,6 @@ Collate:
     'makeWAR.R'
     'linearWeights.R'
     'getrWAR.R'
-    'getfWAR.R'
     'crosscheck.R'
     'GameDayPlays.R'
     'GameDayPlaysExt.R'
