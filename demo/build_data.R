@@ -17,6 +17,14 @@ save(MLBAM2012, file = "data/MLBAM2012.rda")
 MLBAM2013 = getData(start = "2013-03-31", end = "2013-09-30")
 save(MLBAM2013, file = "data/MLBAM2013.rda")
 
+# Use the data from 2012 to compute WAR
+madeWAR2012 = makeWAR(MLBAM2012)
+openWARPlays.2012 = madeWAR2012$openWAR
+save(openWARPlays.2012, file="data/openWARPlays.2012.rda")
+
+openWAR.2012 = getWAR(openWARPlays.2012)
+save(openWAR.2012, file="data/openWAR.2012.rda")
+
 # Use the data from 2013 to compute WAR
 openWAR.2013 = getWAR(madeWAR2013$openWAR)
 save(openWAR.2013, file="data/openWAR.2013.rda")
