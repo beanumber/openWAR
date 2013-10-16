@@ -42,9 +42,9 @@ getReplacementPlayers.openWARPlayers = function (data, nteams = 30, ...) {
   return(repl.playerIds)
 }
 
-getReplacementPlayers.openWARPlays = function (data) {
+getReplacementPlayers.openWARPlays = function (data, nteams = 30, ...) {
   players = getWAR(data)
-  return(getReplacementPlayers.openWARPlayers(players))
+  return(getReplacementPlayers.openWARPlayers(players, nteams = 30, ...))
 }
 
 #' @title getReplacementActivity

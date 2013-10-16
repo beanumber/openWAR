@@ -28,6 +28,92 @@ summary.openWARPlayers = function (data, n = 25, ...) {
 }
 
 
+
+
+#' @title plot.openWARPlayers
+#' 
+#' @description Display a season's worth of openWAR results
+#' 
+#' @details Given an openWARPlayers object, draw a plot displaying each player's RAA, WAR, and replacement
+#' level shadow. 
+#' 
+#' @param data An object of class \code{"openWARPlayers"}
+#' 
+#' @export plot.openWARPlayers
+#' 
+#' @examples
+#' 
+#' ds = getData()
+#' out = makeWAR(ds)
+#' players = getWAR(out$openWAR)
+#' summary(players)
+#' plot(players)
+
+plot.openWARPlayers = function (data, ...) {
+  # Add the combined playing time
+  data = transform(data, TPA = PA.bat + BF)
+  
+  supp = data[,c("playerId", "Name", "WAR", "TPA", "repl", "RAA", "RAA.pitch")]
+  names(supp) = c("playerId", "Name", "WAR", "TPA", "repl", "RAA", "RAA_pitch")
+  
+  require(mosaic)
+  xyplot(RAA ~ TPA, groups=isReplacement, data=data, panel=panel.war, data2 = supp
+         , alpha = 0.3, pch = 19, type = c("p", "r")
+         , ylab = "openWAR Runs Above Average", xlab = "Playing Time (plate appearances plus batters faced)"
+         , auto.key = list(columns = 2, corner = c(0.05,0.95), text = c("MLB Player", "Replacement Player"))
+         , sub = paste("Number of Players =", nrow(data), ", Number of Replacement Level Players =", sum(data$isReplacement))
+         , ...
+  )
+}
+
+#' @title panel.war
+#' 
+#' @description Display a season's worth of openWAR results
+#' 
+#' @details Given an openWARPlayers object, draw a plot displaying each player's RAA, WAR, and replacement
+#' level shadow. 
+#' 
+#' @param x
+#' @param y
+#' @param ... arguments passed from \code{"plot.openWARPlayers"}
+#' 
+#' @export panel.war
+#' 
+#' @examples
+#' 
+#' ds = getData()
+#' out = makeWAR(ds)
+#' players = getWAR(out$openWAR)
+#' summary(players)
+#' plot(players)
+
+panel.war = function (x, y, ...) {
+  panel.abline(h=0, col = "black")
+  panel.xyplot(x, y, ...)            
+  # data2 is passed to the panel function via the ellipses,
+  # so extract those arguments vial match.call
+  args <- match.call(expand.dots = FALSE)$...
+  ds = args$data2
+  panel.xyplot(ds$TPA, ds$repl, col="darkgray", ...)
+  # annotate the best player
+  best.idx = which.max(ds$WAR)
+  with(ds[best.idx,], panel.arrows(TPA, repl, TPA, RAA, code=3, lwd=2, col="darkgray", length=0.1))
+  with(ds[best.idx,], panel.text(TPA, RAA, Name, pos = 4))
+  # annotate the best pitcher
+  pitchers = subset(ds, RAA_pitch > 0)
+  pitcher.idx = which.max(pitchers$WAR)
+  with(pitchers[pitcher.idx,], panel.arrows(TPA, repl, TPA, RAA, code=3, lwd=2, col="darkgray", length=0.1))
+  with(pitchers[pitcher.idx,], panel.text(TPA, RAA, Name, pos = 3))
+  # annotate the worst player
+  worst.idx = which.min(ds$WAR)
+  with(ds[worst.idx,], panel.arrows(TPA, repl, TPA, RAA, code=3, lwd=2, col="darkgray", length=0.1))
+  with(ds[worst.idx,], panel.text(TPA, RAA, Name, pos = 2))
+  # annotate the total WAR in the system
+  panel.text(0, ds[best.idx, "RAA"] * 0.6, paste("Total RAA =", round(sum(y), 1)), adj=0)
+  panel.text(0, ds[best.idx, "RAA"] * 0.6 - 3, paste("Total WAR =", round(sum(ds$WAR), 1)), adj=0)
+}
+
+
 ##############################################################
 #
 # Generic functions for bootstrapped results

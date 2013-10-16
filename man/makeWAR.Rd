@@ -35,10 +35,10 @@
   (base,out) states. Variables must be "startCode" [0-7]
   and "startOuts" [0-2] pitching: a model for the expected
   outcome of a plate appearance attributable to the
-  pitcher. Variables must be "stadium", "throws" [L/R], and
+  pitcher. Variables must be "venueId", "throws" [L/R], and
   "stands" [L/R] offense: a model for the expected outcome
   of a plate appearance attributable to the offense.
-  Variables must be "stadium", "throws" [L/R], and "stands"
+  Variables must be "venueId", "throws" [L/R], and "stands"
   [L/R] baserunning: a model for the expected contribution
   of the baserunners to a plate appearance. Variables must
   be "event" (the type of batting event), "startCode"

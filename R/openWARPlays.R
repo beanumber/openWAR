@@ -84,6 +84,7 @@ getRAA.openWARPlays = function (data, ...) {
 #' @details Compute each player's WAR, given their RAA values
 #' 
 #' @param data An object of class \code{"openWARPlays"}
+#' @param nteams The nteams argument to be passed to getReplacementPlayers
 #' 
 #' @export getWAR
 #' @export getWAR.openWARPlays
@@ -117,6 +118,7 @@ getWAR.openWARPlays = function (data, nteams = 30, verbose=TRUE, ...) {
   # Attach the replacement values to the list of players
 #  war = merge(x=players, y=data.frame(batterId = row.names(repl.value), repl = repl.value), all.x = TRUE)
   war = transform(players, WAR = (RAA - repl) / 10)
+  war$isReplacement = with(war, playerId %in% replIds)
   class(war) = c("openWARPlayers", class(war))
   return(war)
 }

@@ -6,6 +6,9 @@
 }
 \arguments{
   \item{data}{An object of class \code{"openWARPlays"}}
+
+  \item{nteams}{The nteams argument to be passed to
+  getReplacementPlayers}
 }
 \description{
   Tabulates WAR
