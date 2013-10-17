@@ -1,6 +1,6 @@
 
-  bat = read.csv("data/FanGraphs_2012_batting.csv")
-  pitch = read.csv("data/FanGraphs_2012_pitching.csv")
+  bat = read.csv("data/FanGraphs_2005-2013_batting.csv")
+  pitch = read.csv("data/FanGraphs_2005-2013_pitching.csv")
   out = merge(x=bat, y=pitch, by = "playerid", all=TRUE)
   out$Name = with(out, ifelse(is.na(Name.x), as.character(Name.y), as.character(Name.x)))
   out$fRAA_bat = with(out, ifelse(is.na(Batting), 0, Batting) + ifelse(is.na(Positional), 0, Positional))
