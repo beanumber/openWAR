@@ -1,8 +1,9 @@
 
   bat = read.csv("data/FanGraphs_2005-2013_batting.csv")
   pitch = read.csv("data/FanGraphs_2005-2013_pitching.csv")
-  out = merge(x=bat, y=pitch, by = "playerid", all=TRUE)
+  out = merge(x=bat, y=pitch, by = c("playerid", "X.Season"), all=TRUE)
   out$Name = with(out, ifelse(is.na(Name.x), as.character(Name.y), as.character(Name.x)))
+  out$yearId = out$X.Season
   out$fRAA_bat = with(out, ifelse(is.na(Batting), 0, Batting) + ifelse(is.na(Positional), 0, Positional))
   out$fRAA_br = with(out, ifelse(is.na(Base.Running), 0, Base.Running))
   out$fRAA_field = with(out, ifelse(is.na(Fielding), 0, Fielding))
@@ -11,7 +12,7 @@
   out$fRAR = with(out, ifelse(is.na(RAR.x), 0, RAR.x) + ifelse(is.na(RAR.y), 0, RAR.y))
   out$fRAA = with(out, fRAR + fRepl)
   out$fWAR = with(out, ifelse(is.na(WAR.x), 0, WAR.x) + fWAR_pitch)
-  fWAR = out[, c("playerid", "Name", "fWAR", "fRAA_bat", "fRAA_br", "fRAA_field"
+  fWAR = out[, c("playerid", "yearId", "Name", "fWAR", "fRAA_bat", "fRAA_br", "fRAA_field"
                  , "fWAR_pitch", "fRAR", "fRAA", "fRepl")]
   
   
