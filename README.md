@@ -12,6 +12,13 @@ install.packages("Sxslt", repos = "http://www.omegahat.org/R", type = "source")
 ```
 should do the trick. 
 
+Next, installing **openWAR** is best accomplished through the *install_github()* function in the **devtools** package. 
+
+```{r}
+require(devtools)
+install_github("openWAR", "beanumber")
+```
+
 #### Data Source
 
 The *gameday()* function downloads play-by-play data from the GameDay server hosted by Major League Baseball Advanced Media. This data is not *libre*, but it lives on a publicly-available webserver. 
