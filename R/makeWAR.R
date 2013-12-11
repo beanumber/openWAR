@@ -38,7 +38,7 @@
 
 makeWAR = function (data, models = list(), verbose = TRUE, ...) UseMethod("makeWAR")
 
-makeWAR.GameDayPlays = function (data, models = list(), verbose = TRUE, ...) {
+makeWAR.GameDayPlays = function (data, models = list(), verbose = TRUE, low.memory = FALSE, ...) {
   orig = data
   data$idx = 1:nrow(data)
   ###########################################################################################
@@ -132,7 +132,11 @@ makeWAR.GameDayPlays = function (data, models = list(), verbose = TRUE, ...) {
                  , "raa.2B", "raa.3B", "raa.SS", "raa.LF", "raa.CF", "raa.RF")
   openWARPlays = data[, c(id.fields, delta.fields, raa.fields)]
   class(openWARPlays) = c("openWARPlays", "data.frame")
-  return(list("plays" = orig, "data" = data, "models.used" = models.used, "openWAR" = openWARPlays))
+  if (low.memory) {
+    return(list("plays" = NULL, "data" = NULL, "models.used" = NULL, "openWAR" = openWARPlays))
+  } else {
+    return(list("plays" = orig, "data" = data, "models.used" = models.used, "openWAR" = openWARPlays))
+  }
 }
 
 

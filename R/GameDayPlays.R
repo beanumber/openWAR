@@ -157,10 +157,10 @@ shakeWAR = function (data, resample = "plays", N = 10, ...) UseMethod("shakeWAR"
 
 shakeWAR.GameDayPlays = function (data, resample = "plays", N = 10, ...) {
   require(mosaic)
-  ext = makeWAR(data, verbose=FALSE)
+  ext = makeWAR(data, verbose=FALSE, low.memory=TRUE)
   
   # Keep track of the original data
-  reality = ext$plays
+  reality = data
   # Keep track of the models built on the original data
   reality.models = ext$models
   # Keep track of the original RAA values
@@ -169,15 +169,20 @@ shakeWAR.GameDayPlays = function (data, resample = "plays", N = 10, ...) {
   if (resample == "plays") {
     # assume the models are fixed, and resample the RAA values
     # this captures the sampling error
+    
+    # supposedly the performance of do() is really bad
     bstrap = do(N) * getWAR(resample(reality.raa), verbose=FALSE)
+    # use replicate() instead
+#    bstrap = rdply(N, getWAR(resample(reality.raa), verbose=FALSE))
+#    class(bstrap) = c("do.openWARPlayers", class(bstrap))
   } else {
     # resample the actual plays AND rebuild the models each time
     # this captures both measurement error and sampling error
-    sims = do(N) * makeWAR(resample(reality))
+    sims = do(N) * makeWAR(resample(reality), low.memory=TRUE)
     if (resample == "models") {
       # to isolate the measurement error, use the models we built on the resampled rows
       # but apply them exclusively to the real data
-      ext.list = lapply(sims$models, makeWAR, data = reality, verbose=FALSE)
+      ext.list = lapply(sims$models.used, makeWAR, data = reality, verbose=FALSE)
       raa.list = lapply(ext.list, "[[", "openWAR")
     } else {
       # otherwise, just take the resampled models applied to the resampled data
