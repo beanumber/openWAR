@@ -157,41 +157,41 @@ shakeWAR = function (data, resample = "plays", N = 10, ...) UseMethod("shakeWAR"
 
 shakeWAR.GameDayPlays = function (data, resample = "plays", N = 10, ...) {
   require(mosaic)
-  ext = makeWAR(data, verbose=FALSE, low.memory=TRUE)
   
-  # Keep track of the original data
-  reality = data
-  # Keep track of the models built on the original data
-  reality.models = ext$models
-  # Keep track of the original RAA values
-  reality.raa = ext$openWAR
-  
-  if (resample == "plays") {
-    # assume the models are fixed, and resample the RAA values
-    # this captures the sampling error
-    
-    # supposedly the performance of do() is really bad
-    bstrap = do(N) * getWAR(resample(reality.raa), verbose=FALSE)
-    # use replicate() instead
-#    bstrap = rdply(N, getWAR(resample(reality.raa), verbose=FALSE))
-#    class(bstrap) = c("do.openWARPlayers", class(bstrap))
-  } else {
+  if (resample == "both") {
     # resample the actual plays AND rebuild the models each time
     # this captures both measurement error and sampling error
-    sims = do(N) * makeWAR(resample(reality), low.memory=TRUE)
-    if (resample == "models") {
-      # to isolate the measurement error, use the models we built on the resampled rows
-      # but apply them exclusively to the real data
-      ext.list = lapply(sims$models.used, makeWAR, data = reality, verbose=FALSE)
-      raa.list = lapply(ext.list, "[[", "openWAR")
-    } else {
-      # otherwise, just take the resampled models applied to the resampled data
-      raa.list = sims$openWAR
+    bstrap = do(N) * getWAR(makeWAR(resample(data), low.memory=TRUE)$openWAR)
+  } else {
+    
+    ext = makeWAR(data, verbose=FALSE, low.memory=TRUE)
+    # Keep track of the original data
+    reality = data
+    # Keep track of the models built on the original data
+    reality.models = ext$models
+    # Keep track of the original RAA values
+    reality.raa = ext$openWAR
+    
+    if (resample == "plays") {
+      # assume the models are fixed, and resample the RAA values
+      # this captures the sampling error
+      
+      # supposedly the performance of do() is really bad
+      bstrap = do(N) * getWAR(resample(reality.raa), verbose=FALSE)
+      # use replicate() instead
+      #    bstrap = rdply(N, getWAR(resample(reality.raa), verbose=FALSE))
+      #    class(bstrap) = c("do.openWARPlayers", class(bstrap))
+#     } else {
+#         # to isolate the measurement error, use the models we built on the resampled rows
+#         # but apply them exclusively to the real data
+#         ext.list = lapply(sims$models.used, makeWAR, data = reality, verbose=FALSE)
+#         raa.list = lapply(ext.list, "[[", "openWAR")
+#         war.list = t(lapply(raa.list, getWAR))
+#         bstrap = do.call("rbind", war.list)
+#         class(bstrap) = c("do.openWARPlayers", class(bstrap))
     }
-    war.list = t(lapply(raa.list, getWAR))
-    bstrap = do.call("rbind", war.list)
-    class(bstrap) = c("do.openWARPlayers", class(bstrap))
   }
+  
   # bstrap should be a data.frame of class "do.openWARPlayers"
   # with roughly N * M rows, where M is the numbers of players
   return(bstrap)
