@@ -109,11 +109,11 @@ getDataWeekly <- function(start = Sys.Date() - 8) {
 #' @description Retrieves MLBAM gameIds for a specified date
 #' 
 #' @details Downloads information for a given day from the MLBAM website and retrieves
-#' a list of valid gameIds. 
+#' a list of valid gameIds. This function is used internally in the function getData.
 #' 
 #' @param date A date in "yyyy-mm-dd" format
 #'  
-#' @return a vector of gameIds
+#' @return A vector of gameIds
 #' 
 #' @export
 #' @examples
