@@ -38,7 +38,7 @@
 
 makeWAR = function (data, models = list(), verbose = TRUE, ...) UseMethod("makeWAR")
 
-makeWAR.GameDayPlays = function (data, models = list(), verbose = TRUE, low.memory = FALSE, ...) {
+makeWAR.GameDayPlays = function (data, models = list(), verbose = TRUE, low.memory = TRUE, ...) {
   orig = data
   data$idx = 1:nrow(data)
   ###########################################################################################
