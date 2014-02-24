@@ -55,30 +55,49 @@ getData <- function(start = Sys.Date()-1, end = NULL, gameIds = NULL, drop.suspe
 
 
 #' @title getDataMonthly
-#' @aliases getDataWeekly
 #' 
-#' @description Retrieves MLBAM GameDay files for a single month (or week)
+#' 
+#' @description Retrieves MLBAM GameDay files for a single month 
 #' 
 #' @details Given a year and month, this function will retrieve data from the 
-#' GameDay server, and process them into a single data.frame.
+#' GameDay server from the specified month and process them into a single data.frame.
 #' 
 #' @param yyyy A year
 #' @param m a numeric value corresponding to a month
 #' 
-#' @return a data.frame consisting of play-by-play data 
+#' @return A data.frame of class GameDayPlays consisting of play-by-play data 
 #' 
 #' @export
-#' @export getDataWeekly
+#' @export getDataMonthly
 #' @examples
 #' 
-#' ds = getData()
-#' getMonthlyData(2-13, 5)
+#' #Retrieve all of the MLBAM data from May 2013
+#' ds = getMonthlyData(2013, 5)
 
 getDataMonthly <- function(yyyy = 2013, m = 5) {
   start = as.Date(paste(yyyy, m, "01", sep="-"), "%Y-%m-%d")
   end = as.Date(paste(yyyy, m + 1, "01", sep="-"), "%Y-%m-%d") - 1
   return(getData(start, end))
 }
+
+#' @title getDataWeekly
+#' 
+#' @description Retrieves MLBAM GameDay files for a single week
+#' 
+#' @details Given a date, this function will retrieve data from the week starting on the specified date from the 
+#' GameDay server and process them into a single data.frame.
+#' 
+#' @param start A valid date in yyyy-mm-dd format (default Sys.Date()-8)
+#' 
+#' @return A data.frame of class "GameDayPlays" consisting of play-by-play data 
+#' 
+#' @export
+#' @export getDataWeekly
+#' @examples
+#' 
+#' #Retrieve all the data from the first week of the 2013 season
+#' ds = getDataWeekly("2013-03-31)
+
 
 getDataWeekly <- function(start = Sys.Date() - 8) {
   return(getData(as.Date(start), as.Date(start) + 6))
