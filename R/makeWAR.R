@@ -198,19 +198,17 @@ makeWARFielding = function (data, models = list(), verbose=TRUE, ...) {
 #' 
 #' @title getFielderRAA
 #' 
-#' @description Determine the RAA of the fielders
+#' @description Determine the Runs Above Average (RAA) of the fielders
 #' 
-#' @details RAA is the residuals from a simple fielding model
+#' @details RAA is the residuals from a simple fielding model.  Used in the function \code{makeWARFielding}
 #' 
-#' @param data An MLBAM data.frame of BIPs
+#' @param data A data.frame containg an estimate of the probably that a ball on a given play would be fielded, the total delta for fielders, a column of delta for each fielder, and a venueId
 #' 
-#' @return a matrix of Runs Above Average (RAA)
+#' @return A data.frame containing fielding RAA values for all plate appearances with a ball in play
 #' 
 #' @export
 #' @examples
 #' 
-#' ds = getData()
-#' ds$resp.field = getFieldResp(ds)
 #' 
 
 getFielderRAA = function (data) {
