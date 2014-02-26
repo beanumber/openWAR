@@ -1,6 +1,6 @@
 #' @title openWARPlayers
 #' 
-#' @description A data.frame of players and their tabulated openWAR values
+#' @description A data.frame of players and their tabulated openWAR values.  The function \code{getWAR} returns an object of class \code{openWARPlayers}
 #' 
 #' @exportClass openWARPlayers
 #' @examples showClass("openWARPlayers")
@@ -13,14 +13,15 @@ setClass("openWARPlayers", contains = "data.frame")
 #' 
 #' @details A summary of players' WAR
 #' 
-#' @param data An object of class \code{"openWAR"}
+#' @param data An object of class \code{"openWARPlayers"}
 #' 
 #' @export summary.openWARPlayers
 #' @examples
 #' 
-#' ds = getData()
-#' out = (makeWAR(ds))
-#' summary(out)
+#' ds <- getData()
+#' out <-  (makeWAR(ds))
+#' war <- getWAR(out$openWARPlays)
+#' summary(war)
 
 summary.openWARPlayers = function (data, n = 25, ...) {
   cat(paste("Displaying information for", nrow(data), "players, of whom", nrow(subset(data, RAA.pitch != 0)), "have pitched\n"))

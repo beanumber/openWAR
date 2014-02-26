@@ -251,8 +251,7 @@ getFielderRAA = function (data) {
 #' @export
 #' @examples
 #' 
-#' ds = getData()
-#' setBIPresp(ds)
+
 
 getFielderResp = function (data, ...) {  
   ds = data
