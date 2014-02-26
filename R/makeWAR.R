@@ -1,38 +1,52 @@
 #' @title makeWAR
 #' @aliases makeWAR.GameDayPlays
 #' 
-#' @description Compute openWAR
+#' @description Computes runs above average (RAA) for each player involved in each play of the "GameDayPlays" object. 
 #' 
-#' @details Computes openWAR, given an MLBAM data set. If no \code{models} argument is supplied, then all
+#' @details Within a "GameDayPlays" object, each row consists of a single plate appearance and contains information about the batter, all of the baserunners,
+#'  the pitcher, and all of the fielders on the field during the plate appearance. The total value of the play as determined by the change in the run expectancy 
+#'  matrix from the beginning of the plate appearence to the end of the plate appearance is partitioned across all players involved in with the play on offense, 
+#'  and that same value (with the opposite sign) is partitioned across the pitcher and all of the fielders.  Thus for every single plate appearance a runs above average (RAA) value is assigned
+#'  to every player involved in the play.  
+#'  If no \code{models} argument is supplied, then all
 #' models necessary for the computation of openWAR will be generated on the data set given. 
+#' The output of this function is then used in the function getWAR to calculate a Wins Above Replacement (WAR) value for each player. 
 #' 
-#' If \code{verbose == TRUE}, then various pieces of information will be displayed during the comuptation
+#' If \code{verbose == TRUE}, then various pieces of information will be displayed during the comuptation.
 #' 
 #' Elements of \code{models}:
-#' run-expectancy: a model for assigning a run expectancy value to any of the 24 (base,out) states. Variables
-#' must be "startCode" [0-7] and "startOuts" [0-2]
-#' pitching: a model for the expected outcome of a plate appearance attributable to the pitcher. Variables
-#' must be "venueId", "throws" [L/R], and "stands" [L/R]
-#' offense: a model for the expected outcome of a plate appearance attributable to the offense. Variables
-#' must be "venueId", "throws" [L/R], and "stands" [L/R]
-#' baserunning: a model for the expected contribution of the baserunners to a plate appearance. Variables
-#' must be "event" (the type of batting event), "startCode" [0-7], and "startOuts" [0-2]
-#' batting: a model for the expected contribution of the batter to a plate appearance. Variables
-#' must be "batterPos" (the defensive position of the batter)
+#' \itemize{
+#' \item{run-expectancy}{: a model for assigning a run expectancy value to any of the 24 (base,out) states. Variables
+#' must be "startCode" [0-7] and "startOuts" [0-2]}
+#' \item{pitching}{: a model for the expected outcome of a plate appearance attributable to the pitcher. Variables
+#' must be "venueId", "throws" [L/R], and "stands" [L/R]}
+#' \item{offense}{: a model for the expected outcome of a plate appearance attributable to the offense. Variables
+#' must be "venueId", "throws" [L/R], and "stands" [L/R]}
+#' \item{baserunning}{: a model for the expected contribution of the baserunners to a plate appearance. Variables
+#' must be "event" (the type of batting event), "startCode" [0-7], and "startOuts" [0-2]}
+#' \item{batting}{: a model for the expected contribution of the batter to a plate appearance. Variables
+#' must be "batterPos" (the defensive position of the batter)}
+#' }
 #' 
-#' 
-#' @param data A GameDayPlays data set
+#' @param data An object of class "GameDayPlays"
 #' @param models A named list of models, each with a predict() method. See Details.
 #' @param verbose A LOGICAL indicating whether you want various messages and information to be displayed
 #' during the computation
 #' 
-#' @return a GameDayPlaysExt data.frame
+#' @return An object of class "openWARPlays" which is a list of length 4 containing the following: 
+#' \itemize{
+#' \item{plays}{A data.frame of class "GameDayPlays" that is the same as the input to the function.}
+#' \item{data}{A data.frame of class "GameDayPlaysExt" containing the original data along with appended rows containing the RAA values for each player involved in a plate appearance}
+#'  \item{models.used}{A list containing all of the model information for each of the models used in computing RAA.}
+#'   \item{openWAR}{A data.frame of class "openWARPlays" containing only the columns necessry for input into the getWAR function.  }
+#' }
+#' 
 #' 
 #' @export makeWAR
 #' @export makeWAR.GameDayPlays
 #' @examples
 #' 
-#' ds = getData()
+#' # ds = getData(start = "2013-03-31", end = "2013-09-30")
 #' res = makeWAR(ds)
 #' 
 
