@@ -16,7 +16,7 @@
 #' 
 #' # Get data from one day
 #' ds = getData(start = "2013-03-31")
-#' # Get data from multiple daya
+#' # Get data from multiple days
 #' ds = getData(start = "2013-03-31", end = "2013-04-02")
 #' # Get data for entire 2013 season
 #' # ds = getData(start = "2013-03-31", end = "2013-09-30")
