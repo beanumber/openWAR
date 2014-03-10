@@ -2,9 +2,10 @@
 #' @aliases getReplacementPlayers.RAA
 #' @aliases getReplacementPlayers.openWARPlays
 #' 
-#' @description Identifies the replacement level players
+#' @description  This function determines and returns a list of players who are considered to be replacement level players.  
 #' 
-#' @details Returns a list of playerIds, who constitute replacement-level players
+#' @details In the openWAR framework, we first define a specific number of players to be considered "true" major league talent.  This function returns a list of players who do not appear on the list of "true" major league talent.
+#' The performances of the players on this list are used to estimate the value of a replacement level player for use in converting runs above average into runs above replacement and ultimately wins above replacement.  
 #' 
 #' @param data An object of class \code{"RAA"}
 #' 
