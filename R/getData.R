@@ -126,6 +126,7 @@ getGameIds <- function(date = Sys.Date()) {
   if (class(as.Date(date)) != "Date") {
     warning("Not a valid Date")
   }
+  date = as.Date(date)
   yyyy = format(date, "%Y")
   mm = format(date, "%m")
   dd = format(date, "%d")
