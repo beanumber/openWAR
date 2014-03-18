@@ -2,7 +2,7 @@
 \alias{panel.war}
 \title{panel.war}
 \usage{
-  panel.war(x, y, ...)
+panel.war(x, y, ...)
 }
 \arguments{
   \item{x}{}
@@ -13,11 +13,11 @@
   \code{"plot.openWARPlayers"}}
 }
 \description{
-  Display a season's worth of openWAR results
+Display a season's worth of openWAR results
 }
 \details{
-  Given an openWARPlayers object, draw a plot displaying
-  each player's RAA, WAR, and replacement level shadow.
+Given an openWARPlayers object, draw a plot displaying each
+player's RAA, WAR, and replacement level shadow.
 }
 \examples{
 ds = getData()

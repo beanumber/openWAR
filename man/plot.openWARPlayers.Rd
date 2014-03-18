@@ -2,17 +2,17 @@
 \alias{plot.openWARPlayers}
 \title{plot.openWARPlayers}
 \usage{
-  plot.openWARPlayers(data, ...)
+\method{plot}{openWARPlayers}(data, ...)
 }
 \arguments{
   \item{data}{An object of class \code{"openWARPlayers"}}
 }
 \description{
-  Display a season's worth of openWAR results
+Display a season's worth of openWAR results
 }
 \details{
-  Given an openWARPlayers object, draw a plot displaying
-  each player's RAA, WAR, and replacement level shadow.
+Given an openWARPlayers object, draw a plot displaying each
+player's RAA, WAR, and replacement level shadow.
 }
 \examples{
 ds = getData()

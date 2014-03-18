@@ -3,11 +3,24 @@ Type: Package
 Title: Machinery for analyzing baseball data and computing WAR
 Version: 0.1-1
 Date: 2013-07-31
-Author: Ben Baumer and Gregory J. Matthews
+Authors@R: c(person("Ben", "Baumer", email = "ben.baumer@gmail.com", role =
+    c("aut", "cre")), person("Gregory", "Matthews", email = "gjm112@gmail.com",
+    role = c("aut", "cre")))
 Maintainer: Ban Baumer <ben.baumer@gmail.com>
-Description: This package is useful for computing WAR
+Description: This package serves two primary purposes: 1) it facilitates the
+    computation of openWAR, a fully open-source implementation of Wins Above
+    Replacement (WAR) that could serve as a reference implementation for the
+    sabermetric community; and 2) it downloads raw XML files from the MLBAM
+    GameDay web application and processes them into play-by-play data in a
+    tabular format. This play-by-play information is similar in spirit, though
+    not in syntax, to play-by-play data made available by Retrosheet. Those
+    interested in the modeling choices that we have made in our computation of
+    openWAR should consult our paper on the arXiv on that subject. This
+    implementation of openWAR includes functions for constructing interval
+    estimates of WAR for each player, as well as comparing openWAR point
+    estimates to those of Baseball-Reference.com's rWAR.
 Depends:
-    R (>= 1.8.0)
+    R (>= 3.0.0)
 Imports:
     mosaic,
     XML,
@@ -17,20 +30,5 @@ Imports:
     Sxslt,
     Lahman
 License: GPL (>=2)
-Collate:
-    'openWAR-package.R'
-    'GameDay.R'
-    'exWPct.R'
-    'getData.R'
-    'getRunEx.R'
-    'makeWAR.R'
-    'linearWeights.R'
-    'getrWAR.R'
-    'crosscheck.R'
-    'GameDayPlays.R'
-    'GameDayPlaysExt.R'
-    'getIDMap.R'
-    'getModels.R'
-    'openWARPlays.R'
-    'replacement.R'
-    'openWARPlayers.R'
+URL: https://github.com/beanumber/openWAR
+VignetteBuilder: knitr

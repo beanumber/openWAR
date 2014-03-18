@@ -2,7 +2,7 @@
 \alias{getRunEx}
 \title{getRunEx}
 \usage{
-  getRunEx(data, drop.incomplete = TRUE, ...)
+getRunEx(data, drop.incomplete = TRUE, ...)
 }
 \arguments{
   \item{data}{an MLBAM dataset}
@@ -12,15 +12,15 @@
   excluded from the run expectancy model}
 }
 \value{
-  A function that takes two arguments: baseCode and outs,
-  and return a run value
+A function that takes two arguments: baseCode and outs, and
+return a run value
 }
 \description{
-  Find the Run Expectancy for a given state
+Find the Run Expectancy for a given state
 }
 \details{
-  Given a data set, return a function giving the run
-  expectancy for any base/out state
+Given a data set, return a function giving the run
+expectancy for any base/out state
 }
 \examples{
 ds = data(MLBAM2013)

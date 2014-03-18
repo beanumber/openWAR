@@ -2,8 +2,7 @@
 \alias{plot.do.openWARPlayers}
 \title{plot.do.openWARPlayers}
 \usage{
-  plot.do.openWARPlayers(data,
-    playerIds = c(431151, 285079), ...)
+\method{plot}{do.openWARPlayers}(data, playerIds = c(431151, 285079), ...)
 }
 \arguments{
   \item{playerIds}{A vector of valid MLBAM player IDs
@@ -13,13 +12,13 @@
   class \code{do.openWARPlayers}}
 }
 \value{
-  a faceted densityplot
+a faceted densityplot
 }
 \description{
-  Visualize WAR
+Visualize WAR
 }
 \details{
-  Density Plot for WAR estimates
+Density Plot for WAR estimates
 }
 \examples{
 ds = getData()

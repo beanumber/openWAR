@@ -4,7 +4,7 @@
 #' 
 #' @details Retrieves any of several linear weights formulae as \code{lm} objects
 #' 
-#' @param type A string representing either "xr27", "woba"
+#' @param type A string representing either "xr", "woba"
 #'
 #' @return A \code{lm} object
 #' 

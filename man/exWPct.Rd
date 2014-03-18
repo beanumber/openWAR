@@ -2,7 +2,7 @@
 \alias{exWPct}
 \title{exWPct}
 \usage{
-  exWPct(rs, ra, exponent = 2)
+exWPct(rs, ra, exponent = 2)
 }
 \arguments{
   \item{rs}{A numeric representing Runs Scored}
@@ -13,15 +13,15 @@
   exponent}
 }
 \value{
-  A value of expected winning percentage
+A value of expected winning percentage
 }
 \description{
-  Model for a team's winning percentage
+Model for a team's winning percentage
 }
 \details{
-  An implementation of Bill James's Pythagorean formula for
-  a team's expected winning percentage as a function of
-  their runs scored and runs allowed.
+An implementation of Bill James's Pythagorean formula for a
+team's expected winning percentage as a function of their
+runs scored and runs allowed.
 }
 \examples{
 # For a .500 team

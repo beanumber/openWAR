@@ -2,20 +2,20 @@
 \alias{getRAA}
 \title{getRAA}
 \usage{
-  getRAA(data, ...)
+getRAA(data, ...)
 }
 \arguments{
   \item{data}{An openWARPlays data.frame}
 }
 \value{
-  an RAA object
+an RAA object
 }
 \description{
-  Tabulates RAA values per player
+Tabulates RAA values per player
 }
 \details{
-  takes an openWARPlays data.frame and consolidates the RAA
-  values by player
+takes an openWARPlays data.frame and consolidates the RAA
+values by player
 }
 \examples{
 data = getData()

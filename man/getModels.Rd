@@ -3,7 +3,7 @@
 \alias{getModels.GameDayPlays}
 \title{getModels}
 \usage{
-  getModels(data, ...)
+getModels(data, ...)
 }
 \arguments{
   \item{data}{a GameDayPlays dataset}
@@ -15,14 +15,14 @@
   excluded}
 }
 \value{
-  A model object with a predict() method
+A model object with a predict() method
 }
 \description{
-  Retrieve various models trained on GameDayPlays data
+Retrieve various models trained on GameDayPlays data
 }
 \details{
-  This function will build various models based on the
-  MLBAM data set and the openWAR framework.
+This function will build various models based on the MLBAM
+data set and the openWAR framework.
 }
 \examples{
 data(MLBAM2013)

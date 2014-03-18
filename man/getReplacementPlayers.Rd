@@ -1,20 +1,26 @@
 \name{getReplacementPlayers}
 \alias{getReplacementPlayers}
 \alias{getReplacementPlayers.RAA}
-\alias{getReplacementPlayers.openWARPlays}
 \title{getReplacementPlayers}
 \usage{
-  getReplacementPlayers(data, nteams = 30, ...)
+getReplacementPlayers(data, nteams = 30, ...)
 }
 \arguments{
   \item{data}{An object of class \code{"RAA"}}
 }
 \description{
-  Identifies the replacement level players
+This function determines and returns a list of players who
+are considered to be replacement level players.
 }
 \details{
-  Returns a list of playerIds, who constitute
-  replacement-level players
+In the openWAR framework, we first define a specific number
+of players to be considered "true" major league talent.
+This function returns a list of players who do not appear
+on the list of "true" major league talent. The performances
+of the players on this list are used to estimate the value
+of a replacement level player for use in converting runs
+above average into runs above replacement and ultimately
+wins above replacement.
 }
 \examples{
 ds = getData()

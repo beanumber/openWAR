@@ -2,16 +2,16 @@
 \alias{summary.do.openWARPlayers}
 \title{summary.do.openWARPlayers}
 \usage{
-  summary.do.openWARPlayers(data, n = 25, ...)
+\method{summary}{do.openWARPlayers}(data, n = 25, ...)
 }
 \arguments{
   \item{An}{object of class \code{"openWARPlayers"}}
 }
 \description{
-  Summarize WAR
+Summarize WAR
 }
 \details{
-  Summary of players' WAR
+Summary of players' WAR
 }
 \examples{
 ds = makeWAR(ds)

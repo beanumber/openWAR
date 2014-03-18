@@ -2,17 +2,17 @@
 \alias{getrWAR}
 \title{getrWAR}
 \usage{
-  getrWAR()
+getrWAR()
 }
 \value{
-  a data.frame consisting of rWAR
+a data.frame consisting of rWAR
 }
 \description{
-  Retrieves rWAR from Baseball-Reference.com
+Retrieves rWAR from Baseball-Reference.com
 }
 \details{
-  Retrieves daily rWAR figures from Baseball-Reference.com
-  and stores it as a data.frame
+Retrieves daily rWAR figures from Baseball-Reference.com
+and stores it as a data.frame
 }
 \examples{
 # Get data from yesterday

@@ -207,7 +207,6 @@ makeWARFielding = function (data, models = list(), verbose=TRUE, ...) {
 #' @return A data.frame containing fielding RAA values for all plate appearances with a ball in play
 #' 
 #' @export
-#' @examples
 #' 
 #' 
 
@@ -249,7 +248,6 @@ getFielderRAA = function (data) {
 #' @return data.frame with 9 columns, each row representing a ball in play
 #' 
 #' @export
-#' @examples
 #' 
 
 

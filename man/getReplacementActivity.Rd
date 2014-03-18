@@ -2,7 +2,7 @@
 \alias{getReplacementActivity}
 \title{getReplacementActivity}
 \usage{
-  getReplacementActivity(data, replacementIds)
+getReplacementActivity(data, replacementIds)
 }
 \arguments{
   \item{data}{An openWARPlays data.frame}
@@ -11,14 +11,14 @@
   replacement-level players}
 }
 \value{
-  a list of RAA values for each type of activity
+a list of RAA values for each type of activity
 }
 \description{
-  Isolates the plays involving replacement-level players
+Isolates the plays involving replacement-level players
 }
 \details{
-  Returns only the RAA values involving replacement-level
-  players
+Returns only the RAA values involving replacement-level
+players
 }
 \examples{
 data = getData()

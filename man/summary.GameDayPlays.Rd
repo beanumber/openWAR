@@ -2,20 +2,20 @@
 \alias{summary.GameDayPlays}
 \title{summary.GameDayPlays}
 \usage{
-  summary.GameDayPlays(data)
+\method{summary}{GameDayPlays}(data)
 }
 \arguments{
   \item{data}{A GameDayPlays data set}
 }
 \value{
-  nothing
+nothing
 }
 \description{
-  Summarize MLBAM data
+Summarize MLBAM data
 }
 \details{
-  Prints information about the contents of an GameDayPlays
-  data set.
+Prints information about the contents of an GameDayPlays
+data set.
 }
 \examples{
 ds = getData()

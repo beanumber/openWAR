@@ -2,7 +2,7 @@
 \alias{getWAR}
 \title{getWAR}
 \usage{
-  getWAR(data, nteams = 30, verbose = TRUE, ...)
+getWAR(data, nteams = 30, verbose = TRUE, ...)
 }
 \arguments{
   \item{data}{An object of class \code{"openWARPlays"}}
@@ -11,10 +11,10 @@
   getReplacementPlayers}
 }
 \description{
-  Tabulates WAR
+Tabulates WAR
 }
 \details{
-  Compute each player's WAR, given their RAA values
+Compute each player's WAR, given their RAA values
 }
 \examples{
 ds = getData()

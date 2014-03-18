@@ -2,20 +2,20 @@
 \alias{getLinearWeightsModel}
 \title{getLinearWeightsModel}
 \usage{
-  getLinearWeightsModel(type)
+getLinearWeightsModel(type)
 }
 \arguments{
-  \item{type}{A string representing either "xr27", "woba"}
+  \item{type}{A string representing either "xr", "woba"}
 }
 \value{
-  A \code{lm} object
+A \code{lm} object
 }
 \description{
-  Retrieves a linear weights model object
+Retrieves a linear weights model object
 }
 \details{
-  Retrieves any of several linear weights formulae as
-  \code{lm} objects
+Retrieves any of several linear weights formulae as
+\code{lm} objects
 }
 \examples{
 ds = getData()

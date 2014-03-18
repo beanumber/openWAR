@@ -2,7 +2,7 @@
 \alias{shakeWAR}
 \title{shakeWAR}
 \usage{
-  shakeWAR(data, resample = "plays", N = 10, ...)
+shakeWAR(data, resample = "plays", N = 10, ...)
 }
 \arguments{
   \item{data}{An MLBAM data.frame}
@@ -13,13 +13,13 @@
   \item{N}{the number of resamples (default 5000)}
 }
 \value{
-  a data.frame with RAA values
+a data.frame with RAA values
 }
 \description{
-  resample a data.frame to obtain variance estimate for WAR
+resample a data.frame to obtain variance estimate for WAR
 }
 \details{
-  Resamples the rows of an MLBAM data set
+Resamples the rows of an MLBAM data set
 }
 \examples{
 ds = getData()

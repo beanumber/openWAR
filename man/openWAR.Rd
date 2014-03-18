@@ -4,12 +4,12 @@
 \alias{openWAR-package}
 \title{openWAR}
 \description{
-  This package allows a user to explore WAR
+This package allows a user to explore WAR
 }
 \details{
-  A fully open-source implementation of WAR.
+A fully open-source implementation of WAR.
 }
 \author{
-  Ben Baumer and Gregory Matthews
+Ben Baumer and Gregory J. Matthews
 }
 

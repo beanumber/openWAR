@@ -96,7 +96,7 @@ getDataMonthly <- function(yyyy = 2013, m = 5) {
 #' @examples
 #' 
 #' #Retrieve all the data from the first week of the 2013 season
-#' ds = getDataWeekly("2013-03-31)
+#' ds = getDataWeekly("2013-03-31")
 
 
 getDataWeekly <- function(start = Sys.Date() - 8) {
