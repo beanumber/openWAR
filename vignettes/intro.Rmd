@@ -59,7 +59,7 @@ subset(ds, event == "Home Run", select = c("gameId", "batterId", "description"))
 The best part about the MLBAM data is that it contains an $(x,y)$-coordinate indicated the location of each batted ball hit into play. We can visualize this. 
 
 ```{r, message=FALSE}
-bbplot(data = ds)
+plot(data = ds)
 ```
 
 ### Modeling

@@ -17,7 +17,7 @@ require(openWAR)
 ```
 
 ```
-## Warning: replacing previous import by 'plyr::count' when loading 'openWAR'
+## Warning: replacing previous import 'count' when loading 'plyr'
 ```
 
 ```r
@@ -269,12 +269,10 @@ The best part about the MLBAM data is that it contains an $(x,y)$-coordinate ind
 
 
 ```r
-bbplot(data = ds)
+plot(data = ds)
 ```
 
-```
-## Error: could not find function "bbplot"
-```
+![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6.png) 
 
 
 ### Modeling
@@ -368,30 +366,6 @@ The inning began in the state $(0,0)$. Our estimate $\hat{\rho}(0,0)$ of the exp
 
 ```r
 fit.rem = getRunEx(ds)
-```
-
-```
-## Loading required package: mosaic
-## Loading required package: grid
-## Loading required package: lattice
-## 
-## Attaching package: 'mosaic'
-## 
-## The following object is masked from 'package:plyr':
-## 
-##     count
-## 
-## The following objects are masked from 'package:stats':
-## 
-##     binom.test, cor, cov, D, fivenum, IQR, median, prop.test, sd,
-##     t.test, var
-## 
-## The following objects are masked from 'package:base':
-## 
-##     max, mean, min, print, prod, range, sample, sum
-```
-
-```r
 fit.rem(baseCode = 0, outs = 0)
 ```
 
