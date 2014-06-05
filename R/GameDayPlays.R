@@ -9,6 +9,52 @@ setClass("GameDayPlays", contains = "data.frame")
 
 
 
+#' @title panel.baseball
+#' 
+#' @description Visualize Balls in Play
+#' 
+#' @details A convenience function for drawing a generic baseball field using a Cartesian coordinate
+#' system scaled in feet with home plate at the origin. 
+#' 
+#' 
+#' @return nothing
+#' 
+#' @export
+#' @examples
+#' 
+#' ds = getData()
+#' plot(ds)
+
+panel.baseball <- function () {
+  bgcol = "darkgray"
+  panel.segments(0, 0, -400, 400, col=bgcol)   # LF line
+  panel.segments(0, 0, 400, 400, col=bgcol)     # RF line
+  bw = 2
+  # midpoint is at (0, 127.27)
+  base2.y = sqrt(90^2 + 90^2)
+  panel.polygon(c(-bw, 0, bw, 0), c(base2.y, base2.y - bw, base2.y, base2.y + bw), col=bgcol)
+  # back corner is 90' away on the line
+  base1.x = 90 * cos(pi/4)
+  base1.y = 90 * sin(pi/4)
+  panel.polygon(c(base1.x, base1.x - bw, base1.x - 2*bw, base1.x - bw), c(base1.y, base1.y - bw, base1.y, base1.y + bw), col=bgcol)
+  # back corner is 90' away on the line
+  base3.x = 90 * cos(3*pi/4)
+  panel.polygon(c(base3.x, base3.x + bw, base3.x + 2*bw, base3.x + bw), c(base1.y, base1.y - bw, base1.y, base1.y + bw), col=bgcol)
+  # infield cutout is 95' from the pitcher's mound
+  panel.curve(60.5 + sqrt(95^2 - x^2), from=base3.x - 26, to=base1.x + 26, col=bgcol)
+  # pitching rubber
+  panel.rect(-bw, 60.5 - bw/2, bw, 60.5 + bw/2, col=bgcol)
+  # home plate
+  panel.polygon(c(0, -8.5/12, -8.5/12, 8.5/12, 8.5/12), c(0, 8.5/12, 17/12, 17/12, 8.5/12), col=bgcol)
+  # distance curves
+  distances = seq(from=200, to=500, by = 100)
+  for (i in 1:length(distances)) {
+    d = distances[i]
+  panel.curve(sqrt(d^2 - x^2), from= d * cos(3*pi/4), to=d * cos(pi/4), col=bgcol)
+  }
+}
+
+
 
 #' @title plot.GameDayPlays
 #' 
@@ -30,7 +76,6 @@ setClass("GameDayPlays", contains = "data.frame")
 
 plot.GameDayPlays = function (data, ...) {
   require(mosaic)
-  bgcol = "darkgray"
   xy.fields = c("our.x", "our.y")
   if (!length(intersect(xy.fields, names(data))) == length(xy.fields)) {
     stop("(x,y) coordinate locations not found.")
@@ -39,31 +84,7 @@ plot.GameDayPlays = function (data, ...) {
   ds$event = factor(ds$event)
   plot = xyplot(our.y ~ our.x, groups=event, data=ds
          , panel = function(x,y, ...) {
-           panel.segments(0, 0, -400, 400, col=bgcol)   # LF line
-           panel.segments(0, 0, 400, 400, col=bgcol)     # RF line
-           bw = 2
-           # midpoint is at (0, 127.27)
-           base2.y = sqrt(90^2 + 90^2)
-           panel.polygon(c(-bw, 0, bw, 0), c(base2.y, base2.y - bw, base2.y, base2.y + bw), col=bgcol)
-           # back corner is 90' away on the line
-           base1.x = 90 * cos(pi/4)
-           base1.y = 90 * sin(pi/4)
-           panel.polygon(c(base1.x, base1.x - bw, base1.x - 2*bw, base1.x - bw), c(base1.y, base1.y - bw, base1.y, base1.y + bw), col=bgcol)
-           # back corner is 90' away on the line
-           base3.x = 90 * cos(3*pi/4)
-           panel.polygon(c(base3.x, base3.x + bw, base3.x + 2*bw, base3.x + bw), c(base1.y, base1.y - bw, base1.y, base1.y + bw), col=bgcol)
-           # infield cutout is 95' from the pitcher's mound
-           panel.curve(60.5 + sqrt(95^2 - x^2), from=base3.x - 26, to=base1.x + 26, col=bgcol)
-           # pitching rubber
-           panel.rect(-bw, 60.5 - bw/2, bw, 60.5 + bw/2, col=bgcol)
-           # home plate
-           panel.polygon(c(0, -8.5/12, -8.5/12, 8.5/12, 8.5/12), c(0, 8.5/12, 17/12, 17/12, 8.5/12), col=bgcol)
-           # distance curves
-           distances = seq(from=200, to=500, by = 100)
-           for (i in 1:length(distances)) {
-             d = distances[i]
-             panel.curve(sqrt(d^2 - x^2), from= d * cos(3*pi/4), to=d * cos(pi/4), col=bgcol)
-           }
+           panel.baseball()
            panel.xyplot(x,y, alpha = 0.3, ...)
          }
        , auto.key=list(columns=4)
