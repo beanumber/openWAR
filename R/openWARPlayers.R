@@ -58,13 +58,15 @@ plot.openWARPlayers = function (data, ...) {
   names(supp) = c("playerId", "Name", "WAR", "TPA", "repl", "RAA", "RAA_pitch")
   
   require(mosaic)
-  xyplot(RAA ~ TPA, groups=isReplacement, data=data, panel=panel.war, data2 = supp
+  p = xyplot(RAA ~ TPA, groups=isReplacement, data=data, panel=panel.war, data2 = supp
          , alpha = 0.3, pch = 19, type = c("p", "r")
+         , par.settings = list("superpose.symbol" = list(pch = 19))
          , ylab = "openWAR Runs Above Average", xlab = "Playing Time (plate appearances plus batters faced)"
          , auto.key = list(columns = 2, corner = c(0.05,0.95), text = c("MLB Player", "Replacement Player"))
          , sub = paste("Number of Players =", nrow(data), ", Number of Replacement Level Players =", sum(data$isReplacement))
          , ...
   )
+  print(p)
 }
 
 #' @title panel.war
