@@ -150,6 +150,7 @@ getModelFieldingLF = function (data) {
 
 getModelFieldingCF = function (data) {
   mod = glm((fielderPos == "CF") ~ poly(our.x, 2) + poly(our.y, 2) + I(our.x * our.y), data=data, family="binomial")
+#  fieldingplot(mod, data=data, write.pdf=TRUE)
   return(mod)
 }
 
@@ -197,7 +198,7 @@ getModelFieldingCollective = function (data) {
   # Make sure to add a small amount to avoid division by zero
   field.smooth = transform(field.smooth, wasFielded = isOut / (isOut + isHit + 0.00000001))
   # summary(field.smooth)
-  # wireframe(wasFielded ~ x + y, data=field.smooth, scales = list(arrows = FALSE), drape = TRUE, colorkey = TRUE)
+#  fieldingplot(wasFielded ~ x + y, data=field.smooth, label = "cum_resp", write.pdf=TRUE)
   
   fit.all = function (x, y) {
     require(Hmisc)
