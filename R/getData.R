@@ -5,7 +5,7 @@
 #' @details Given a beginning and end date, this function will retrieve all data from the MLABM
 #' GameDay server in the specified interval and process them into a single data.frame. 
 #' 
-#' @param start A valid date in yyyy-mm-dd format (default today)
+#' @param start A valid date in yyyy-mm-dd format (default yesterday)
 #' @param end A valid date in yyyy-mm-dd format (default start)
 #' @param drop.suspended Logical indicating whether games with fewer than 5 innings should be excluded
 #' 
