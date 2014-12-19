@@ -77,14 +77,16 @@ panel.baseball <- function () {
 #' ds = getData()
 #' plot(ds)
 
-plot.GameDayPlays = function (data, batterName=NULL,pitcherName=NULL,pch=1) {
+plot.GameDayPlays = function (data, batterName=NULL,pitcherName=NULL,event=NULL,pch=1) {
   require(mosaic)
   xy.fields = c("our.x", "our.y")
   if (!length(intersect(xy.fields, names(data))) == length(xy.fields)) {
     stop("(x,y) coordinate locations not found.")
   }
+  #Code for filtering base on batter, pitcher and/or event type.  
   if (!is.null(batterName)){data = data[data$batterName==batterName,]}
   if (!is.null(pitcherName)){data = data[data$pitcherName==pitcherName,]}
+  if (!is.null(event)){data = data[data$event%in%event,]}
   ds = subset(data, !is.na(our.y) & !is.na(our.x))
   ds$event = factor(ds$event)
   plot = xyplot(our.y ~ our.x, groups=event, data=ds,pch=pch
