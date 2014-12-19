@@ -23,11 +23,7 @@ setClass("openWARPlayers", contains = "data.frame")
 #' war <- getWAR(out$openWARPlays)
 #' summary(war)
 
-summary.openWARPlayers = function (data, n = 25, ...) {
-  # weird unsupported type error?
-  # https://github.com/hadley/dplyr/issues/390
-  data$repl <- as.numeric(data$repl)
-  
+summary.openWARPlayers = function (data, n = 25, ...) {  
   cat(paste("Displaying information for", nrow(data), "players, of whom", nrow(filter(data, RAA.pitch != 0)), "have pitched\n"))
   
   # classic syntax
@@ -35,7 +31,7 @@ summary.openWARPlayers = function (data, n = 25, ...) {
   
   # dplyr syntax
   data %>%
-    select(Name, TPA, WAR, RAA, repl, RAA.bat, RAA.br, RAA.field, RAA.pitch) %>%
+    dplyr::select(Name, TPA, WAR, RAA, repl, RAA.bat, RAA.br, RAA.field, RAA.pitch) %>%
     arrange(desc(WAR)) %>%
     head(n)
 }
