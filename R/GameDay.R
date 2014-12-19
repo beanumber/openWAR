@@ -246,7 +246,7 @@ readData.gameday = function (gd) {
     
     # Update fielders for defensive switches
     require(stringr)
-    require(plyr)
+#    require(plyr)
     out = makeSubstitutions(out)  
     # Sometimes data errors result in the batter's defensive position not getting set. Set it to UN manually
     missing.idx = which(is.na(out$batterPos) & out$batterId > 0)
@@ -262,13 +262,14 @@ readData.gameday = function (gd) {
     out$runsOnPlay = str_count(as.character(out$runnerMovement), ":T:")
     
     # runner movement, score, and outs
-    out = ddply(out, ~inning + half, updateHalfInning)  
+#    out = ddply(out, ~inning + half, updateHalfInning)  
+    out <- dplyr::do(group_by(out, inning, half), updateHalfInning(.))
     # Once the non-PA related events have been removed, best to sort by ab_num, since the timestamp is occassionally missing!
     out = out[order(out$ab_num),]
     
     # number of baserunners
-    out$startCode = as.numeric((1 * !is.na(out[, c("start1B", "start2B", "start3B")])) %*% c(1, 2, 4))
-    out$endCode  = as.numeric((1 * !is.na(out[, c("end1B", "end2B", "end3B")])) %*% c(1, 2, 4))
+    out$startCode = as.numeric((1 * !is.na(as.data.frame(out)[, c("start1B", "start2B", "start3B")])) %*% c(1, 2, 4))
+    out$endCode  = as.numeric((1 * !is.na(as.data.frame(out)[, c("end1B", "end2B", "end3B")])) %*% c(1, 2, 4))
     
     # Figure out who fielded the ball
     out$fielderId = getFielderId(out)
@@ -282,10 +283,10 @@ readData.gameday = function (gd) {
     out = out[order(out$ab_num),]
     
     # add some convenience calculation fields
-    out = transform(out, isPA = !event %in% c("Defensive Indiff", "Stolen Base 2B", "Runner Out"))
-    out = transform(out, isAB = isPA & !event %in% c("Walk", "Intent Walk", "Hit By Pitch", "Sac Fly", "Sac Bunt"))
-    out = transform(out, isHit = event %in% c("Single", "Double", "Triple", "Home Run"))
-    out = transform(out, isBIP = event != "Home Run" & !is.na(x) & !is.na(y))
+    out = mutate(out, isPA = !event %in% c("Defensive Indiff", "Stolen Base 2B", "Runner Out"))
+    out = mutate(out, isAB = isPA & !event %in% c("Walk", "Intent Walk", "Hit By Pitch", "Sac Fly", "Sac Bunt"))
+    out = mutate(out, isHit = event %in% c("Single", "Double", "Triple", "Home Run"))
+    out = mutate(out, isBIP = event != "Home Run" & !is.na(x) & !is.na(y))
     
     # translate the coordinates so that home plate is (0,0) and second base is (0, 127' 3 3/8")
     out = recenter(out)
@@ -308,12 +309,12 @@ updateHalfInning = function (data) {
   data$runsInInning = sum(data$runsOnPlay)
   data$runsITD = cumsum(c(0, data$runsOnPlay))[1:nrow(data)]
   data = transform(data, runsFuture = runsInInning - runsITD)
-  data$start1B = NA
-  data$start2B = NA
-  data$start3B = NA
-  data$end1B = NA
-  data$end2B = NA
-  data$end3B = NA
+  data$start1B = as.character(NA)
+  data$start2B = as.character(NA)
+  data$start3B = as.character(NA)
+  data$end1B = as.character(NA)
+  data$end2B = as.character(NA)
+  data$end3B = as.character(NA)
   leadoff.mv = getRunnerMovement(data[1, "runnerMovement"])
   data[1, "end1B"] = leadoff.mv["end1B"]
   data[1, "end2B"] = leadoff.mv["end2B"]
@@ -375,7 +376,8 @@ getRunnerMovement = function (x) {
     
     # In case a runner moved twice during the at-bat, for now just concentrate on where he ended up
     rm.df$end = ifelse(rm.df$end == "", "4B", rm.df$end)
-    rm.df = ddply(rm.df, ~ id, summarise, start = min(start), end = max(end))
+    # rm.df = ddply(rm.df, ~ id, summarise, start = min(start), end = max(end))
+    rm.df <- summarise(group_by(rm.df, id), start = min(start), end = max(end))
     rm.df$end = ifelse(rm.df$end == "4B", "", rm.df$end)
     
     if( nrow(subset(rm.df, start == "1B")) > 0 ) { rm.vec["start1B"] = subset(rm.df, start == "1B")$id }
@@ -392,6 +394,7 @@ getRunnerMovement = function (x) {
 
 
 makeSubstitutions = function (data) {
+  require(stringr)
   # IMPORTANT: Have to sort the data frame just in case
   # Have to sort by timestamp here, NOT by ab_num!
   data = data[order(data$timestamp),]

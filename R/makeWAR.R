@@ -297,37 +297,37 @@ getFielderResp = function (data, ...) {
 makeWARBaserunning = function (data, mod.bat, verbose = TRUE, ...) {
   message("...Estimating Baserunning Runs Above Average...")
   
-  require(plyr)
+#  require(plyr)
   require(MASS)
   require(stringr)
   
   # Figure out what happened to the runner on 3B
-  data$dest.br3 = with(data, ifelse(str_count(runnerMovement, paste(start3B, ":3B::T:", sep="")), "H", NA))
-  data$dest.br3 = with(data, ifelse(!is.na(start3B) & !is.na(end3B) & start3B == end3B, "3B", dest.br3))
+  data <- mutate(data, dest.br3 = ifelse(str_count(runnerMovement, paste(start3B, ":3B::T:", sep="")), "H", NA))
+  data <- mutate(data, dest.br3 = ifelse(!is.na(start3B) & !is.na(end3B) & start3B == end3B, "3B", dest.br3))
   
   br3.idx = which(!is.na(data$start3B))
   ds3 = data[br3.idx,]
   br3.scored = with(ds3, str_count(runnerMovement, paste(start3B, ":3B::T:", sep="")))
   br3.out = with(ds3, str_count(runnerMovement, paste(start3B, ":3B:::", sep="")))
-  ds3$basesAdvanced = ifelse(br3.scored == 1, 1, ifelse(br3.out == 1, -3, 0))
+  ds3 <- mutate(ds3, basesAdvanced = ifelse(br3.scored == 1, 1, ifelse(br3.out == 1, -3, 0)))
   
   # Figure out what happened to the runner on 2B
-  data$dest.br2 = with(data, ifelse(str_count(runnerMovement, paste(start2B, ":2B::T:", sep="")), "H", NA))
-  data$dest.br2 = with(data, ifelse(!is.na(start2B) & !is.na(end3B) & start2B == end3B, "3B", dest.br2))
-  data$dest.br2 = with(data, ifelse(!is.na(start2B) & !is.na(end2B) & start2B == end2B, "2B", dest.br2))
+  data <- mutate(data, dest.br2 = ifelse(str_count(runnerMovement, paste(start2B, ":2B::T:", sep="")), "H", NA))
+  data <- mutate(data, dest.br2 = ifelse(!is.na(start2B) & !is.na(end3B) & start2B == end3B, "3B", dest.br2))
+  data <- mutate(data, dest.br2 = ifelse(!is.na(start2B) & !is.na(end2B) & start2B == end2B, "2B", dest.br2))
   
   br2.idx = which(!is.na(data$start2B))
   ds2 = data[br2.idx,]
   br2.scored = with(ds2, str_count(runnerMovement, paste(start2B, ":2B::T:", sep="")))
   br2.out = with(ds2, str_count(runnerMovement, paste(start2B, ":2B:::", sep="")))
   br2.advanced = with(ds2, str_count(runnerMovement, paste(start2B, ":2B:3B::", sep="")))
-  ds2$basesAdvanced = ifelse(br2.scored == 1, 2, ifelse(br2.out == 1, -2, ifelse(br2.advanced == 1, 1, 0)))
+  ds2 <- mutate(ds2, basesAdvanced = ifelse(br2.scored == 1, 2, ifelse(br2.out == 1, -2, ifelse(br2.advanced == 1, 1, 0))))
   
   # Figure out what happened to the runner on 1B
-  data$dest.br1 = with(data, ifelse(str_count(runnerMovement, paste(start1B, ":1B::T:", sep="")), "H", NA))
-  data$dest.br1 = with(data, ifelse(!is.na(start1B) & !is.na(end3B) & start1B == end3B, "3B", dest.br1))
-  data$dest.br1 = with(data, ifelse(!is.na(start1B) & !is.na(end2B) & start1B == end2B, "2B", dest.br1))
-  data$dest.br1 = with(data, ifelse(!is.na(start1B) & !is.na(end1B) & start1B == end1B, "1B", dest.br1))
+  data <- mutate(data, dest.br1 = ifelse(str_count(runnerMovement, paste(start1B, ":1B::T:", sep="")), "H", NA))
+  data <- mutate(data, dest.br1 = ifelse(!is.na(start1B) & !is.na(end3B) & start1B == end3B, "3B", dest.br1))
+  data <- mutate(data, dest.br1 = ifelse(!is.na(start1B) & !is.na(end2B) & start1B == end2B, "2B", dest.br1))
+  data <- mutate(data, dest.br1 = ifelse(!is.na(start1B) & !is.na(end1B) & start1B == end1B, "1B", dest.br1))
   
   br1.idx = which(!is.na(data$start1B))
   ds1 = data[br1.idx,]
@@ -335,7 +335,7 @@ makeWARBaserunning = function (data, mod.bat, verbose = TRUE, ...) {
   br1.out = with(ds1, str_count(runnerMovement, paste(start1B, ":1B:::", sep="")))
   br1.advanced.one = with(ds1, str_count(runnerMovement, paste(start1B, ":1B:2B::", sep="")))
   br1.advanced.two = with(ds1, str_count(runnerMovement, paste(start1B, ":1B:3B::", sep="")))
-  ds1$basesAdvanced = ifelse(br1.scored == 1, 3, ifelse(br1.out == 1, -1, ifelse(br1.advanced.one == 1, 1, ifelse(br1.advanced.two == 1, 2, 0))))
+  ds1 <- mutate(ds1, basesAdvanced = ifelse(br1.scored == 1, 3, ifelse(br1.out == 1, -1, ifelse(br1.advanced.one == 1, 1, ifelse(br1.advanced.two == 1, 2, 0)))))
   
   # Compute the number of bases advanced by each baserunner
   # data$br0.adv = ifelse(br0.scored == 1, 4, ifelse(br0.advanced.one == 1, 1, ifelse(br0.advanced.two == 1, 2, ifelse(br0.advanced.three == 1, 3, 0))))
@@ -345,28 +345,33 @@ makeWARBaserunning = function (data, mod.bat, verbose = TRUE, ...) {
   
   # Compute the empirical probabilities
   getCDF = function (ds) {
-    events = ddply(ds, ~basesAdvanced, summarise, N = length(basesAdvanced))
-    events = transform(events, numObs = nrow(ds))
-    events = transform(events, p = N / numObs)
+    # events = ddply(ds, ~basesAdvanced, summarise, N = length(basesAdvanced))
+    events <- summarise(group_by(ds, basesAdvanced), N = length(basesAdvanced))
+    events = mutate(events, numObs = nrow(ds))
+    events = mutate(events, p = N / numObs)
     events$cdf = cumsum(events$p)
     events$cdf.lag = c(0, cumsum(events$p[-nrow(events)]))
     return(events)
   }
   
-  ds3Probs = ddply(ds3, ~event + startCode + startOuts, getCDF)
-  ds2Probs = ddply(ds2, ~event + startCode + startOuts, getCDF)
-  ds1Probs = ddply(ds1, ~event + startCode + startOuts, getCDF)
-  
+#  ds3Probs = plyr::ddply(ds3, ~event + startCode + startOuts, getCDF)
+#  ds2Probs = ddply(ds2, ~event + startCode + startOuts, getCDF)
+#  ds1Probs = ddply(ds1, ~event + startCode + startOuts, getCDF)
+
+  ds3Probs <- do(group_by(ds3, event, startCode, startOuts), getCDF(.))
+  ds2Probs <- do(group_by(ds2, event, startCode, startOuts), getCDF(.))
+  ds1Probs <- do(group_by(ds1, event, startCode, startOuts), getCDF(.))
+
   # Merge onto the main data frame
   join.idx = c("event", "startCode", "startOuts")
   data = merge(x = data, y = ds3Probs[,c(join.idx, "basesAdvanced", "cdf.lag")], by.x = c(join.idx, "br3.adv"), by.y = c(join.idx, "basesAdvanced"), all.x=TRUE)
   # Rename column
-  data = rename(data, c("cdf.lag" = "cdf.br3"))
+  data = rename(data, cdf.br3 = cdf.lag)
   
   data = merge(x = data, y = ds2Probs[,c(join.idx, "basesAdvanced", "cdf.lag")], by.x = c(join.idx, "br2.adv"), by.y = c(join.idx, "basesAdvanced"), all.x=TRUE)
-  data = rename(data, c("cdf.lag" = "cdf.br2"))
+  data = rename(data, cdf.br2 = cdf.lag)
   data = merge(x = data, y = ds1Probs[,c(join.idx, "basesAdvanced", "cdf.lag")], by.x = c(join.idx, "br1.adv"), by.y = c(join.idx, "basesAdvanced"), all.x=TRUE)
-  data = rename(data, c("cdf.lag" = "cdf.br1"))
+  data = rename(data, cdf.br1 = cdf.lag)
   
   # Make sure that baserunners who get out have a non-zero share
   data$cdf.br1[data$cdf.br1 == 0] <- 0.00000001
