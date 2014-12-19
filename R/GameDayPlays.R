@@ -221,6 +221,7 @@ shakeWAR.GameDayPlays = function (data, resample = "plays", N = 10, ...) {
   }
   
   # bstrap should be a data.frame of class "do.openWARPlayers"
+  class(bstrap) <- c("do.openWARPlayers", "data.frame")
   # with roughly N * M rows, where M is the numbers of players
   return(bstrap)
 }

@@ -24,8 +24,20 @@ setClass("openWARPlayers", contains = "data.frame")
 #' summary(war)
 
 summary.openWARPlayers = function (data, n = 25, ...) {
-  cat(paste("Displaying information for", nrow(data), "players, of whom", nrow(subset(data, RAA.pitch != 0)), "have pitched\n"))
-  head(data[order(data$WAR, decreasing=TRUE), c("Name", "TPA", "WAR", "RAA", "repl", "RAA.bat", "RAA.br", "RAA.field", "RAA.pitch")], n)
+  # weird unsupported type error?
+  # https://github.com/hadley/dplyr/issues/390
+  data$repl <- as.numeric(data$repl)
+  
+  cat(paste("Displaying information for", nrow(data), "players, of whom", nrow(filter(data, RAA.pitch != 0)), "have pitched\n"))
+  
+  # classic syntax
+  # head(data[order(data$WAR, decreasing=TRUE), c("Name", "TPA", "WAR", "RAA", "repl", "RAA.bat", "RAA.br", "RAA.field", "RAA.pitch")], n)
+  
+  # dplyr syntax
+  data %>%
+    select(Name, TPA, WAR, RAA, repl, RAA.bat, RAA.br, RAA.field, RAA.pitch) %>%
+    arrange(desc(WAR)) %>%
+    head(n)
 }
 
 
@@ -141,12 +153,25 @@ panel.war = function (x, y, ...) {
 #' summary(sim)
 
 summary.do.openWARPlayers = function (data, n = 25, ...) {
-  require(plyr)  
-  players = ddply(data, ~Name, summarise, q0 = min(WAR), q2.5 = quantile(WAR, 0.025)
-                  , q25 = quantile(WAR, 0.25)
-                  , q50 = mean(WAR)
-                  , q75 = quantile(WAR, 0.75), q97.5 = quantile(WAR, 0.975), q100 = max(WAR))
-  print(head(players[order(players$q50, decreasing=TRUE),], n))
+#   require(plyr)  
+#   players = ddply(data, ~Name, summarise, q0 = min(WAR), q2.5 = quantile(WAR, 0.025)
+#                   , q25 = quantile(WAR, 0.25)
+#                   , q50 = mean(WAR)
+#                   , q75 = quantile(WAR, 0.75), q97.5 = quantile(WAR, 0.975), q100 = max(WAR))
+#   print(head(players[order(players$q50, decreasing=TRUE),], n))
+  
+  data %>%
+    dplyr::select(Name, WAR) %>%
+    group_by(Name) %>%
+    summarise(q0 = min(WAR)
+              , q2.5 = quantile(WAR, 0.025)
+              , q25 = quantile(WAR, 0.25)
+              , q50 = mean(WAR)
+              , q75 = quantile(WAR, 0.75)
+              , q97.5 = quantile(WAR, 0.975)
+              , q100 = max(WAR)) %>%
+    arrange(desc(q50)) %>%
+    head(n)
 }
 
 
@@ -176,7 +201,7 @@ plot.do.openWARPlayers = function (data, playerIds = c(431151, 285079), ...) {
   require(mosaic)
   playerIds = sort(playerIds)
   # is it worth the trouble to filter the rows? 
-  rows = subset(data, batterId %in% playerIds)
+  rows = filter(data, batterId %in% playerIds)
   # Remove unused factor levels
   rows$Name = factor(rows$Name)
   
