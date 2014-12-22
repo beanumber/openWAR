@@ -7,7 +7,7 @@ require(openWAR)
 
 # Get the data from a single game
 MetsBraves = gameday()
-save(MetsBraves, file = "data/MetsBraves.rda")
+save(MetsBraves, file = "data/MetsBraves.rdata")
 
 # Get the data for 2012
 MLBAM2012 = getData(start = "2013-03-28", end = "2013-10-03")

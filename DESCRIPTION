@@ -32,3 +32,4 @@ Imports:
 License: GPL (>=2)
 URL: https://github.com/beanumber/openWAR
 VignetteBuilder: knitr
+LazyData: true
