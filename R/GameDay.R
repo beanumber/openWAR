@@ -302,6 +302,7 @@ readData.gameday = function (gd) {
 # fixRunnerMovement(data)
 
 updateHalfInning = function (data) {
+#  cat(print("new inning"))
   # IMPORTANT: Have to sort the data frame just in case
 #  data = data[order(data$timestamp),]
   # Sometimes the timestamp is blank -- so sort these by AB num
@@ -322,6 +323,7 @@ updateHalfInning = function (data) {
   data[1, "end3B"] = leadoff.mv["end3B"]
   if (nrow(data) > 1) {
     for (i in 2:nrow(data)) {
+#      cat(print(i))
       data[i, "startOuts"] = data[i-1, "endOuts"]
       data[i, "start1B"] = data[i-1, "end1B"]
       data[i, "start2B"] = data[i-1, "end2B"]
@@ -380,7 +382,6 @@ getRunnerMovement = function (x) {
     # rm.df = ddply(rm.df, ~ id, summarise, start = min(start), end = max(end))
     rm.df <- summarise(group_by(rm.df, id), start = min(start), end = max(end))
     rm.df$end = ifelse(rm.df$end == "4B", "", rm.df$end)
-    
     if( nrow(subset(rm.df, start == "1B")) > 0 ) { rm.vec["start1B"] = subset(rm.df, start == "1B")$id }
     if( nrow(subset(rm.df, start == "2B")) > 0 ) { rm.vec["start2B"] = subset(rm.df, start == "2B")$id }
     if( nrow(subset(rm.df, start == "3B")) > 0 ) { rm.vec["start3B"] = subset(rm.df, start == "3B")$id }
