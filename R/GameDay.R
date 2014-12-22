@@ -170,6 +170,7 @@ getXML.gameday = function (gd) {
 
 
 readData.gameday = function (gd) {
+  require(mosaic)
   # First, build gd$data as a list of data frames
   dirname = file.path(find.package("openWAR"))
   labels = do.call("rbind", strsplit(basename(gd$url), split="\\."))[,1]
