@@ -1,7 +1,7 @@
 Package: openWAR
 Type: Package
 Title: Machinery for analyzing baseball data and computing WAR
-Version: 0.1-1
+Version: 0.2-1
 Date: 2013-07-31
 Authors@R: c(person("Ben", "Baumer", email = "ben.baumer@gmail.com", role =
     c("aut", "cre")), person("Gregory", "Matthews", email = "gjm112@gmail.com",
@@ -29,6 +29,8 @@ Imports:
     stringr,
     Sxslt,
     Lahman
+Suggests:
+    openWARData
 License: GPL (>=2)
 URL: https://github.com/beanumber/openWAR
 VignetteBuilder: knitr
