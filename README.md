@@ -16,7 +16,7 @@ Next, installing **openWAR** is best accomplished through the *install_github()*
 
 ```{r}
 require(devtools)
-install_github("openWAR", "beanumber")
+install_github("beanumber/openWAR")
 ```
 
 #### Data Source
