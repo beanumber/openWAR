@@ -5,8 +5,8 @@ Version: 0.2-1
 Date: 2013-07-31
 Authors@R: c(person("Ben", "Baumer", email = "ben.baumer@gmail.com", role =
     c("aut", "cre")), person("Gregory", "Matthews", email = "gjm112@gmail.com",
-    role = c("aut", "cre")))
-Maintainer: Ban Baumer <ben.baumer@gmail.com>
+    role = c("aut")))
+Maintainer: Ben Baumer <ben.baumer@gmail.com>
 Description: This package serves two primary purposes: 1) it facilitates the
     computation of openWAR, a fully open-source implementation of Wins Above
     Replacement (WAR) that could serve as a reference implementation for the
