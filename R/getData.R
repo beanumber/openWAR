@@ -138,7 +138,7 @@ getGameIds <- function(date = Sys.Date()) {
   b <- strsplit(a,"<a")
   ind <- grep("gid", b[[1]])
   games <- substring(b[[1]][ind], 8, 37)
-  cat(paste("\n...found", length(games), "games"))
+  cat(paste("\n...found", length(games), "games\n"))
   return(games)
 }
 
