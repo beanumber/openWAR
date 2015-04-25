@@ -152,7 +152,7 @@ getXML.gameday = function (gd) {
   }
 }
 
-#' @title readData.gameday
+#' @title   
 #' 
 #' @description Grabs XML files from MLBAM and converts to data.frames in memory
 #' 
@@ -212,7 +212,7 @@ readData.gameday = function (gd) {
     out$field_teamId = ifelse(out$half == "top", as.character(out$home_teamId), as.character(out$away_teamId))
     # Create a lookup for the player's name
     lkup = gd$data$bis_boxscore
-    lkup = lkup[unique(lkup$playerId),]
+    lkup = lkup[!duplicated(lkup$playerId),]
     lkup$bo = as.numeric(as.character(lkup$bo))
     # Weed out pitchers
     lineup = subset(lkup, bo %% 100 == 0)
@@ -380,7 +380,7 @@ getRunnerMovement = function (x) {
     # In case a runner moved twice during the at-bat, for now just concentrate on where he ended up
     rm.df$end = ifelse(rm.df$end == "", "4B", rm.df$end)
     # rm.df = ddply(rm.df, ~ id, summarise, start = min(start), end = max(end))
-    rm.df <- summarise(group_by(rm.df, id), start = min(start), end = max(end))
+    rm.df <- dplyr::summarise(group_by(rm.df, id), start = min(start), end = max(end))
     rm.df$end = ifelse(rm.df$end == "4B", "", rm.df$end)
     if( nrow(subset(rm.df, start == "1B")) > 0 ) { rm.vec["start1B"] = subset(rm.df, start == "1B")$id }
     if( nrow(subset(rm.df, start == "2B")) > 0 ) { rm.vec["start2B"] = subset(rm.df, start == "2B")$id }
