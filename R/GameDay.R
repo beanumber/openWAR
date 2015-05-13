@@ -107,7 +107,7 @@ getURLs.gameday = function (gd) {
   return(url)
 }
 
-#' @title 
+#' @title get game data
 #' 
 #' @description Grabs XML files from MLBAM and converts to data.frames in memory
 #' 
@@ -117,11 +117,12 @@ getURLs.gameday = function (gd) {
 #' 
 #' @return A gameday object
 #'
-#' @importFrom(Sxslt, xsltApplyStyleSheet)
-#' @importFrom(XML, saveXML)
-#' @importFrom(stringr, str_split)
-#' @importFrom(dplyr, do)
-#' @importFrom(dplyr, mutate)
+#' @importFrom Sxslt xsltApplyStyleSheet
+#' @importFrom XML saveXML
+#' @importFrom stringr str_split
+#' @importFrom dplyr do
+#' @importFrom dplyr mutate
+#' @importFrom dplyr group_by
 #' 
 #' @export
 #' @examples
@@ -175,7 +176,8 @@ readData.gameday = function (gd) {
     # Create a lookup for the player's name
     lkup = gd$data$bis_boxscore
     lkup = lkup[!duplicated(lkup$playerId),]
-    lkup$bo = as.numeric(as.character(lkup$bo))
+    # suppressWarnings for na
+    lkup$bo = suppressWarnings(as.numeric(as.character(lkup$bo)))
     # Weed out pitchers
     lineup = subset(lkup, bo %% 100 == 0)
     lineup$batterPos = sapply(strsplit(as.character(lineup$pos), split="-"), "[", 1)
@@ -233,8 +235,8 @@ readData.gameday = function (gd) {
     out$runsOnPlay = str_count(as.character(out$runnerMovement), ":T:")
     
     # runner movement, score, and outs
-#    out = ddply(out, ~inning + half, updateHalfInning)  
-    out <- dplyr::do(group_by(out, inning, half), updateHalfInning(.))
+    # out = ddply(out, ~inning + half, updateHalfInning)  
+    out <- do(dplyr::group_by(out, inning, half), updateHalfInning(.))
     # Once the non-PA related events have been removed, best to sort by ab_num, 
     # since the timestamp is occassionally missing!
     out = out[order(out$ab_num), ]
@@ -257,11 +259,11 @@ readData.gameday = function (gd) {
     out = out[order(out$ab_num), ]
     
     # add some convenience calculation fields
-    out <- mutate(out, isPA=!event %in% c("Defensive Indiff", "Stolen Base 2B", "Runner Out"))
-    out <- mutate(out, isAB=isPA & !event %in% c("Walk", "Intent Walk", "Hit By Pitch", 
+    out <- dplyr::mutate(out, isPA=!event %in% c("Defensive Indiff", "Stolen Base 2B", "Runner Out"))
+    out <- dplyr::mutate(out, isAB=isPA & !event %in% c("Walk", "Intent Walk", "Hit By Pitch", 
         "Sac Fly", "Sac Bunt"))
-    out <- mutate(out, isHit=event %in% c("Single", "Double", "Triple", "Home Run"))
-    out <- mutate(out, isBIP=event != "Home Run" & !is.na(x) & !is.na(y))
+    out <- dplyr::mutate(out, isHit=event %in% c("Single", "Double", "Triple", "Home Run"))
+    out <- dplyr::mutate(out, isBIP=event != "Home Run" & !is.na(x) & !is.na(y))
     
     # translate the coordinates so that home plate is (0,0) and second base is (0, 127' 3 3/8")
     out = recenter(out)
@@ -274,7 +276,7 @@ readData.gameday = function (gd) {
 
 #' @title updataHalfInning
 #' 
-#' @description 
+#' @description updateHalfInning
 #' 
 #' @param data
 #' 
@@ -340,13 +342,11 @@ updateHalfInning <- function (dat) {
   return(dat)
 }
 
-#' @title
-#'
-#' @description
+#' @title getRunnerMovement
 #' 
-#' @importFrom(stringr, str_split)
-#' @importFrom(dplyr, summarise)
-#' @importFrom(dplyr, group_by)
+#' @importFrom stringr str_split
+#' @importFrom dplyr summarize
+#' @importFrom dplyr group_by
 #'
 getRunnerMovement = function (x) {
   # runner movement
@@ -363,7 +363,7 @@ getRunnerMovement = function (x) {
     # for now just concentrate on where he ended up
     rm.df$end = ifelse(rm.df$end == "", "4B", rm.df$end)
     # rm.df = ddply(rm.df, ~ id, summarise, start = min(start), end = max(end))
-    rm.df <- summarise(group_by(rm.df, id), start = min(start), end = max(end))
+    rm.df <- dplyr::summarize(dplyr::group_by(rm.df, id), start = min(start), end = max(end))
     rm.df$end = ifelse(rm.df$end == "4B", "", rm.df$end)
     if( nrow(subset(rm.df, start == "1B")) > 0 ) { 
       rm.vec["start1B"] = subset(rm.df, start == "1B")$id 
@@ -388,10 +388,10 @@ getRunnerMovement = function (x) {
   return(rm.vec)
 }
 
-#' @title
-#' @description
+#' @title make substitutions
+#' @description make substitutions
 #' @param data as dat
-#' @importFrom(stringr, str_count)
+#' @importFrom stringr str_count
 #'
 makeSubstitutions <- function (dat) {
   # IMPORTANT: Have to sort the data frame just in case
@@ -477,11 +477,10 @@ makeSubstitutions <- function (dat) {
   return(dat)
 }
 
-#' @title
-#' @description
-#' @param 
-#' @return
-#' @importFrom(stringr, str_count)
+#' @title getFilederId
+#' @description getFilderId
+#' @param dat
+#' @importFrom stringr str_count
 
 getFielderId = function (dat) {
   
