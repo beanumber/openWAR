@@ -41,3 +41,4 @@ This will retrieve play-by-play data for all games played yesterday (by default)
 
 #### Methodology
 
+Please see our full paper on the [arXiv](http://arxiv.org/abs/1312.7158) or in the forthcoming issue of the *Journal of Quantitative Analysis in Sports*. 
