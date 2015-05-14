@@ -1,0 +1,5 @@
+^\.Rproj\.user$
+\.Rproj$
+^\.gitignore$
+^\.travis\.yml$
+^\duplicated

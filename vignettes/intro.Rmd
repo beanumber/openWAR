@@ -88,15 +88,15 @@ The simplest way to build a model for $futureRuns$ is to take the average over a
 
 ```{r, message=FALSE, eval=TRUE}
 # Will take a loooong time -- the first time
-# ds = getWeeklyData("2013-04-01")
-# ds = getWeeklyData("2013-04-08")
-# ds = getWeeklyData("2013-04-15")
-# ds = getWeeklyData("2013-04-22")
+# ds = getDataWeekly("2013-04-01")
+# ds = getDataWeekly("2013-04-08")
+# ds = getDataWeekly("2013-04-15")
+# ds = getDataWeekly("2013-04-22")
 # ds = getData("2013-03-31")
 # 2013 first half
 # ds = getData("2013-03-31", end="2013-07-14")
 
-# ds = getMonthlyData(2013, 6)
+# ds = getDataMonthly(2013, 6)
 # MLBAM2013 = ds
 # save(MLBAM2013, file="data/MLBAM2013.rda")
 data(MLBAM2013)

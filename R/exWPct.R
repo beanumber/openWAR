@@ -12,6 +12,8 @@
 #'
 #' @return A value of expected winning percentage
 #' 
+#' @importFrom mosaic makeFun
+#' 
 #' @export
 #' @examples
 #' # For a .500 team
