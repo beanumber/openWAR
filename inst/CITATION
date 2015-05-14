@@ -1,17 +1,22 @@
-bibentry("Manual",
-   title = "openWAR: An Open Source System for Overall Player Performance in Major League Baseball",
-   author = c(person("Ben Baumer", email="ben.baumer@gmail.com"), person("Gregory J. Matthews")),
-#   organization = "R Foundation for Statistical Computing",
-#   address      = "Vienna, Austria",
-   year   = version$year,
-   note   = "",
-   url    = "http://github.com/beanumber/openWAR/",
+citHeader("To cite openWAR in publications use:")
 
-   mheader = "To cite openWAR in publications use:",
 
-   mfooter = 
-     paste("We have invested a lot of time and effort in creating R,",
-      "please cite it when using it for data analysis.",
-      "See also", sQuote("citation(\"pkgname\")"),
-      "for citing R packages.", sep = " ")
+citEntry(entry = "Article",
+   title       = "{openWAR}: An Open Source System for Overall Player Performance in Major League Baseball",
+  author       = personList(as.person("Benjamin S. Baumer"), as.person("Shane T. Jensen"), 
+                   as.person("Gregory J. Matthews")),
+  journal      = "Journal of Quantitative Analysis in Sports",
+  year         = "2015",
+  volume       = "11",
+  number       = "2",
+  pages        = "",
+  url          = "http://arxiv.org/abs/1312.7158",
+  textVersion  =
+  paste("Benjamin S. Baumer, Shane T. Jensen, Gregory J. Matthews (2015).",
+        "openWAR: An Open Source System for Overall Player Performance in Major League Baseball.",
+        "Journal of Statistics in Sports, 11(2).",
+        "URL http://arxiv.org/abs/1312.7158.")
 )
+
+citFooter("For the latest version see <http://github.com/beanumber/openWAR/>")
+
