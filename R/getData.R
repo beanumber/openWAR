@@ -11,6 +11,8 @@
 #' 
 #' @return A data.frame of class "GameDayPlays" consisting of play-by-play data 
 #' 
+#' @importFrom dplyr filter
+#'
 #' @export
 #' @examples
 #' 
@@ -40,7 +42,7 @@ getData <- function(start = Sys.Date()-1, end = NULL, gameIds = NULL, drop.suspe
   #}
   ds.list = lapply(gd.list, "[[", "ds")
   out = do.call(rbind, ds.list)
-  out = filter(out, game_type == "R")
+  out = dplyr::filter(out, game_type=="R")
   # exclude suspended games
   if (drop.suspended) {
 #    test = ddply(out, ~gameId, summarise, Innings = max(inning))

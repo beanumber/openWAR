@@ -17,6 +17,9 @@ setClass("openWARPlays", contains = "data.frame")
 #' 
 #' @return an RAA object
 #' 
+#' @importFrom dplyr summarise
+#' @importFrom magrittr %>%
+#' 
 #' @export getRAA
 #' @export getRAA.openWARPlays
 #' @examples
@@ -56,17 +59,17 @@ getRAA.openWARPlays = function (data, ...) {
 
   # dplyr
   war.br1 <- data %>%
-    filter(!is.na(start1B)) %>%
+    dplyr::filter(!is.na(start1B)) %>%
     group_by(start1B) %>%
     summarise(PA.br1 = sum(isPA), RAA.br1 = sum(raa.br1, na.rm=TRUE))
 
   war.br2 <- data %>%
-    filter(!is.na(start2B)) %>%
+    dplyr::filter(!is.na(start2B)) %>%
     group_by(start2B) %>%
     summarise(PA.br2 = sum(isPA), RAA.br2 = sum(raa.br2, na.rm=TRUE))
 
   war.br3 <- data %>%
-    filter(!is.na(start3B)) %>%
+    dplyr::filter(!is.na(start3B)) %>%
     group_by(start3B) %>%
     summarise(PA.br3 = sum(isPA), RAA.br3 = sum(raa.br3, na.rm=TRUE))
 
