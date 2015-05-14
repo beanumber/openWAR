@@ -19,7 +19,7 @@
 #' # Get data from multiple days
 #' ds = getData(start = "2013-03-31", end = "2013-04-02")
 #' # Get data for entire 2013 season
-#' # ds = getData(start = "2013-03-31", end = "2013-09-30")
+#' # ds = getData(start = , end = "2013-09-30")
 
 getData <- function(start = Sys.Date()-1, end = NULL, gameIds = NULL, drop.suspended = TRUE) {
   if (is.null(gameIds)) {
