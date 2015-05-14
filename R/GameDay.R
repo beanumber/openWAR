@@ -107,50 +107,7 @@ getURLs.gameday = function (gd) {
   return(url)
 }
 
-<<<<<<< HEAD
 #' @title get game data
-=======
-getXML.gameday = function (gd) {
-  require(XML)
-  require(RCurl)
-  
-  # If the local directory for this game does not exist, create it and download the files
-  dirname = file.path(find.package("openWAR"), "data", gd$gameId)
-  if (!file.exists(dirname)) {
-    warning("...GameDay XML files are not in local directory -- must download")
-    dir.create(dirname, recursive=TRUE)  
-    curl = getCurlHandle()
-    files = getURL(gd$url, curl = curl)
-    for(i in 1:(length(files))) {
-      filename = basename(names(files)[i])
-      write(files[i], file.path(dirname, filename))
-    }
-  }
-  
-  # Now read from the local files
-  local.filenames = file.path(dirname, names(gd$url))
-  
-  xml = try(sapply(local.filenames, xmlParse))
-  if (class(xml) == "try-error") {
-    warning("404 - GameDay files do not exist...")
-    return(NULL)
-  } else {
-    names(xml) = names(gd$url)
-  
-#   xml = switch(type
-#                , bis_boxscore.xml = try(xmlParse(file.path(dirname, "bis_boxscore.xml")))
-#                , inning_all.xml = try(xmlTreeParse(file.path(dirname, "inning_all.xml")))
-#                , game.xml = try(xmlParse(file.path(dirname, "game.xml")))
-#                , game_events.xml = try(xmlTreeParse(file.path(dirname, "game_events.xml")))
-#                , inning_hit.xml = try(xmlTreeParse(file.path(dirname, "inning_hit.xml")))
-#   )
-#    closeAllConnections()
-    return(xml)
-  }
-}
-
-#' @title   
->>>>>>> cfc410f382bb07cd1d21183372849352a30cbb12
 #' 
 #' @description Grabs XML files from MLBAM and converts to data.frames in memory
 #' 
@@ -219,12 +176,10 @@ readData.gameday = function (gd) {
     # Create a lookup for the player's name
     lkup = gd$data$bis_boxscore
     lkup = lkup[!duplicated(lkup$playerId),]
-<<<<<<< HEAD
+    
     # suppressWarnings for na
     lkup$bo = suppressWarnings(as.numeric(as.character(lkup$bo)))
-=======
-    lkup$bo = as.numeric(as.character(lkup$bo))
->>>>>>> cfc410f382bb07cd1d21183372849352a30cbb12
+    
     # Weed out pitchers
     lineup = subset(lkup, bo %% 100 == 0)
     lineup$batterPos = sapply(strsplit(as.character(lineup$pos), split="-"), "[", 1)
@@ -410,11 +365,9 @@ getRunnerMovement = function (x) {
     # for now just concentrate on where he ended up
     rm.df$end = ifelse(rm.df$end == "", "4B", rm.df$end)
     # rm.df = ddply(rm.df, ~ id, summarise, start = min(start), end = max(end))
-<<<<<<< HEAD
+
     rm.df <- dplyr::summarize(dplyr::group_by(rm.df, id), start = min(start), end = max(end))
-=======
-    rm.df <- dplyr::summarise(group_by(rm.df, id), start = min(start), end = max(end))
->>>>>>> cfc410f382bb07cd1d21183372849352a30cbb12
+
     rm.df$end = ifelse(rm.df$end == "4B", "", rm.df$end)
     if( nrow(subset(rm.df, start == "1B")) > 0 ) { 
       rm.vec["start1B"] = subset(rm.df, start == "1B")$id 
