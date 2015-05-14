@@ -10,6 +10,8 @@
 #' 
 #' @return A function that takes two arguments: baseCode and outs, and return a run value 
 #' 
+#' @importFrom mosaic makeFun
+#' 
 #' @export
 #' @examples
 #' 
