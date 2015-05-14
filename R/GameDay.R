@@ -236,7 +236,7 @@ readData.gameday = function (gd) {
     
     # runner movement, score, and outs
     # out = ddply(out, ~inning + half, updateHalfInning)  
-    out <- do(dplyr::group_by(out, inning, half), updateHalfInning(.))
+    out <- dplyr::do(dplyr::group_by(out, inning, half), updateHalfInning(.))
     # Once the non-PA related events have been removed, best to sort by ab_num, 
     # since the timestamp is occassionally missing!
     out = out[order(out$ab_num), ]
