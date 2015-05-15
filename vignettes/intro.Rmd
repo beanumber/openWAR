@@ -165,5 +165,8 @@ fit.rem(4,1) - fit.rem(2,1)
 
 goes to Heyward as a rightfielder, and Wright as a baserunner. 
 
-### Reference on the openWAR model
-Benjamin S. Baumer, Gregory J. Matthews, Shane T. Jensen. 2013. "OpenWAR: An Open Source System for Evaluating Overall Player Performance in Major League Baseball." http://arxiv.org/abs/1312.7158v3.
+### Reference for the openWAR model
+
+For a complete description of the openWAR model, please see our paper on the subject:
+
+* Benjamin S. Baumer, Gregory J. Matthews, Shane T. Jensen. 2013. "OpenWAR: An Open Source System for Evaluating Overall Player Performance in Major League Baseball." *Journal of Quantitative Analysis in Sports*, 11(2), (http://arxiv.org/abs/1312.7158v3).
