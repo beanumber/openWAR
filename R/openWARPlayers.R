@@ -15,6 +15,7 @@ setClass("openWARPlayers", contains = "data.frame")
 #' 
 #' @param data An object of class \code{"openWARPlayers"}
 #' 
+#' @importFrom dplyr arrange
 #' @export summary.openWARPlayers
 #' @examples
 #' 
