@@ -41,7 +41,7 @@
 #'   \item{openWAR}{A data.frame of class "openWARPlays" containing only the columns necessry for input into the getWAR function.  }
 #' }
 #' 
-#' @importFrom dplyr rename
+#' @import dplyr
 #' @importFrom stringr str_count
 #' @export makeWAR
 #' @export makeWAR.GameDayPlays

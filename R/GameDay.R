@@ -120,9 +120,7 @@ getURLs.gameday = function (gd) {
 #' @importFrom Sxslt xsltApplyStyleSheet
 #' @importFrom XML saveXML
 #' @importFrom stringr str_split
-#' @importFrom dplyr do
-#' @importFrom dplyr mutate
-#' @importFrom dplyr group_by
+#' @import dplyr
 #' 
 #' @export
 #' @examples
@@ -347,8 +345,7 @@ updateHalfInning <- function (dat) {
 #' @title getRunnerMovement
 #' 
 #' @importFrom stringr str_split
-#' @importFrom dplyr summarize
-#' @importFrom dplyr group_by
+#' @import dplyr
 #'
 getRunnerMovement = function (x) {
   # runner movement
