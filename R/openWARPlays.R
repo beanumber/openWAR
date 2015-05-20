@@ -17,7 +17,7 @@ setClass("openWARPlays", contains = "data.frame")
 #' 
 #' @return an RAA object
 #' 
-#' @importFrom dplyr summarise
+#' @import dplyr
 #' @importFrom magrittr %>%
 #' 
 #' @export getRAA

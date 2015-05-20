@@ -41,7 +41,8 @@
 #'   \item{openWAR}{A data.frame of class "openWARPlays" containing only the columns necessry for input into the getWAR function.  }
 #' }
 #' 
-#' 
+#' @import dplyr
+#' @importFrom stringr str_count
 #' @export makeWAR
 #' @export makeWAR.GameDayPlays
 #' @examples
@@ -298,8 +299,8 @@ makeWARBaserunning = function (data, mod.bat, verbose = TRUE, ...) {
   message("...Estimating Baserunning Runs Above Average...")
   
 #  require(plyr)
-  require(MASS)
-  require(stringr)
+#  require(MASS)
+#  require(stringr)
   
   # Figure out what happened to the runner on 3B
   data <- mutate(data, dest.br3 = ifelse(str_count(runnerMovement, paste(start3B, ":3B::T:", sep="")), "H", NA))

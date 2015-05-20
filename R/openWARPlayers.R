@@ -15,6 +15,7 @@ setClass("openWARPlayers", contains = "data.frame")
 #' 
 #' @param data An object of class \code{"openWARPlayers"}
 #' 
+#' @import dplyr
 #' @export summary.openWARPlayers
 #' @examples
 #' 
@@ -141,8 +142,7 @@ panel.war = function (x, y, ...) {
 #' @param An object of class \code{"openWARPlayers"}
 #' 
 #' @importFrom magrittr %>%
-#' @importFrom dplyr select
-#' @importFrom dplyr summarise
+#' @import dplyr
 #'
 #' @export
 #' 

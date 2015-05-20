@@ -11,7 +11,7 @@
 #' 
 #' @return A data.frame of class "GameDayPlays" consisting of play-by-play data 
 #' 
-#' @importFrom dplyr filter
+#' @import dplyr
 #'
 #' @export
 #' @examples
