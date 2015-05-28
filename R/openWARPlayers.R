@@ -141,13 +141,13 @@ panel.war = function(x, y, ...) {
 #' summary(sim)
 
 summary.do.openWARPlayers = function(data, n = 25, ...) {
-    # require(plyr) players = ddply(data, ~Name, summarise, q0 = min(WAR), q2.5 = quantile(WAR, 0.025) , q25 = quantile(WAR,
-    # 0.25) , q50 = mean(WAR) , q75 = quantile(WAR, 0.75), q97.5 = quantile(WAR, 0.975), q100 = max(WAR))
-    # print(head(players[order(players$q50, decreasing=TRUE),], n))
-    
-    data %>% dplyr::select(Name, WAR) %>% group_by(Name) %>% summarise(q0 = min(WAR), q2.5 = quantile(WAR, 0.025), q25 = quantile(WAR, 
-        0.25), q50 = mean(WAR), q75 = quantile(WAR, 0.75), q97.5 = quantile(WAR, 0.975), q100 = max(WAR)) %>% arrange(desc(q50)) %>% 
-        head(n)
+
+    data %>% dplyr::select(Name, WAR) %>% 
+      group_by(Name) %>% 
+      summarise(q0 = min(WAR), q2.5 = quantile(WAR, 0.025), q25 = quantile(WAR, 
+        0.25), q50 = mean(WAR), q75 = quantile(WAR, 0.75), q97.5 = quantile(WAR, 0.975), q100 = max(WAR)) %>%
+      arrange(desc(q50)) %>% 
+      head(n)
 }
 
 
@@ -193,27 +193,3 @@ plot.do.openWARPlayers = function(data, playerIds = c(431151, 285079), ...) {
     return(plot)
 }
 
-
-
-
-
-
-
-
-
-
-# Deprecated
-
-# warplot = function (playerIds, data, N = 5000, ...) { require(mosaic) bgcol = 'darkgray' playerIds = sort(playerIds) # is
-# it worth the trouble to filter the rows?  # rows = subset(data, batterId %in% playerIds | start1B %in% playerIds | start2B
-# %in% playerIds | start3B %in% ) # Remove unused factor levels # data$batterName = factor(rows$batterName) lkup =
-# unique(data[,c('batterId', 'batterName')]) lkup = subset(lkup, batterId %in% playerIds) labels =
-# as.character(lkup[order(lkup$batterId),]$batterName) bstraps = lapply(playerIds, getWARest, data = data, N = N) X =
-# do.call('rbind', bstraps) X = merge(x=X, y=lkup, by.x='playerId', by.y='batterId') plot = densityplot(~result | component,
-# groups=playerId, data=X , panel = function(x,y,...) { panel.densityplot(x, plot.points=FALSE, lwd = 3, ...)  if
-# (length(bstraps) == 1) { quants = qdata(c(0.05, 0.5, 0.975), vals=x) h = 0.025 eps = 0.05 * diff(range(x))
-# panel.abline(v=quants[1], col=bgcol) panel.abline(v=quants[2], col=bgcol) panel.abline(v=quants[3], col=bgcol)
-# panel.text(quants[2], h, paste('Point Estimate:\n', round(quants[2],2))) panel.text(quants[1], h/3,
-# paste(round(quants[1],2))) panel.text(quants[3], h/3, paste(round(quants[3],2))) panel.arrows(quants[1] + eps, h/3,
-# quants[3] - eps, h/3, ends = 'both') panel.text(quants[2], h/2, '95% CI') } } , auto.key=list(columns=min(4,
-# length(playerIds)), text = labels) , ylim = c(-0.01, 0.2) , xlab = 'Runs Above Average (RAA)' ) return(plot) } 

@@ -11,7 +11,7 @@ panel.war(x, y, ...)
 
 \item{y}{}
 
-\item{...}{arguments passed from \code{"plot.openWARPlayers"}}
+\item{...}{arguments passed from \code{'plot.openWARPlayers'}}
 }
 \description{
 Display a season's worth of openWAR results

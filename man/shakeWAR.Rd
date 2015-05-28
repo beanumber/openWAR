@@ -9,7 +9,7 @@ shakeWAR(data, resample = "plays", N = 10, ...)
 \arguments{
 \item{data}{An MLBAM data.frame}
 
-\item{resample}{An element of \code{c("plays", "models", "both")}}
+\item{resample}{An element of \code{c('plays', 'models', 'both')}}
 
 \item{N}{the number of resamples (default 5000)}
 }
@@ -24,7 +24,7 @@ Resamples the rows of an MLBAM data set
 }
 \examples{
 ds = getData()
-res = shakeWAR(ds, resample="plays", N=10)
+res = shakeWAR(ds, resample='plays', N=10)
 summary(res)
 }
 

@@ -8,6 +8,6 @@
 Contains the output from makeWAR() specific to openWAR
 }
 \examples{
-showClass("openWARPlays")
+showClass('openWARPlays')
 }
 

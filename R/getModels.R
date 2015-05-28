@@ -173,6 +173,10 @@ getModelFieldingRF = function(data) {
 #' @return a vector representing the probability that each ball in play will be fielded
 #' 
 #' @export
+#' 
+#' @importFrom KernSmooth bkde2D
+#' @importFrom Hmisc whichClosest
+#' 
 #' @examples
 #' 
 #' ds = getData()
@@ -180,15 +184,14 @@ getModelFieldingRF = function(data) {
 #' 
 
 getModelFieldingCollective = function(data) {
-    require(KernSmooth)
     message("....Computing the collective fielding model...")
     outs = subset(data, wasFielded, select = c("our.x", "our.y"))
     hits = subset(data, !wasFielded, select = c("our.x", "our.y"))
     # Find 2D kernel density estimates for hits and outs Make sure to specify the range, so that they over estimated over the
     # same grid
     grid = list(range(data$our.x, na.rm = TRUE), range(data$our.y, na.rm = TRUE))
-    fit.out <- bkde2D(outs, bandwidth = c(10, 10), range.x = grid)
-    fit.hit <- bkde2D(hits, bandwidth = c(10, 10), range.x = grid)
+    fit.out <- KernSmooth::bkde2D(outs, bandwidth = c(10, 10), range.x = grid)
+    fit.hit <- KernSmooth::bkde2D(hits, bandwidth = c(10, 10), range.x = grid)
     
     field.smooth = data.frame(cbind(expand.grid(fit.out$x1, fit.out$x2), isOut = as.vector(fit.out$fhat)), isHit = as.vector(fit.hit$fhat))
     names(field.smooth)[1:2] = c("x", "y")
@@ -200,9 +203,8 @@ getModelFieldingCollective = function(data) {
     # summary(field.smooth) fieldingplot(wasFielded ~ x + y, data=field.smooth, label = 'cum_resp', write.pdf=TRUE)
     
     fit.all = function(x, y) {
-        require(Hmisc)
-        x.idx = whichClosest(field.smooth$x, x)
-        y.idx = whichClosest(field.smooth$y, y)
+        x.idx = Hmisc::whichClosest(field.smooth$x, x)
+        y.idx = Hmisc::whichClosest(field.smooth$y, y)
         match = subset(field.smooth, x == field.smooth$x[x.idx] & y == field.smooth$y[y.idx])
         return(match$wasFielded)
     }

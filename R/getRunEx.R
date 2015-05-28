@@ -23,7 +23,6 @@
 #' 
 
 getRunEx = function(data, drop.incomplete = TRUE, ...) {
-    require(mosaic)
     if (drop.incomplete) {
         ds = subset(data, outsInInning == 3)
     } else {
@@ -31,7 +30,7 @@ getRunEx = function(data, drop.incomplete = TRUE, ...) {
     }
     mod = lm(runsFuture ~ as.factor(startCode) * as.factor(startOuts), data = ds)
     summary(mod)
-    rem = makeFun(mod)
+    rem = mosaic::makeFun(mod)
     fit.rem = function(baseCode, outs) {
         good = baseCode %in% 0:7 & outs %in% 0:2
         out = NULL

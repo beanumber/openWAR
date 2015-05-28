@@ -15,7 +15,7 @@ getData(start = Sys.Date() - 1, end = NULL, gameIds = NULL,
 \item{drop.suspended}{Logical indicating whether games with fewer than 5 innings should be excluded}
 }
 \value{
-A data.frame of class "GameDayPlays" consisting of play-by-play data
+A data.frame of class 'GameDayPlays' consisting of play-by-play data
 }
 \description{
 Retrieves MLBAM GameDay files for a specified time interval using multiple calls of the gameday function.
@@ -26,10 +26,10 @@ GameDay server in the specified interval and process them into a single data.fra
 }
 \examples{
 # Get data from one day
-ds = getData(start = "2013-03-31")
+ds = getData(start = '2013-03-31')
 # Get data from multiple days
-ds = getData(start = "2013-03-31", end = "2013-04-02")
+ds = getData(start = '2013-03-31', end = '2013-04-02')
 # Get data for entire 2013 season
-# ds = getData(start = "2013-03-31", end = "2013-09-30")
+# ds = getData(start = '2013-03-31', end = '2013-09-30')
 }
 

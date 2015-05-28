@@ -10,7 +10,7 @@ getDataWeekly(start = Sys.Date() - 8)
 \item{start}{A valid date in yyyy-mm-dd format (default Sys.Date()-8)}
 }
 \value{
-A data.frame of class "GameDayPlays" consisting of play-by-play data
+A data.frame of class 'GameDayPlays' consisting of play-by-play data
 }
 \description{
 Retrieves MLBAM GameDay files for a single week
@@ -21,6 +21,6 @@ GameDay server and process them into a single data.frame.
 }
 \examples{
 #Retrieve all the data from the first week of the 2013 season
-ds = getDataWeekly("2013-03-31")
+ds = getDataWeekly('2013-03-31')
 }
 

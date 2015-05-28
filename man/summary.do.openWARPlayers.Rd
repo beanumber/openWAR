@@ -7,7 +7,7 @@
 \method{summary}{do.openWARPlayers}(data, n = 25, ...)
 }
 \arguments{
-\item{An}{object of class \code{"openWARPlayers"}}
+\item{An}{object of class \code{'openWARPlayers'}}
 }
 \description{
 Summarize WAR

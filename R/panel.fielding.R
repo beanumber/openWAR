@@ -47,14 +47,14 @@ fieldingplot.lm = function(x, data, ...) {
 }
 
 fieldingplot.formula = function(x, data, label = "label", write.pdf = FALSE, ...) {
-    require(RColorBrewer)
     
     if (write.pdf) {
         filename = paste("fielding_", label, ".pdf", sep = "")
         pdf(file = filename, width = 10, height = 8)
     }
-    print(contourplot(x, data = data, region = TRUE, ..., alpha.regions = 0.5, col.regions = colorRampPalette(brewer.pal(9, 
-        "Blues"))(100), cuts = 10, contour = TRUE, panel = panel.fielding
+    print(contourplot(x, data = data, region = TRUE, ..., alpha.regions = 0.5, 
+                      col.regions = colorRampPalette(RColorBrewer::brewer.pal(9, "Blues"))(100)
+                      , cuts = 10, contour = TRUE, panel = panel.fielding
 #        , xlim = c(-350, 350), ylim = c(0, 550)
         , xlab = "Horizontal Distance from Home Plate (ft.)", 
         ylab = "Vertical Distance from Home Plate (ft.)"))

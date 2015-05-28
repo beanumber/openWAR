@@ -19,7 +19,7 @@
 #' # For a .500 team
 #' exWPct(750, 750)
 #' # Find the partial derivatives
-#' require(mosaic)
+#' library(mosaic)
 #' slope.rs = D(exWPct(rs, ra, exponent = 1.83) ~ rs)
 #' slope.ra = D(exWPct(rs, ra, exponent = 1.83) ~ ra)
 #' # How many wins is one run in a 700 run environment?

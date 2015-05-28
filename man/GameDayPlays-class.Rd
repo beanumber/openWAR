@@ -8,6 +8,6 @@
 Contains the output from getData()
 }
 \examples{
-showClass("GameDayPlays")
+showClass('GameDayPlays')
 }
 

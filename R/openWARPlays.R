@@ -34,13 +34,11 @@ getRAA = function(data, ...) UseMethod("getRAA")
 
 getRAA.openWARPlays = function(data, ...) {
     message("...Tabulating RAA per player...")
-    
-    # Batting require(plyr) war.bat = ddply(data, ~ batterId, summarise, playerId = batterId[1], Name =
-    # max(as.character(batterName)) , PA.bat = sum(isPA), G = length(unique(gameId)), HR = sum(event=='Home Run') , RAA.bat =
-    # sum(raa.bat, na.rm=TRUE))
-    
+        
     # dplyr syntax
-    war.bat <- data %>% group_by(batterId) %>% summarise(playerId = batterId[1], Name = max(as.character(batterName)), PA.bat = sum(isPA), 
+    war.bat <- data %>% 
+      group_by(batterId) %>% 
+      summarise(playerId = batterId[1], Name = max(as.character(batterName)), PA.bat = sum(isPA), 
         G = length(unique(gameId)), HR = sum(event == "Home Run"), RAA.bat = sum(raa.bat, na.rm = TRUE))
     
     # Baserunning war.br0 = ddply(data, ~batterId, summarise, RAA.br0 = sum(raa.br0, na.rm=TRUE)) war.br1 = ddply(subset(data,

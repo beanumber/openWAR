@@ -122,7 +122,6 @@ getDataWeekly <- function(start = Sys.Date() - 8) {
 #' 
 
 getGameIds <- function(date = Sys.Date()) {
-    require(RCurl)
     if (class(as.Date(date)) != "Date") {
         warning("Not a valid Date")
     }
@@ -133,7 +132,7 @@ getGameIds <- function(date = Sys.Date()) {
     dd = format(date, "%d")
     url <- paste("http://gd2.mlb.com/components/game/mlb/year_", yyyy, "/month_", mm, "/day_", dd, "/", sep = "")
     cat(paste("\nRetrieving data from", date, "..."))
-    a <- getURL(url)
+    a <- RCurl::getURL(url)
     b <- strsplit(a, "<a")
     ind <- grep("gid", b[[1]])
     games <- substring(b[[1]][ind], 8, 37)
@@ -164,23 +163,3 @@ updateGame <- function(gameId.vec, data, ...) {
     out = rbind(temp, ds.new)
     return(out)
 }
-
-
-
-
-######################################################################## Deprecated getGameDayURLs = function (gameId = 'gid_2012_08_12_atlmlb_nynmlb_1') { if (nchar(gameId) != 30) { stop('This
-######################################################################## is not a valid MLBAM gameId!') } yyyy <- substring(gameId, 5, 8) mm <- substring(gameId, 10, 11) dd <- substring(gameId,
-######################################################################## 13, 14) # Base URL base = paste('http://gd2.mlb.com/components/game/mlb/year_',yyyy,'/month_',mm,'/day_',dd,'/',sep='')
-######################################################################## message(base) url = NULL url['bis_boxscore.xml'] = paste(base, gameId, '/bis_boxscore.xml', sep='') url['inning_all.xml']
-######################################################################## = paste(base, gameId, '/inning/inning_all.xml', sep='') url['inning_hit.xml'] = paste(base, gameId,
-######################################################################## '/inning/inning_hit.xml', sep='') url['game.xml'] = paste(base, gameId, '/game.xml', sep='') url['game_events.xml'] =
-######################################################################## paste(base, gameId, '/game_events.xml', sep='') return(url) } getGameDayXML = function (gameId =
-######################################################################## 'gid_2012_08_12_atlmlb_nynmlb_1', type = 'inning_all') { url = getGameDayURLs(gameId) # If the local directory for this
-######################################################################## game does not exist, create it and download the files dirname = file.path('data', gameId) if (!file.exists(dirname)) {
-######################################################################## warning('...GameDay XML files are not in local directory -- must download') dir.create(dirname) files = getURL(url) for(i
-######################################################################## in 1:(length(files))) { filename = basename(names(files)[i]) write(files[i], file.path(dirname, filename)) } } # Now read
-######################################################################## from the local files xml = switch(type , bis_boxscore.xml = try(xmlParse(file.path(dirname, 'bis_boxscore.xml'))) ,
-######################################################################## inning_all.xml = try(xmlTreeParse(file.path(dirname, 'inning_all.xml'))) , game.xml = try(xmlParse(file.path(dirname,
-######################################################################## 'game.xml'))) , game_events.xml = try(xmlTreeParse(file.path(dirname, 'game_events.xml'))) , inning_hit.xml =
-######################################################################## try(xmlTreeParse(file.path(dirname, 'inning_hit.xml'))) ) # if (class(xml) == 'try-error') { # warning('404 - GameDay
-######################################################################## files do not exist...') # return(NULL) # } return(xml) } 

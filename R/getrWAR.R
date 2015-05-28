@@ -11,8 +11,7 @@
 #' 
 #' # Get data from yesterday
 #' ds = getrWAR()
-#' require(mosaic)
-#' densityplot(~WAR, data=ds, plot.points=FALSE)
+#' mosaic::densityplot(~WAR, data=ds, plot.points=FALSE)
 #' 
 #' # Leaders since 1954
 #' modern = subset(ds, yearId >= 1954)

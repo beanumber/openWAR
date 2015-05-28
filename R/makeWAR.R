@@ -284,8 +284,6 @@ getFielderResp = function(data, ...) {
 makeWARBaserunning = function(data, mod.bat, verbose = TRUE, ...) {
     message("...Estimating Baserunning Runs Above Average...")
     
-    # require(plyr) require(MASS) require(stringr)
-    
     # Figure out what happened to the runner on 3B
     data <- mutate(data, dest.br3 = ifelse(str_count(runnerMovement, paste(start3B, ":3B::T:", sep = "")), "H", NA))
     data <- mutate(data, dest.br3 = ifelse(!is.na(start3B) & !is.na(end3B) & start3B == end3B, "3B", dest.br3))

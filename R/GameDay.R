@@ -122,7 +122,7 @@ getURLs.gameday = function(gd) {
 #' getURLs.gameday(gd)
 
 readData.gameday = function(gd) {
-    #' library(mosaic)?
+  
     # First, build gd$data as a list of data frames
     dirname = file.path(find.package("openWAR"))
     labels = do.call("rbind", strsplit(basename(gd$url), split = "\\."))[, 1]
@@ -202,7 +202,7 @@ readData.gameday = function(gd) {
             out[, colId] = as.numeric(as.character(out[, colId]))
         }
         
-        # Update fielders for defensive switches require(plyr)
+        # Update fielders for defensive switches
         out = makeSubstitutions(out)
         # Sometimes data errors result in the batter's defensive position not getting set.  Set it to UN manually.
         missing.idx = which(is.na(out$batterPos) & out$batterId > 0)
@@ -537,19 +537,3 @@ recenter = function(dat, ...) {
     dat = transform(dat, our.y = r * sin(theta))
     return(dat)
 }
-
-############################################################################################### duplicated
-
-# getXML.gameday = function (gd) { require(XML) require(RCurl) # If the local directory for this game does not exist, create
-# it and download the files dirname = file.path(find.package('openWAR'), 'data', gd$gameId) if (!file.exists(dirname)) {
-# warning('...GameDay XML files are not in local directory -- must download') dir.create(dirname, recursive=TRUE) curl =
-# getCurlHandle() files = getURL(gd$url, curl = curl) for(i in 1:(length(files))) { filename = basename(names(files)[i])
-# write(files[i], file.path(dirname, filename)) } } # Now read from the local files local.filenames = file.path(dirname,
-# names(gd$url)) xml = try(sapply(local.filenames, xmlParse)) if (class(xml) == 'try-error') { warning('404 - GameDay files
-# do not exist...') return(NULL) } else { names(xml) = names(gd$url) xml = switch(type , bis_boxscore.xml =
-# try(xmlParse(file.path(dirname, 'bis_boxscore.xml'))) , inning_all.xml = try(xmlTreeParse(file.path(dirname,
-# 'inning_all.xml'))) , game.xml = try(xmlParse(file.path(dirname, 'game.xml'))) , game_events.xml =
-# try(xmlTreeParse(file.path(dirname, 'game_events.xml'))) , inning_hit.xml = try(xmlTreeParse(file.path(dirname,
-# 'inning_hit.xml'))) ) closeAllConnections() return(xml) } }
-
-# data = subset(out, inning == 9 & half == 'bottom') fixRunnerMovement(data) 

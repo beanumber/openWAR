@@ -7,7 +7,7 @@
 getGameIds(date = Sys.Date())
 }
 \arguments{
-\item{date}{A date in "yyyy-mm-dd" format}
+\item{date}{A date in 'yyyy-mm-dd' format}
 }
 \value{
 A vector of gameIds
@@ -21,6 +21,6 @@ a list of valid gameIds. This function is used internally in the function getDat
 }
 \examples{
 getGameIds()
-getGameIds("2008-05-14")
+getGameIds('2008-05-14')
 }
 

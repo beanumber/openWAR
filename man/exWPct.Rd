@@ -28,7 +28,7 @@ allowed.
 # For a .500 team
 exWPct(750, 750)
 # Find the partial derivatives
-require(mosaic)
+library(mosaic)
 slope.rs = D(exWPct(rs, ra, exponent = 1.83) ~ rs)
 slope.ra = D(exWPct(rs, ra, exponent = 1.83) ~ ra)
 # How many wins is one run in a 700 run environment?
@@ -38,7 +38,7 @@ runsPerWin(700)
 runsPerWin(742)
 # Plot Runs per Win
 plotFun(runsPerWin(r) ~ r, r.lim = c(300, 1200)
-, xlab = "Runs Environment per 162 games"
-, ylab = "Runs per Win")
+, xlab = 'Runs Environment per 162 games'
+, ylab = 'Runs per Win')
 }
 

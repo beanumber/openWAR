@@ -7,7 +7,7 @@
 getLinearWeightsModel(type)
 }
 \arguments{
-\item{type}{A string representing either "xr", "woba"}
+\item{type}{A string representing either 'xr', 'woba'}
 }
 \value{
 A \code{lm} object
@@ -21,12 +21,12 @@ Retrieves any of several linear weights formulae as \code{lm} objects
 \examples{
 ds = getData()
 event = data.frame(event = ds$event)
-woba = getLinearWeightsModel(type = "woba")
-xr = getLinearWeightsModel(type = "xr")
+woba = getLinearWeightsModel(type = 'woba')
+xr = getLinearWeightsModel(type = 'xr')
 ds$woba = predict(woba, newdata=event)
 ds$xr = predict(xr, newdata=event)
 
-braa = getLinearWeightsModelfromData(ds, type = "bp")
+braa = getLinearWeightsModelfromData(ds, type = 'bp')
 bp.events = levels(as.factor(braa$model$event))
 event[which(!(event \%in\% bp.events))] <- NA
 ds$braa = predict(braa, newdata=event)

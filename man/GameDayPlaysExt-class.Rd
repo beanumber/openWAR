@@ -8,6 +8,6 @@
 Contains the output from makeWAR()
 }
 \examples{
-showClass("GameDayPlaysExt")
+showClass('GameDayPlaysExt')
 }
 

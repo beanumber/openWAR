@@ -7,9 +7,9 @@
 getWAR(data, dataRepl = NULL, nteams = 30, verbose = TRUE, ...)
 }
 \arguments{
-\item{data}{An object of class \code{"openWARPlays"}}
+\item{data}{An object of class \code{'openWARPlays'}}
 
-\item{dataRepl}{An object of class \code{"openWARPlays"} that will be used to calculate the replacement level.}
+\item{dataRepl}{An object of class \code{'openWARPlays'} that will be used to calculate the replacement level.}
 
 \item{nteams}{The nteams argument to be passed to getReplacementPlayers}
 }

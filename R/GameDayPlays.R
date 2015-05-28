@@ -177,6 +177,8 @@ tabulate.GameDayPlays = function(data) {
 #' defined by the Lahman database. 
 #' 
 #' @export crosscheck.GameDayPlays
+#' 
+#' 
 #' @examples
 #' 
 #' ds = getData()
@@ -186,22 +188,25 @@ tabulate.GameDayPlays = function(data) {
 crosscheck = function(data) UseMethod("crosscheck")
 
 crosscheck.GameDayPlays = function(data) {
-    require(Lahman)
     
     teams = tabulate(data)
     
-    lteams <- Batting %>% group_by(yearID, teamID) %>% summarise(PA = sum(AB + BB + HBP + SH + SF, na.rm = TRUE), AB = sum(AB, 
+    
+    lteams <- Lahman::Batting %>% 
+      group_by(yearID, teamID) %>% 
+      summarise(PA = sum(AB + BB + HBP + SH + SF, na.rm = TRUE), AB = sum(AB, 
         na.rm = TRUE), R = sum(R, na.rm = TRUE), H = sum(H, na.rm = TRUE), HR = sum(HR, na.rm = TRUE), BB = sum(BB, na.rm = TRUE), 
         K = sum(SO, na.rm = TRUE), BA = sum(H, na.rm = TRUE)/sum(AB, na.rm = TRUE), OBP = sum(H + BB + HBP, na.rm = TRUE)/sum(AB + 
             BB + HBP + SF, na.rm = TRUE), SLG = sum(H + X2B + X3B + HR, na.rm = TRUE)/sum(AB, na.rm = TRUE))
     
-    lteams = merge(x = lteams, y = Teams[, c("yearID", "teamID", "G")], by = c("yearID", "teamID"))
+    lteams = merge(x = lteams, y = Lahman::Teams[, c("yearID", "teamID", "G")], by = c("yearID", "teamID"))
     lteams <- mutate(lteams, teamId = tolower(teamID))
     lteams <- mutate(lteams, teamId = ifelse(teamId == "laa", "ana", as.character(teamId)))
     
     match = merge(x = teams, y = lteams, by.x = c("yearId", "bat_team"), by.y = c("yearID", "teamId"), all.x = TRUE)
     
-    # move this out of here eventually require(xtable) x = xtable(match[,c('bat_team', 'G.x', 'PA.x', 'AB.x', 'R.x', 'H.x',
+    # move this out of here eventually 
+    # require(xtable) x = xtable(match[,c('bat_team', 'G.x', 'PA.x', 'AB.x', 'R.x', 'H.x',
     # 'HR.x', 'BB.x', 'K.x', 'G.y', 'PA.y', 'AB.y', 'R.y', 'H.y', 'HR.y', 'BB.y', 'K.y')] , caption=c('Cross-check between MLBAM
     # data (left) and Lahman data (right), 2012'), label='tab:crosscheck' , align = rep('c', 18)) print(x,
     # include.rownames=FALSE)
@@ -230,6 +235,10 @@ crosscheck.GameDayPlays = function(data) {
 #' 
 #' @export shakeWAR
 #' @export shakeWAR.GameDayPlays
+#' 
+#' @importFrom mosaic do
+#' @importFrom mosaic resample
+#' 
 #' @examples
 #' 
 #' ds = getData()
@@ -240,11 +249,10 @@ crosscheck.GameDayPlays = function(data) {
 shakeWAR = function(data, resample = "plays", N = 10, ...) UseMethod("shakeWAR")
 
 shakeWAR.GameDayPlays = function(data, resample = "plays", N = 10, ...) {
-    require(mosaic)
     
     if (resample == "both") {
         # resample the actual plays AND rebuild the models each time this captures both measurement error and sampling error
-        bstrap = do(N) * getWAR(makeWAR(resample(data), low.memory = TRUE)$openWAR)
+        bstrap = mosaic::do(N) * getWAR(makeWAR(mosaic::resample(data), low.memory = TRUE)$openWAR)
     } else {
         
         ext = makeWAR(data, verbose = FALSE, low.memory = TRUE)
@@ -259,7 +267,7 @@ shakeWAR.GameDayPlays = function(data, resample = "plays", N = 10, ...) {
             # assume the models are fixed, and resample the RAA values this captures the sampling error
             
             # supposedly the performance of do() is really bad
-            bstrap = do(N) * getWAR(resample(reality.raa), verbose = FALSE)
+            bstrap = mosaic::do(N) * getWAR(mosaic::resample(reality.raa), verbose = FALSE)
             # use replicate() instead bstrap = rdply(N, getWAR(resample(reality.raa), verbose=FALSE)) class(bstrap) =
             # c('do.openWARPlayers', class(bstrap)) } else { # to isolate the measurement error, use the models we built on the
             # resampled rows # but apply them exclusively to the real data ext.list = lapply(sims$models.used, makeWAR, data = reality,

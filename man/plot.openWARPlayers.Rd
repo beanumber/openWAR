@@ -7,7 +7,7 @@
 \method{plot}{openWARPlayers}(data, ...)
 }
 \arguments{
-\item{data}{An object of class \code{"openWARPlayers"}}
+\item{data}{An object of class \code{'openWARPlayers'}}
 }
 \description{
 Display a season's worth of openWAR results

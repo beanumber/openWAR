@@ -8,6 +8,6 @@
 A data.frame of players and their tabulated openWAR values.  The function \code{getWAR} returns an object of class \code{openWARPlayers}
 }
 \examples{
-showClass("openWARPlayers")
+showClass('openWARPlayers')
 }
 
