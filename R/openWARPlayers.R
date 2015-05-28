@@ -129,7 +129,6 @@ panel.war = function(x, y, ...) {
 #' 
 #' @param An object of class \code{'openWARPlayers'}
 #' 
-#' @importFrom magrittr %>%
 #' @import dplyr
 #'
 #' @export
