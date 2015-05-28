@@ -19,9 +19,9 @@ Description: This package serves two primary purposes: 1) it facilitates the
     implementation of openWAR includes functions for constructing interval
     estimates of WAR for each player, as well as comparing openWAR point
     estimates to those of Baseball-Reference.com's rWAR.
-Depends:
+Depends: 
     R (>= 3.0.0)
-Imports:
+Imports: 
     mosaic,
     XML,
     RCurl,
@@ -29,8 +29,9 @@ Imports:
     stringr,
     Sxslt,
     Lahman
-Suggests:
-    openWARData
+Suggests: 
+    openWARData,
+    testthat
 License: GPL (>=2)
 URL: https://github.com/beanumber/openWAR
 BugReports: https://github.com/beanumber/openWAR/issues
