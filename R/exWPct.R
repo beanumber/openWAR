@@ -29,10 +29,9 @@
 #' runsPerWin(742)
 #' # Plot Runs per Win
 #' plotFun(runsPerWin(r) ~ r, r.lim = c(300, 1200)
-#' , xlab = "Runs Environment per 162 games"
-#' , ylab = "Runs per Win")
+#' , xlab = 'Runs Environment per 162 games'
+#' , ylab = 'Runs per Win')
 #' 
-exWPct <- makeFun(1 / (1 + (ra/rs)^exponent) ~ rs & ra & exponent, exponent = 2)
+exWPct <- makeFun(1/(1 + (ra/rs)^exponent) ~ rs & ra & exponent, exponent = 2)
 
-runsPerWin <- makeFun(1 / (162 * D(exWPct(rs, ra, exponent=1.83) ~ rs)(r, r)) ~ r & exponent)
-
+runsPerWin <- makeFun(1/(162 * D(exWPct(rs, ra, exponent = 1.83) ~ rs)(r, r)) ~ r & exponent) 

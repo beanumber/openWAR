@@ -3,9 +3,6 @@
 #' @description Contains the output from makeWAR()
 #' 
 #' @exportClass GameDayPlaysExt
-#' @examples showClass("GameDayPlaysExt")
+#' @examples showClass('GameDayPlaysExt')
 
-setClass("GameDayPlaysExt", contains = "GameDayPlays")
-
-
-
+setClass("GameDayPlaysExt", contains = "GameDayPlays") 

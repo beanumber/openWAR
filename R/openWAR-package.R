@@ -8,4 +8,4 @@
 #' 
 #' @docType package
 #' @name openWAR
-NULL
+NULL 

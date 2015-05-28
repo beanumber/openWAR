@@ -12,11 +12,9 @@
 #' ids = getIDMap()
 #' 
 
-getIDMap = function () {
-  bp.ids = read.csv("http://www.baseballprospectus.com/sortable/playerids/playerid_list.csv")
-  names(bp.ids) = c("nameLast", "nameFirst", "bpId", "davenportId", "mlbamId", "retroId")
-  ids = merge(x=Lahman::Master, y=bp.ids, by.x="retroID", by.y="retroId", all=TRUE)
-  return(ids)
-}
-
-
+getIDMap = function() {
+    bp.ids = read.csv("http://www.baseballprospectus.com/sortable/playerids/playerid_list.csv")
+    names(bp.ids) = c("nameLast", "nameFirst", "bpId", "davenportId", "mlbamId", "retroId")
+    ids = merge(x = Lahman::Master, y = bp.ids, by.x = "retroID", by.y = "retroId", all = TRUE)
+    return(ids)
+} 

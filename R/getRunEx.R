@@ -22,22 +22,22 @@
 #' fit.rem(4,1)
 #' 
 
-getRunEx = function (data, drop.incomplete = TRUE, ...) {
-  require(mosaic)
-  if (drop.incomplete) {
-    ds = subset(data, outsInInning == 3)
-  } else {
-    ds = data
-  }
-  mod = lm(runsFuture ~ as.factor(startCode) * as.factor(startOuts), data=ds)
-  summary(mod)
-  rem = makeFun(mod)
-  fit.rem = function (baseCode, outs) {
-    good = baseCode %in% 0:7 & outs %in% 0:2
-    out = NULL
-    out[good] = rem(baseCode[good], outs[good])
-    out[!good] = 0
-    return(out)
-  }
-  return(fit.rem)
-}
+getRunEx = function(data, drop.incomplete = TRUE, ...) {
+    require(mosaic)
+    if (drop.incomplete) {
+        ds = subset(data, outsInInning == 3)
+    } else {
+        ds = data
+    }
+    mod = lm(runsFuture ~ as.factor(startCode) * as.factor(startOuts), data = ds)
+    summary(mod)
+    rem = makeFun(mod)
+    fit.rem = function(baseCode, outs) {
+        good = baseCode %in% 0:7 & outs %in% 0:2
+        out = NULL
+        out[good] = rem(baseCode[good], outs[good])
+        out[!good] = 0
+        return(out)
+    }
+    return(fit.rem)
+} 
