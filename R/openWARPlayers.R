@@ -66,7 +66,6 @@ plot.openWARPlayers = function(data, ...) {
     supp = data[, c("playerId", "Name", "WAR", "TPA", "repl", "RAA", "RAA.pitch")]
     names(supp) = c("playerId", "Name", "WAR", "TPA", "repl", "RAA", "RAA_pitch")
     
-    require(mosaic)
     p = xyplot(RAA ~ TPA, groups = isReplacement, data = data, panel = panel.war
                , data2 = supp, alpha = 0.3, pch = 19, type = c("p", "r")
                , par.settings = list(superpose.symbol = list(pch = 19))
@@ -182,7 +181,6 @@ summary.do.openWARPlayers = function(data, n = 25, ...) {
 #' plot(data=openWAR.sim, playerIds = c(431151, 502517, 408234, 285078, 518774, 285079))
 
 plot.do.openWARPlayers = function(data, playerIds = c(431151, 285079), ...) {
-    require(mosaic)
     playerIds = sort(playerIds)
     # is it worth the trouble to filter the rows?
     rows = filter(data, batterId %in% playerIds)
