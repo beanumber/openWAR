@@ -17,12 +17,6 @@
 #' 
 #' 
 
-panel.fielding = function(x, y, z, ...) {
-    panel.baseball()
-    panel.contourplot(x, y, z, ...)
-}
-
-
 fieldingplot = function(x, data, ...) UseMethod("fieldingplot")
 
 fieldingplot.glm = function(x, data, ...) {
@@ -68,4 +62,8 @@ fieldingplot.default = function(x, y, z, label = "label", write.pdf = FALSE, ...
 }
 
 
- 
+
+panel.fielding = function(x, y, z, ...) {
+  panel.baseball()
+  panel.contourplot(x, y, z, ...)
+}
