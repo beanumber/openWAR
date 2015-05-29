@@ -80,7 +80,6 @@ panel.baseball <- function() {
 #' plot(ds)
 
 plot.GameDayPlays = function(data, batterName = NULL, pitcherName = NULL, event = NULL, pch = 1) {
-    require(mosaic)
     xy.fields = c("our.x", "our.y")
     if (!length(intersect(xy.fields, names(data))) == length(xy.fields)) {
         stop("(x,y) coordinate locations not found.")
@@ -97,11 +96,16 @@ plot.GameDayPlays = function(data, batterName = NULL, pitcherName = NULL, event 
     }
     ds <- filter(data, !is.na(our.y) & !is.na(our.x))
     ds$event <- factor(ds$event)
-    plot = xyplot(our.y ~ our.x, groups = event, data = ds, pch = pch, panel = function(x, y, ...) {
-        panel.baseball()
-        panel.xyplot(x, y, alpha = 0.3, ...)
-    }, auto.key = list(columns = 4), xlim = c(-350, 350), ylim = c(-20, 525), xlab = "Horizontal Distance from Home Plate (ft.)", 
-        ylab = "Vertical Distance from Home Plate (ft.)")
+    plot = xyplot(our.y ~ our.x, groups = event, data = ds, pch = pch
+                  , panel = function(x, y, ...) {
+                    panel.baseball()
+                    panel.xyplot(x, y, alpha = 0.3, ...)
+                    }
+                  , auto.key = list(columns = 4)
+                  , xlim = c(-350, 350), ylim = c(-20, 525)
+                  , xlab = "Horizontal Distance from Home Plate (ft.)"
+                  , ylab = "Vertical Distance from Home Plate (ft.)"
+                  )
     return(plot)
 }
 

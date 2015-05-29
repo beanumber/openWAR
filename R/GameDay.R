@@ -113,6 +113,7 @@ getURLs.gameday = function(gd) {
 #' @importFrom Sxslt xsltApplyStyleSheet
 #' @importFrom XML saveXML
 #' @importFrom stringr str_split
+#' @importFrom stringr str_count
 #' @import dplyr
 #' 
 #' @export
@@ -127,7 +128,7 @@ readData.gameday = function(gd) {
     dirname = file.path(find.package("openWAR"))
     labels = do.call("rbind", strsplit(basename(gd$url), split = "\\."))[, 1]
     for (i in 1:length(labels)) {
-        xsl = paste(dirname, "/inst/xsl/", labels[i], ".xsl", sep = "")
+        xsl = paste(dirname, "/xsl/", labels[i], ".xsl", sep = "")
         # Use the shell command 'xsltproc' cmd = paste('xsltproc', xsl, gd$url[i], sep=' ') dat = try(system(cmd, intern=TRUE))
         # Alternative within R apply the stylesheet to the XML
         dat = stringr::str_split(XML::saveXML(Sxslt::xsltApplyStyleSheet(gd$url[i], xsl)$doc), "\n")[[1]]
