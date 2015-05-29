@@ -16,10 +16,8 @@ system("rm -R inst/extdata/register-20150405")
 # remove the ZIP file
 system("rm inst/extdata/register.zip")
 
-register = read.csv("inst/extdata/register.csv")
 
-idmap = subset(register, !is.na(key_mlbam), select=c("key_person", "key_mlbam", "key_retro", "key_bbref", "key_bbpro"
-                                                    , "key_fangraphs", "name_last", "name_first", "name_given"))
+register = read.csv(system.file("extdata", "register.csv", package = "openWAR"))
 
 idTT <- register %>%
   filter(!is.na(key_mlbam)) %>%
