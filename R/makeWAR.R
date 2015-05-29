@@ -341,9 +341,9 @@ makeWARBaserunning = function(data, mod.bat, verbose = TRUE, ...) {
     # ds3Probs = plyr::ddply(ds3, ~event + startCode + startOuts, getCDF) ds2Probs = ddply(ds2, ~event + startCode + startOuts,
     # getCDF) ds1Probs = ddply(ds1, ~event + startCode + startOuts, getCDF)
     
-    ds3Probs <- do(group_by(ds3, event, startCode, startOuts), getCDF(.))
-    ds2Probs <- do(group_by(ds2, event, startCode, startOuts), getCDF(.))
-    ds1Probs <- do(group_by(ds1, event, startCode, startOuts), getCDF(.))
+    ds3Probs <- dplyr::do(group_by(ds3, event, startCode, startOuts), getCDF(.))
+    ds2Probs <- dplyr::do(group_by(ds2, event, startCode, startOuts), getCDF(.))
+    ds1Probs <- dplyr::do(group_by(ds1, event, startCode, startOuts), getCDF(.))
     
     # Merge onto the main data frame
     join.idx = c("event", "startCode", "startOuts")
