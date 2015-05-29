@@ -1,0 +1,42 @@
+---
+title: "Comparison of openWAR to other implementations of WAR"
+author: "Ben Baumer"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+## Cross-check our WAR with bbref
+
+```{r, eval=FALSE}
+rWAR = getrWAR()
+rWAR2012 = subset(rWAR, yearId == 2012)
+
+ids = getIDMap()
+
+data(idmap)
+WAR = merge(x=rWAR2012, y=ids, by.x="playerId", by.y="playerID")
+WAR = merge(x=WAR, y=players, by.x="mlbamId", by.y="batterId")
+
+panel.compare = function (x, y,...) {
+  panel.xyplot(x,y, pch=19, alpha=0.3, ...)
+  panel.abline(0,1, col="darkgray")
+  panel.text(0, 0, paste("Correlation =", round(cor(x,y, use="complete.obs"), 3)))
+}
+
+xyplot(RAA_bat ~ RAA.bat, data=WAR, type=c("p", "r", "smooth")
+       , panel=panel.compare
+       , main="Comparison of openWAR vs. rWAR, 2012"
+       , xlab = "Batting Runs Above Average (openWAR)", ylab="Batting Runs Above Average (rWAR)")
+
+with(WAR, cor(RAA_bat, RAA.bat))
+
+favstats(~RAA.bat, data=players)
+favstats(~RAA_bat, data=rWAR2012)
+densityplot(~RAA_bat, data=rWAR2012)
+ladd(panel.densityplot(players$RAA.bat, col="pink"))
+```
