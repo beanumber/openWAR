@@ -31,7 +31,10 @@ summary.openWARPlayers = function(data, n = 25, ...) {
     # 'RAA.field', 'RAA.pitch')], n)
     
     # dplyr syntax
-    data %>% dplyr::select(Name, TPA, WAR, RAA, repl, RAA.bat, RAA.br, RAA.field, RAA.pitch) %>% arrange(desc(WAR)) %>% head(n)
+    data %>% 
+      dplyr::select(Name, TPA, WAR, RAA, repl, RAA.bat, RAA.br, RAA.field, RAA.pitch) %>%
+      arrange(desc(WAR)) %>% 
+      head(n)
 }
 
 
@@ -64,10 +67,16 @@ plot.openWARPlayers = function(data, ...) {
     names(supp) = c("playerId", "Name", "WAR", "TPA", "repl", "RAA", "RAA_pitch")
     
     require(mosaic)
-    p = xyplot(RAA ~ TPA, groups = isReplacement, data = data, panel = panel.war, data2 = supp, alpha = 0.3, pch = 19, type = c("p", 
-        "r"), par.settings = list(superpose.symbol = list(pch = 19)), ylab = "openWAR Runs Above Average", xlab = "Playing Time (plate appearances plus batters faced)", 
-        auto.key = list(columns = 2, corner = c(0.05, 0.95), text = c("MLB Player", "Replacement Player")), sub = paste("Number of Players =", 
-            nrow(data), ", Number of Replacement Level Players =", sum(data$isReplacement)), ...)
+    p = xyplot(RAA ~ TPA, groups = isReplacement, data = data, panel = panel.war
+               , data2 = supp, alpha = 0.3, pch = 19, type = c("p", "r")
+               , par.settings = list(superpose.symbol = list(pch = 19))
+               , ylab = "openWAR Runs Above Average"
+               , xlab = "Playing Time (plate appearances plus batters faced)"
+               , auto.key = list(columns = 2, corner = c(0.05, 0.95)
+                                 , text = c("MLB Player", "Replacement Player"))
+                                 , sub = paste("Number of Players =", nrow(data)
+                                               , ", Number of Replacement Level Players =", sum(data$isReplacement))
+               , ...)
     print(p)
 }
 
@@ -186,9 +195,13 @@ plot.do.openWARPlayers = function(data, playerIds = c(431151, 285079), ...) {
     sims.long = reshape(rows[, c("batterId", "Name", "RAA", "RAA.bat", "RAA.br", "RAA.field", "RAA.pitch")], varying = 3:7, 
         timevar = "component", direction = "long")
     
-    plot = densityplot(~RAA | component, groups = batterId, data = sims.long, panel = function(x, y, ...) {
-        panel.densityplot(x, plot.points = FALSE, lwd = 3, ...)
-    }, auto.key = list(columns = min(4, length(playerIds)), text = labels), ylim = c(-0.01, 0.2), xlab = "Runs Above Average (RAA)")
+    plot = densityplot(~RAA | component, groups = batterId, data = sims.long
+                       , panel = function(x, y, ...) { 
+                         panel.densityplot(x, plot.points = FALSE, lwd = 3, ...)
+                         }
+                       , auto.key = list(columns = min(4, length(playerIds)), text = labels)
+                       , ylim = c(-0.01, 0.2), xlab = "Runs Above Average (RAA)"
+                       )
     return(plot)
 }
 
