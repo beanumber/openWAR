@@ -36,3 +36,19 @@
 #' @source \url{http://gd2.mlb.com/components/game/mlb/year_2012/month_05/day_14/}
 #' 
 "May14" 
+
+#' A sample of GameDayPlays data from MLBAM
+#' 
+#' A dataset containing play-by-play data from MLBAM GameDay and processed by 
+#' \code{openWAR} for all games in May, 2013. 
+#' 
+#' @format A `GameDayPlays` object, which is also a \code{data.frame} with 31738 
+#' rows (e.g. plays) and 62 columns. The columns are as follows:
+#' \describe{
+#'    \item{pitcherId}{the MLBAM id of the pitcher}
+#'    \item{batterId}{the MLBAM id of the batter}
+#'    }
+#' 
+#' @source \url{http://gd2.mlb.com/components/game/mlb/year_2012/month_05/}
+#' 
+"May" 
