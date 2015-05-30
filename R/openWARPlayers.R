@@ -16,7 +16,7 @@ setClass("openWARPlayers", contains = "data.frame")
 #' @param data An object of class \code{'openWARPlayers'}
 #' 
 #' @import dplyr
-#' @export summary.openWARPlayers
+#' @export
 #' @examples
 #' 
 #' ds <- getData()
@@ -49,7 +49,7 @@ summary.openWARPlayers = function(data, n = 25, ...) {
 #' 
 #' @param data An object of class \code{'openWARPlayers'}
 #' 
-#' @export plot.openWARPlayers
+#' @export
 #' 
 #' @examples
 #' 
