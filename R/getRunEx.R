@@ -10,7 +10,6 @@
 #' 
 #' @return A function that takes two arguments: baseCode and outs, and return a run value 
 #' 
-#' @importFrom mosaic makeFun
 #' 
 #' @export
 #' @examples
@@ -29,14 +28,13 @@ getRunEx = function(data, drop.incomplete = TRUE, ...) {
         ds = data
     }
     mod = lm(runsFuture ~ as.factor(startCode) * as.factor(startOuts), data = ds)
-    summary(mod)
-    rem = mosaic::makeFun(mod)
     fit.rem = function(baseCode, outs) {
-        good = baseCode %in% 0:7 & outs %in% 0:2
-        out = NULL
-        out[good] = rem(baseCode[good], outs[good])
-        out[!good] = 0
-        return(out)
+      good.idx <- baseCode %in% 0:7 & outs %in% 0:2
+      out <- NULL
+      out[good.idx] <- predict(mod, newdata = data.frame(startCode = baseCode, startOuts = outs))
+      out[!good.idx] <- 0
+      return(out)
     }
     return(fit.rem)
 } 
+
