@@ -10,17 +10,14 @@ vignette: >
 ---
 
 
-Here are a few useful sanity checks for the data compiled by the **openWAR** package. 
-
+Here are a few useful sanity checks for the data compiled by the `openWAR` package. 
 
 ```{r, eval=FALSE}
-require(openWAR)
-require(mosaic)
-require(plyr)
+library(openWAR)
+library(mosaic)
 data(MLBAM2013)
 ds = MLBAM2013
 ```
-
 
 #### Data Accuracy
 
