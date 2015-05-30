@@ -13,7 +13,6 @@
 #' @export shakeWAR
 #' @export shakeWAR.GameDayPlays
 #' 
-#' @importFrom mosaic do
 #' @importFrom mosaic resample
 #' 
 #' @examples
@@ -29,7 +28,7 @@ shakeWAR.GameDayPlays = function(data, resample = "plays", N = 10, ...) {
   
   if (resample == "both") {
     # resample the actual plays AND rebuild the models each time this captures both measurement error and sampling error
-    bstrap = mosaic::do(N) * getWAR(makeWAR(mosaic::resample(data), low.memory = TRUE)$openWAR)
+    bstrap = mosaic.do(N) * getWAR(makeWAR(mosaic::resample(data), low.memory = TRUE)$openWAR)
   } else {
     
     ext = makeWAR(data, verbose = FALSE, low.memory = TRUE)
@@ -44,7 +43,7 @@ shakeWAR.GameDayPlays = function(data, resample = "plays", N = 10, ...) {
       # assume the models are fixed, and resample the RAA values this captures the sampling error
       
       # supposedly the performance of do() is really bad
-      bstrap = mosaic::do(N) * getWAR(mosaic::resample(reality.raa), verbose = FALSE)
+      bstrap = mosaic.do(N) * getWAR(mosaic::resample(reality.raa), verbose = FALSE)
       # use replicate() instead bstrap = rdply(N, getWAR(resample(reality.raa), verbose=FALSE)) class(bstrap) =
       # c('do.openWARPlayers', class(bstrap)) } else { # to isolate the measurement error, use the models we built on the
       # resampled rows # but apply them exclusively to the real data ext.list = lapply(sims$models.used, makeWAR, data = reality,

@@ -73,6 +73,8 @@ panel.baseball <- function() {
 #' 
 #' @return an xyplot() 
 #' 
+#' @importFrom lattice xyplot
+#' 
 #' @export
 #' @examples
 #' 
