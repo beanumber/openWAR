@@ -7,7 +7,7 @@
 #' 
 #' @param start A valid date in yyyy-mm-dd format (default yesterday)
 #' @param end A valid date in yyyy-mm-dd format (default start)
-#' @param drop.suspended Logical indicating whether games with fewer than 5 innings should be excluded
+#' @param drop.suspended Logical indicating whether games with fewer than 5 innings should be excluded.  Default is TRUE.
 #' 
 #' @return A data.frame of class 'GameDayPlays' consisting of play-by-play data 
 #' 
@@ -57,7 +57,6 @@ getData <- function(start = Sys.Date() - 1, end = NULL, gameIds = NULL, drop.sus
 
 #' @title getDataMonthly
 #' 
-#' 
 #' @description Retrieves MLBAM GameDay files for a single month 
 #' 
 #' @details Given a year and month, this function will retrieve data from the 
@@ -73,7 +72,7 @@ getData <- function(start = Sys.Date() - 1, end = NULL, gameIds = NULL, drop.sus
 #' @examples
 #' 
 #' #Retrieve all of the MLBAM data from May 2013
-#' ds = getMonthlyData(2013, 5)
+#' ds = getDataMonthly(2013, 5)
 
 getDataMonthly <- function(yyyy = 2013, m = 5) {
     start = as.Date(paste(yyyy, m, "01", sep = "-"), "%Y-%m-%d")
