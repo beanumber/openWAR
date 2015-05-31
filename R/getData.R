@@ -72,6 +72,7 @@ getData <- function(start = Sys.Date() - 1, end = NULL, gameIds = NULL, drop.sus
 #' @examples
 #' 
 #' #Retrieve all of the MLBAM data from May 2013
+#' #NOT RUN
 #' ds = getDataMonthly(2013, 5)
 
 getDataMonthly <- function(yyyy = 2013, m = 5) {
