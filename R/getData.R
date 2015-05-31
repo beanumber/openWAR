@@ -159,7 +159,7 @@ getGameIds <- function(date = Sys.Date()) {
 #' 
 
 updateGame <- function(gameId.vec, data, ...) {
-    temp = subset(data, !gameId %in% gameId.vec)
+    temp = dplyr::filter(data, !gameId %in% gameId.vec)
     ds.new = getData(gameIds = unique(gameId.vec))
     out = rbind(temp, ds.new)
     return(out)
