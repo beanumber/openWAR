@@ -14,7 +14,7 @@
 #' @export
 #' @examples
 #' 
-#' ds = data(MLBAM2013)
+#' ds = data(May)
 #' fit.rem = getRunEx(ds)
 #' 
 #' fit.rem(0,0)
