@@ -2,20 +2,21 @@
 #' 
 #' @description Find the Run Expectancy for a given state
 #' 
-#' @details Given a data set, return a function giving the run expectancy for any base/out state
+#' @details Given a data set, returns a function giving the run expectancy for any base/out state
 #' 
 #' @param data an MLBAM dataset
 #' @param drop.incomplete a LOGICAL indicating whether incomplete innings (e.g. walk-off innings)
-#' should be excluded from the run expectancy model
+#' should be excluded from the run expectancy model.  Default is TRUE.  
 #' 
-#' @return A function that takes two arguments: baseCode and outs, and return a run value 
+#' @return A function that takes two arguments: baseCode and outs, and returns a run value 
 #' 
 #' 
 #' @export
 #' @examples
 #' 
-#' ds = data(May)
-#' fit.rem = getRunEx(ds)
+#' #Data from May 2013
+#' data(May)
+#' fit.rem = getRunEx(May)
 #' 
 #' fit.rem(0,0)
 #' fit.rem(4,1)
