@@ -21,6 +21,7 @@
 #' # Get data from multiple days
 #' ds = getData(start = '2013-03-31', end = '2013-04-02')
 #' # Get data for entire 2013 season
+#' #NOT RUN
 #' # ds = getData(start = '2013-03-31', end = '2013-09-30')
 
 getData <- function(start = Sys.Date() - 1, end = NULL, gameIds = NULL, drop.suspended = TRUE) {
@@ -43,7 +44,7 @@ getData <- function(start = Sys.Date() - 1, end = NULL, gameIds = NULL, drop.sus
     # exclude suspended games
     if (drop.suspended) {
         # test = ddply(out, ~gameId, summarise, Innings = max(inning))
-        test <- summarise(group_by(out, gameId), Innings = max(inning))
+        test <- dplyr::summarise(group_by(out, gameId), Innings = max(inning))
         suspended = filter(test, Innings < 5)$gameId
         out = filter(out, !gameId %in% suspended)
     }
