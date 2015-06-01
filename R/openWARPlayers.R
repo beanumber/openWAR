@@ -61,7 +61,7 @@ summary.openWARPlayers = function(data, n = 25, ...) {
 
 plot.openWARPlayers = function(data, ...) {
     # Add the combined playing time
-    data = transform(data, TPA = PA.bat + BF)
+    data = dplyr::mutate(data, TPA = PA.bat + BF)
     
     supp = data[, c("playerId", "Name", "WAR", "TPA", "repl", "RAA", "RAA.pitch")]
     names(supp) = c("playerId", "Name", "WAR", "TPA", "repl", "RAA", "RAA_pitch")
@@ -192,7 +192,8 @@ plot.do.openWARPlayers = function(data, playerIds = c(431151, 285079), ...) {
     rows$Name = factor(rows$Name)
     
     lkup = unique(rows[, c("batterId", "Name")])
-    labels = as.character(lkup[order(lkup$batterId), ]$Name)
+#    labels = as.character(lkup[order(lkup$batterId), ]$Name)
+    labels = as.character(arrange(lkup, batterId)$Name)
     
     sims.long = reshape(rows[, c("batterId", "Name", "RAA", "RAA.bat", "RAA.br", "RAA.field", "RAA.pitch")], varying = 3:7, 
         timevar = "component", direction = "long")

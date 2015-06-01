@@ -169,7 +169,7 @@ makeWARre24 = function(data, mod.re = NULL, verbose = TRUE, ...) {
 makeWARFielding = function(data, models = list(), verbose = TRUE, ...) {
     message("...Estimating Fielding Runs Above Average...")
     
-    data = transform(data, wasFielded = !is.na(fielderId))
+    data = dplyr::mutate(data, wasFielded = !is.na(fielderId))
     # Compute the collective responsibility of all fielders
     p.hat = getModelFieldingCollective(data[, c("wasFielded", "our.x", "our.y")])
     # Step 2a: Define \delta.field for the defense, collectively

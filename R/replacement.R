@@ -75,20 +75,20 @@ getReplacementActivity = function(data, replacementIds) UseMethod("getReplacemen
 
 getReplacementActivity.openWARPlays = function(data, replacementIds) {
     out = list()
-    out[["bat"]] = subset(data, batterId %in% replacementIds)$raa.bat
-    out[["br1"]] = subset(data, start1B %in% replacementIds)$raa.br1
-    out[["br2"]] = subset(data, start2B %in% replacementIds)$raa.br2
-    out[["br3"]] = subset(data, start3B %in% replacementIds)$raa.br3
-    out[["pitch"]] = subset(data, pitcherId %in% replacementIds)$raa.pitch
-    out[["P"]] = subset(data, pitcherId %in% replacementIds)$raa.P
-    out[["C"]] = subset(data, playerId.C %in% replacementIds)$raa.C
-    out[["1B"]] = subset(data, playerId.1B %in% replacementIds)$raa.1B
-    out[["2B"]] = subset(data, playerId.2B %in% replacementIds)$raa.2B
-    out[["3B"]] = subset(data, playerId.3B %in% replacementIds)$raa.3B
-    out[["SS"]] = subset(data, playerId.SS %in% replacementIds)$raa.SS
-    out[["LF"]] = subset(data, playerId.LF %in% replacementIds)$raa.LF
-    out[["CF"]] = subset(data, playerId.CF %in% replacementIds)$raa.CF
-    out[["RF"]] = subset(data, playerId.RF %in% replacementIds)$raa.RF
+    out[["bat"]] = dplyr::filter(data, batterId %in% replacementIds)$raa.bat
+    out[["br1"]] = dplyr::filter(data, start1B %in% replacementIds)$raa.br1
+    out[["br2"]] = dplyr::filter(data, start2B %in% replacementIds)$raa.br2
+    out[["br3"]] = dplyr::filter(data, start3B %in% replacementIds)$raa.br3
+    out[["pitch"]] = dplyr::filter(data, pitcherId %in% replacementIds)$raa.pitch
+    out[["P"]] = dplyr::filter(data, pitcherId %in% replacementIds)$raa.P
+    out[["C"]] = dplyr::filter(data, playerId.C %in% replacementIds)$raa.C
+    out[["1B"]] = dplyr::filter(data, playerId.1B %in% replacementIds)$raa.1B
+    out[["2B"]] = dplyr::filter(data, playerId.2B %in% replacementIds)$raa.2B
+    out[["3B"]] = dplyr::filter(data, playerId.3B %in% replacementIds)$raa.3B
+    out[["SS"]] = dplyr::filter(data, playerId.SS %in% replacementIds)$raa.SS
+    out[["LF"]] = dplyr::filter(data, playerId.LF %in% replacementIds)$raa.LF
+    out[["CF"]] = dplyr::filter(data, playerId.CF %in% replacementIds)$raa.CF
+    out[["RF"]] = dplyr::filter(data, playerId.RF %in% replacementIds)$raa.RF
     return(out)
 }
 

@@ -26,11 +26,11 @@
 #' matrix(predict(re.mod, newdata=states), ncol=3)
 #' 
 #' begin.states = MLBAM2013[,c('startCode', 'startOuts')]
-#' ds = transform(MLBAM2013, startEx = predict(re.mod, newdata=begin.states))
+#' ds = mutate(MLBAM2013, startEx = predict(re.mod, newdata=begin.states))
 #' end.states = MLBAM2013[,c('endCode', 'endOuts')]
 #' end.states$endOuts = with(end.states, ifelse(endOuts == 3, NA, endOuts))
 #' names(end.states) = names(begin.states)
-#' ds = transform(ds, endEx = predict(re.mod, newdata=end.states))
+#' ds = mutate(ds, endEx = predict(re.mod, newdata=end.states))
 #' ds$endEx = with(ds, ifelse(is.na(endEx), 0, endEx))
 #' 
 #' 
@@ -53,7 +53,7 @@ getModelRunExpectancy.GameDayPlays = function(data, mod.re = NULL, verbose = TRU
         message("....Building in-sample Run Expectancy Model...")
         # Drop incomplete innings
         if (drop.incomplete) {
-            ds <- subset(data, outsInInning == 3)
+            ds <- dplyr::filter(data, outsInInning == 3)
         } else {
             ds <- data
         }
@@ -185,8 +185,8 @@ getModelFieldingRF = function(data) {
 
 getModelFieldingCollective = function(data) {
     message("....Computing the collective fielding model...")
-    outs = subset(data, wasFielded, select = c("our.x", "our.y"))
-    hits = subset(data, !wasFielded, select = c("our.x", "our.y"))
+    outs = dplyr::select(dplyr::filter(data, wasFielded == TRUE), our.x, our.y)
+    hits = dplyr::select(dplyr::filter(data, wasFielded == FALSE), our.x, our.y)
     # Find 2D kernel density estimates for hits and outs Make sure to specify the range, so that they over estimated over the
     # same grid
     grid = list(range(data$our.x, na.rm = TRUE), range(data$our.y, na.rm = TRUE))
@@ -199,13 +199,13 @@ getModelFieldingCollective = function(data) {
     # TRUE) wireframe(isHit ~ x + y, data=field.smooth, scales = list(arrows = FALSE), drape = TRUE, colorkey = TRUE)
     
     # Make sure to add a small amount to avoid division by zero
-    field.smooth = transform(field.smooth, wasFielded = isOut/(isOut + isHit + 1e-08))
+    field.smooth = dplyr::mutate(field.smooth, wasFielded = isOut/(isOut + isHit + 1e-08))
     # summary(field.smooth) fieldingplot(wasFielded ~ x + y, data=field.smooth, label = 'cum_resp', write.pdf=TRUE)
     
     fit.all = function(x, y) {
         x.idx = Hmisc::whichClosest(field.smooth$x, x)
         y.idx = Hmisc::whichClosest(field.smooth$y, y)
-        match = subset(field.smooth, x == field.smooth$x[x.idx] & y == field.smooth$y[y.idx])
+        match = dplyr::filter(field.smooth, x == field.smooth$x[x.idx] & y == field.smooth$y[y.idx])
         return(match$wasFielded)
     }
     
