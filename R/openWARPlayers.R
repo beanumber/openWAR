@@ -92,6 +92,9 @@ plot.openWARPlayers = function(data, ...) {
 #' 
 #' @export panel.war
 #' @import dplyr
+#' @importFrom lattice panel.abline
+#' @importFrom lattice panel.arrows
+#' @importFrom lattice panel.text
 #' 
 #' @examples
 #' 

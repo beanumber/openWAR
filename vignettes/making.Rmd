@@ -1,0 +1,40 @@
+---
+title: "Making openWAR"
+author: "Ben Baumer"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r}
+library(openWAR)
+```
+
+```{r}
+madeWAR <- makeWAR(May)
+str(madeWAR)
+```
+
+```{r}
+library(dplyr)
+madeWAR$openWAR %>%
+  filter(raa.bat > 3) %>%
+  select(gameId, batterName, pitcherName, event, delta, raa.bat) %>%
+  arrange(desc(raa.bat)) %>%
+  head(10)
+```
+
+
+```{r, eval=FALSE}
+owar <- getWAR(madeWAR)
+summary(owar)
+```
+
+### Reference for the openWAR model
+
+For a complete description of the openWAR model, please see our paper on the subject:
+
+* Benjamin S. Baumer, Gregory J. Matthews, Shane T. Jensen. 2013. "OpenWAR: An Open Source System for Evaluating Overall Player Performance in Major League Baseball." *Journal of Quantitative Analysis in Sports*, 11(2), (http://arxiv.org/abs/1312.7158v3).
