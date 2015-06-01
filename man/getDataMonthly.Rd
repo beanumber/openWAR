@@ -23,6 +23,7 @@ GameDay server from the specified month and process them into a single data.fram
 }
 \examples{
 #Retrieve all of the MLBAM data from May 2013
-ds = getMonthlyData(2013, 5)
+#NOT RUN
+ds = getDataMonthly(2013, 5)
 }
 

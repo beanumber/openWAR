@@ -12,7 +12,7 @@ getData(start = Sys.Date() - 1, end = NULL, gameIds = NULL,
 
 \item{end}{A valid date in yyyy-mm-dd format (default start)}
 
-\item{drop.suspended}{Logical indicating whether games with fewer than 5 innings should be excluded}
+\item{drop.suspended}{Logical indicating whether games with fewer than 5 innings should be excluded.  Default is TRUE.}
 }
 \value{
 A data.frame of class 'GameDayPlays' consisting of play-by-play data
@@ -30,6 +30,7 @@ ds = getData(start = '2013-03-31')
 # Get data from multiple days
 ds = getData(start = '2013-03-31', end = '2013-04-02')
 # Get data for entire 2013 season
+#NOT RUN
 # ds = getData(start = '2013-03-31', end = '2013-09-30')
 }
 

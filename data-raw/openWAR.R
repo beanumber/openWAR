@@ -1,11 +1,11 @@
 library(openWAR)
 library(openWARData)
 
-openWAR.2012 <- getWAR(openWARPlays.2012)
-save(openWAR.2012, file = "data/openWAR.2012.rda")
+openWAR2012 <- getWAR(openWARPlays2012)
+save(openWAR2012, file = "data/openWAR2012.rda")
 
-openWAR.2013 <- getWAR(openWARPlays.2013)
-save(openWAR.2013, file = "data/openWAR.2013.rda")
+openWAR2013 <- getWAR(openWARPlays2013)
+save(openWAR2013, file = "data/openWAR2013.rda")
 
-openWAR.2014 <- getWAR(openWARPlays.2014)
-save(openWAR.2014, file = "data/openWAR.2014.rda")
+openWAR2014 <- getWAR(openWARPlays2014)
+save(openWAR2014, file = "data/openWAR2014.rda")
