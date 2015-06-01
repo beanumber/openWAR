@@ -91,6 +91,7 @@ plot.openWARPlayers = function(data, ...) {
 #' @param ... arguments passed from \code{'plot.openWARPlayers'}
 #' 
 #' @export panel.war
+#' @import dplyr
 #' 
 #' @examples
 #' 
@@ -112,7 +113,7 @@ panel.war = function(x, y, ...) {
     with(ds[best.idx, ], panel.arrows(TPA, repl, TPA, RAA, code = 3, lwd = 2, col = "darkgray", length = 0.1))
     with(ds[best.idx, ], panel.text(TPA, RAA, Name, pos = 4))
     # annotate the best pitcher
-    pitchers = subset(ds, RAA_pitch > 0)
+    pitchers = filter(ds, RAA_pitch > 0)
     pitcher.idx = which.max(pitchers$WAR)
     with(pitchers[pitcher.idx, ], panel.arrows(TPA, repl, TPA, RAA, code = 3, lwd = 2, col = "darkgray", length = 0.1))
     with(pitchers[pitcher.idx, ], panel.text(TPA, RAA, Name, pos = 3))

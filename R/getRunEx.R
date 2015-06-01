@@ -12,6 +12,7 @@
 #' 
 #' 
 #' @export
+#' @import dplyr
 #' @examples
 #' 
 #' #Data from May 2013
@@ -24,7 +25,7 @@
 
 getRunEx = function(data, drop.incomplete = TRUE, ...) {
     if (drop.incomplete) {
-        ds = subset(data, outsInInning == 3)
+        ds = filter(data, outsInInning == 3)
     } else {
         ds = data
     }
