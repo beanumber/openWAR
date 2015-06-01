@@ -33,6 +33,14 @@ owar <- getWAR(madeWAR$openWAR)
 summary(owar)
 ```
 
+
+### Simulations
+
+```{r}
+owar.sim <- shakeWAR(May)
+plot(owar.sim)
+```
+
 ### Reference for the openWAR model
 
 For a complete description of the openWAR model, please see our paper on the subject:

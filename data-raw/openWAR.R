@@ -9,3 +9,7 @@ save(openWAR2013, file = "data/openWAR2013.rda")
 
 openWAR2014 <- getWAR(openWARPlays2014)
 save(openWAR2014, file = "data/openWAR2014.rda")
+
+openWAR2015 <- getWAR(openWARPlays2015)
+save(openWAR2015, file = "data/openWAR2015.rda")
+
