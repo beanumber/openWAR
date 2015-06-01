@@ -28,8 +28,8 @@ madeWAR$openWAR %>%
 ```
 
 
-```{r, eval=FALSE}
-owar <- getWAR(madeWAR)
+```{r}
+owar <- getWAR(madeWAR$openWAR)
 summary(owar)
 ```
 
