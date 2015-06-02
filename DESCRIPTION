@@ -28,7 +28,10 @@ Imports:
     dplyr,
     stringr,
     Sxslt,
-    Lahman
+    Lahman,
+    Hmisc,
+    KernSmooth,
+    lattice
 Suggests: 
     openWARData,
     testthat,

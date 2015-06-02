@@ -175,6 +175,8 @@ summary.do.openWARPlayers = function(data, n = 25, ...) {
 #' 
 #' @return a faceted densityplot
 #' 
+#' @importFrom lattice densityplot
+#' @importFrom lattice panel.densityplot
 #' @export
 #' @examples
 #' 
