@@ -71,7 +71,7 @@ panel.baseball <- function() {
 #' with a generic baseball field plotted in the background. Other lattice options can be passed
 #' to xyplot().
 #' 
-#' @param data A GameDayPlays set with fields 'our.x' and 'our.y'
+#' @param x A GameDayPlays data set with fields 'our.x' and 'our.y'
 #' @param batterName A character string containing the last name of a batter
 #' @param pitcherName A character string containing the last name of a pitcher 
 #' @param pch A numeric 
@@ -87,7 +87,8 @@ panel.baseball <- function() {
 #' ds = getData()
 #' plot(ds)
 
-plot.GameDayPlays = function(data, batterName = NULL, pitcherName = NULL, event = NULL, pch = 1) {
+plot.GameDayPlays = function(x, batterName = NULL, pitcherName = NULL, event = NULL, pch = 1, ...) {
+    data = x
     xy.fields = c("our.x", "our.y")
     if (!length(intersect(xy.fields, names(data))) == length(xy.fields)) {
         stop("(x,y) coordinate locations not found.")
@@ -123,7 +124,7 @@ plot.GameDayPlays = function(data, batterName = NULL, pitcherName = NULL, event 
 #' 
 #' @details Prints information about the contents of an GameDayPlays data set.
 #' 
-#' @param data A GameDayPlays data set
+#' @param object A GameDayPlays data set
 #' 
 #' @return nothing
 #' 
@@ -133,11 +134,11 @@ plot.GameDayPlays = function(data, batterName = NULL, pitcherName = NULL, event 
 #' ds = getData()
 #' summary(ds)
 
-summary.GameDayPlays = function(data) {
-    gIds = sort(unique(data$gameId))
+summary.GameDayPlays = function(object, ...) {
+    gIds = sort(unique(object$gameId))
     message(paste("...Contains data from", length(gIds), "games"))
     message(paste("...from", gIds[1], "to", gIds[length(gIds)]))
-    summary.data.frame(data)
+    summary.data.frame(object)
 }
 
 #' @title tabulate.GameDayPlays

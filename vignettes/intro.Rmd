@@ -98,7 +98,7 @@ May14 %>%
 One nice features of the MLBAM data is that it contains an $(x,y)$-coordinate indicating the location of each batted ball hit into play. We can visualize this using the generic `plot()` function on our `GameDayPlays` object. 
 
 ```{r plot, fig.width=6, fig.height=6}
-plot(data = May14)
+plot(x = May14)
 ```
 
 This returns a `trellis` plot and will pass additional arguments to `xyplot()`. 

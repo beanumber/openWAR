@@ -8,6 +8,8 @@
 #' @param model a model object that has a `predict` method
 #' @param write.pdf a LOGICAL indicating whether to write the contourplot to a file
 #' 
+#' @importFrom lattice contourplot
+#' 
 #' @return A contourplot object
 #' 
 #' @examples

@@ -4,10 +4,10 @@
 \alias{plot.openWARPlayers}
 \title{plot.openWARPlayers}
 \usage{
-\method{plot}{openWARPlayers}(data, ...)
+\method{plot}{openWARPlayers}(x, ...)
 }
 \arguments{
-\item{data}{An object of class \code{'openWARPlayers'}}
+\item{x}{A data.frame object of class \code{'openWARPlayers'}}
 }
 \description{
 Display a season's worth of openWAR results

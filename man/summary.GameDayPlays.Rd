@@ -4,10 +4,10 @@
 \alias{summary.GameDayPlays}
 \title{summary.GameDayPlays}
 \usage{
-\method{summary}{GameDayPlays}(data)
+\method{summary}{GameDayPlays}(object, ...)
 }
 \arguments{
-\item{data}{A GameDayPlays data set}
+\item{object}{A GameDayPlays data set}
 }
 \value{
 nothing
