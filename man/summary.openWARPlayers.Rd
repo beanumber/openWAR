@@ -4,10 +4,10 @@
 \alias{summary.openWARPlayers}
 \title{summary.openWARPlayers}
 \usage{
-\method{summary}{openWARPlayers}(data, n = 25, ...)
+\method{summary}{openWARPlayers}(object, n = 25, ...)
 }
 \arguments{
-\item{data}{An object of class \code{'openWARPlayers'}}
+\item{object}{An object of class \code{'openWARPlayers'}}
 }
 \description{
 Summarize WAR among players

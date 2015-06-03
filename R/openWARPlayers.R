@@ -13,7 +13,7 @@ setClass("openWARPlayers", contains = "data.frame")
 #' 
 #' @details A summary of players' WAR
 #' 
-#' @param data An object of class \code{'openWARPlayers'}
+#' @param object An object of class \code{'openWARPlayers'}
 #' 
 #' @import dplyr
 #' @export
@@ -24,14 +24,14 @@ setClass("openWARPlayers", contains = "data.frame")
 #' war <- getWAR(out$openWARPlays)
 #' summary(war)
 
-summary.openWARPlayers = function(data, n = 25, ...) {
-    cat(paste("Displaying information for", nrow(data), "players, of whom", nrow(filter(data, RAA.pitch != 0)), "have pitched\n"))
+summary.openWARPlayers = function(object, n = 25, ...) {
+    cat(paste("Displaying information for", nrow(object), "players, of whom", nrow(filter(object, RAA.pitch != 0)), "have pitched\n"))
     
     # classic syntax head(data[order(data$WAR, decreasing=TRUE), c('Name', 'TPA', 'WAR', 'RAA', 'repl', 'RAA.bat', 'RAA.br',
     # 'RAA.field', 'RAA.pitch')], n)
     
     # dplyr syntax
-    data %>% 
+    object %>% 
       dplyr::select(Name, TPA, WAR, RAA, repl, RAA.bat, RAA.br, RAA.field, RAA.pitch) %>%
       arrange(desc(WAR)) %>% 
       head(n)
@@ -47,7 +47,7 @@ summary.openWARPlayers = function(data, n = 25, ...) {
 #' @details Given an openWARPlayers object, draw a plot displaying each player's RAA, WAR, and replacement
 #' level shadow. 
 #' 
-#' @param data An object of class \code{'openWARPlayers'}
+#' @param x A data.frame object of class \code{'openWARPlayers'}
 #' 
 #' @export
 #' 
@@ -59,7 +59,8 @@ summary.openWARPlayers = function(data, n = 25, ...) {
 #' summary(players)
 #' plot(players)
 
-plot.openWARPlayers = function(data, ...) {
+plot.openWARPlayers = function(x, ...) {
+    data = x
     # Add the combined playing time
     data = dplyr::mutate(data, TPA = PA.bat + BF)
     
@@ -139,7 +140,7 @@ panel.war = function(x, y, ...) {
 #' 
 #' @details Summary of players' WAR
 #' 
-#' @param An object of class \code{'openWARPlayers'}
+#' @param object An object of class \code{'openWARPlayers'}
 #' 
 #' @import dplyr
 #'
@@ -151,9 +152,9 @@ panel.war = function(x, y, ...) {
 #' sim = shakeWAR(ds)
 #' summary(sim)
 
-summary.do.openWARPlayers = function(data, n = 25, ...) {
+summary.do.openWARPlayers = function(object, n = 25, ...) {
 
-    data %>% dplyr::select(Name, WAR) %>% 
+    object %>% dplyr::select(Name, WAR) %>% 
       group_by(Name) %>% 
       summarise(q0 = min(WAR), q2.5 = quantile(WAR, 0.025), q25 = quantile(WAR, 
         0.25), q50 = mean(WAR), q75 = quantile(WAR, 0.75), q97.5 = quantile(WAR, 0.975), q100 = max(WAR)) %>%
@@ -171,7 +172,7 @@ summary.do.openWARPlayers = function(data, n = 25, ...) {
 #' @details Density Plot for WAR estimates
 #' 
 #' @param playerIds A vector of valid MLBAM player IDs present in the data argument
-#' @param data A data.frame resulting from shakeWAR() of class \code{do.openWARPlayers}
+#' @param x A data.frame resulting from shakeWAR() of class \code{do.openWARPlayers}
 #' 
 #' @return a faceted densityplot
 #' 
@@ -184,12 +185,12 @@ summary.do.openWARPlayers = function(data, n = 25, ...) {
 #' # not run
 #' openWAR = makeWAR(ds)
 #' openWAR.sim = shakeWAR(openWAR)
-#' plot(data=openWAR.sim, playerIds = c(431151, 502517, 408234, 285078, 518774, 285079))
+#' plot(x=openWAR.sim, playerIds = c(431151, 502517, 408234, 285078, 518774, 285079))
 
-plot.do.openWARPlayers = function(data, playerIds = c(431151, 285079), ...) {
+plot.do.openWARPlayers = function(x, playerIds = c(431151, 285079), ...) {
     playerIds = sort(playerIds)
     # is it worth the trouble to filter the rows?
-    rows = filter(data, batterId %in% playerIds)
+    rows = filter(x, batterId %in% playerIds)
     # Remove unused factor levels
     rows$Name = factor(rows$Name)
     

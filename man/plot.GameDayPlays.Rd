@@ -4,11 +4,11 @@
 \alias{plot.GameDayPlays}
 \title{plot.GameDayPlays}
 \usage{
-\method{plot}{GameDayPlays}(data, batterName = NULL, pitcherName = NULL,
-  event = NULL, pch = 1)
+\method{plot}{GameDayPlays}(x, batterName = NULL, pitcherName = NULL,
+  event = NULL, pch = 1, ...)
 }
 \arguments{
-\item{data}{A GameDayPlays set with fields 'our.x' and 'our.y'}
+\item{x}{A GameDayPlays data set with fields 'our.x' and 'our.y'}
 
 \item{batterName}{A character string containing the last name of a batter}
 
