@@ -10,19 +10,19 @@
 #' 
 #' @return a data.frame with RAA values 
 #' 
-#' @export shakeWAR
-#' @export shakeWAR.GameDayPlays
+#' @export 
 #' 
 #' @importFrom mosaic resample
 #' 
 #' @examples
 #' 
-#' ds = getData()
-#' res = shakeWAR(ds, resample='plays', N=10)
+#' res = shakeWAR(May, resample='plays', N=10)
 #' summary(res)
 #' 
 
 shakeWAR = function(data, resample = "plays", N = 10, ...) UseMethod("shakeWAR")
+
+#' @rdname shakeWAR
 
 shakeWAR.GameDayPlays = function(data, resample = "plays", N = 10, ...) {
   
