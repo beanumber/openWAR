@@ -19,10 +19,13 @@
 #' # Get data from one day
 #' ds = getData(start = '2013-03-31')
 #' # Get data from multiple days
+#' \dontrun{
 #' ds = getData(start = '2013-03-31', end = '2013-04-02')
+#' }
 #' # Get data for entire 2013 season
-#' #NOT RUN
-#' # ds = getData(start = '2013-03-31', end = '2013-09-30')
+#' \dontrun{
+#' ds = getData(start = '2013-03-31', end = '2013-09-30')
+#' }
 
 getData <- function(start = Sys.Date() - 1, end = NULL, gameIds = NULL, drop.suspended = TRUE) {
     if (is.null(gameIds)) {
@@ -73,8 +76,9 @@ getData <- function(start = Sys.Date() - 1, end = NULL, gameIds = NULL, drop.sus
 #' @examples
 #' 
 #' #Retrieve all of the MLBAM data from May 2013
-#' #NOT RUN
-#' ds = getDataMonthly(2013, 5)
+#' \dontrun{
+#' # ds = getDataMonthly(2013, 5)
+#' }
 
 getDataMonthly <- function(yyyy = 2013, m = 5) {
     start = as.Date(paste(yyyy, m, "01", sep = "-"), "%Y-%m-%d")
@@ -98,7 +102,9 @@ getDataMonthly <- function(yyyy = 2013, m = 5) {
 #' @examples
 #' 
 #' #Retrieve all the data from the first week of the 2013 season
+#' \dontrun{
 #' ds = getDataWeekly('2013-03-31')
+#' }
 
 
 getDataWeekly <- function(start = Sys.Date() - 8) {
@@ -155,8 +161,9 @@ getGameIds <- function(date = Sys.Date()) {
 #' 
 #' @export
 #' @examples
-#' getData(start = '2013-03-31', end = '2013-07-14')
-#' ds = updateGame('gid_2013_04_16_nynmlb_colmlb_2')
+#' 
+#' data(May)
+#' newMay <- updateGame('gid_2013_05_14_kcamlb_anamlb_1', data = May)
 #' 
 
 updateGame <- function(gameId.vec, data, ...) {

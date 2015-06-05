@@ -28,9 +28,12 @@ GameDay server in the specified interval and process them into a single data.fra
 # Get data from one day
 ds = getData(start = '2013-03-31')
 # Get data from multiple days
+\dontrun{
 ds = getData(start = '2013-03-31', end = '2013-04-02')
+}
 # Get data for entire 2013 season
-#NOT RUN
-# ds = getData(start = '2013-03-31', end = '2013-09-30')
+\dontrun{
+ds = getData(start = '2013-03-31', end = '2013-09-30')
+}
 }
 

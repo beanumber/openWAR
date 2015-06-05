@@ -14,10 +14,6 @@
 #' 
 #' @return A contourplot object
 #' 
-#' @examples
-#' 
-#' data(MLBAM2013)
-#' # not run
 #' 
 #' 
 

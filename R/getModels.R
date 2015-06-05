@@ -179,8 +179,7 @@ getModelFieldingRF = function(data) {
 #' 
 #' @examples
 #' 
-#' ds = getData()
-#' ds$resp.field = getModelFieldingCollective(ds)
+#' mod <- getModelFieldingCollective(May)
 #' 
 
 getModelFieldingCollective = function(data) {

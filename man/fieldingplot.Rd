@@ -22,8 +22,4 @@ Plot the fielding model for an individual player
 \details{
 This is a convenience function for visually checking the fielding models.
 }
-\examples{
-data(MLBAM2013)
-# not run
-}
 

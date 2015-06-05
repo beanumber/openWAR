@@ -21,6 +21,8 @@ GameDay server and process them into a single data.frame.
 }
 \examples{
 #Retrieve all the data from the first week of the 2013 season
+\dontrun{
 ds = getDataWeekly('2013-03-31')
+}
 }
 

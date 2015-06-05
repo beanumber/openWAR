@@ -21,7 +21,7 @@ Replaces data from a single game
 Deletes, and then rbinds fresh information from a particular game.
 }
 \examples{
-getData(start = '2013-03-31', end = '2013-07-14')
-ds = updateGame('gid_2013_04_16_nynmlb_colmlb_2')
+data(May)
+newMay <- updateGame('gid_2013_05_14_kcamlb_anamlb_1', data = May)
 }
 
