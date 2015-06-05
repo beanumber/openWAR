@@ -23,7 +23,7 @@
 shakeWAR = function(data, resample = "plays", N = 10, ...) UseMethod("shakeWAR")
 
 #' @rdname shakeWAR
-#' @export
+#' @export shakeWAR.GameDayPlays
 
 shakeWAR.GameDayPlays = function(data, resample = "plays", N = 10, ...) {
   
