@@ -10,6 +10,7 @@
 #' 
 #' @importFrom lattice contourplot
 #' @importFrom RColorBrewer brewer.pal
+#' @importFrom mosaic lhs
 #' 
 #' @return A contourplot object
 #' 
