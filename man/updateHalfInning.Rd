@@ -7,7 +7,7 @@
 updateHalfInning(dat)
 }
 \arguments{
-\item{data}{}
+\item{dat}{a \code{GameDayPlays} object containing information about a single inning.}
 }
 \value{
 A gameday object

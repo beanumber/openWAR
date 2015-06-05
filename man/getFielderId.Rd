@@ -7,7 +7,7 @@
 getFielderId(dat)
 }
 \arguments{
-\item{dat}{}
+\item{dat}{a \code{gameday} object}
 }
 \description{
 getFilderId

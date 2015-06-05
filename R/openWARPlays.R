@@ -25,7 +25,6 @@ setClass("openWARPlays", contains = "data.frame")
 #' 
 #' ds = makeWAR(May)
 #' players = getRAA(ds$openWAR)
-#' summary(players)
 #' 
 
 getRAA = function(data, ...) UseMethod("getRAA")

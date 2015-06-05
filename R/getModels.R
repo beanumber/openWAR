@@ -18,22 +18,12 @@
 #' @export getModelRunExpectancy.GameDayPlays
 #' @examples
 #' 
-#' data(MLBAM2013)
-#' re.mod = getModel(MLBAM2013, type = 'run-expectancy')
+#' data(May)
+#' re.mod = getModels(May, type = 'run-expectancy')
 #' 
 #' # Generate the Run Expectancy Matrix
 #' states = expand.grid(startCode = 0:7, startOuts = 0:2)
-#' matrix(predict(re.mod, newdata=states), ncol=3)
-#' 
-#' begin.states = MLBAM2013[,c('startCode', 'startOuts')]
-#' ds = mutate(MLBAM2013, startEx = predict(re.mod, newdata=begin.states))
-#' end.states = MLBAM2013[,c('endCode', 'endOuts')]
-#' end.states$endOuts = with(end.states, ifelse(endOuts == 3, NA, endOuts))
-#' names(end.states) = names(begin.states)
-#' ds = mutate(ds, endEx = predict(re.mod, newdata=end.states))
-#' ds$endEx = with(ds, ifelse(is.na(endEx), 0, endEx))
-#' 
-#' 
+#' matrix(predict(re.mod[["run-expectancy"]], newdata=states), ncol=3)
 
 getModels = function(data, ...) UseMethod("getModels")
 

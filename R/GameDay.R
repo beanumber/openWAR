@@ -232,7 +232,7 @@ readData.gameday = function(gd) {
 #' 
 #' @description updateHalfInning
 #' 
-#' @param data
+#' @param dat a \code{GameDayPlays} object containing information about a single inning.
 #' 
 #' @return A gameday object
 #'
@@ -427,7 +427,7 @@ makeSubstitutions <- function(dat) {
 
 #' @title getFilederId
 #' @description getFilderId
-#' @param dat
+#' @param dat a \code{gameday} object
 #' @importFrom stringr str_count
 
 getFielderId = function(dat) {

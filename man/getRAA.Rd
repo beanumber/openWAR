@@ -21,6 +21,5 @@ takes an openWARPlays data.frame and consolidates the RAA values by player
 \examples{
 ds = makeWAR(May)
 players = getRAA(ds$openWAR)
-summary(players)
 }
 

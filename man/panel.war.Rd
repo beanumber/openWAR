@@ -7,9 +7,9 @@
 panel.war(x, y, ...)
 }
 \arguments{
-\item{x}{}
+\item{x}{the x-coordinate}
 
-\item{y}{}
+\item{y}{the y-coordinate}
 
 \item{...}{arguments passed from \code{'plot.openWARPlayers'}}
 }

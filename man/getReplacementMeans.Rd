@@ -20,6 +20,8 @@ Identifies replacement-level players, and then compute their contribution
 }
 \examples{
 ds = makeWAR(May)
-getReplacementMeans(ds$openWAR)
+raa <- getRAA(ds$openWAR)
+replIds = getReplacementPlayers(raa, 30)
+getReplacementMeans(ds$openWAR, replIds)
 }
 

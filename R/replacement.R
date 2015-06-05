@@ -107,7 +107,9 @@ getReplacementActivity.openWARPlays = function(data, replacementIds) {
 #' @examples
 #' 
 #' ds = makeWAR(May)
-#' getReplacementMeans(ds$openWAR)
+#' raa <- getRAA(ds$openWAR)
+#' replIds = getReplacementPlayers(raa, 30)
+#' getReplacementMeans(ds$openWAR, replIds)
 #' 
 
 getReplacementMeans = function(data, replIds) UseMethod("getReplacementMeans")

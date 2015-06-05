@@ -20,7 +20,7 @@ setClass("openWARPlayers", contains = "data.frame")
 #' @examples
 #' 
 #' out <- makeWAR(May)
-#' war <- getWAR(out$openWARPlays)
+#' war <- getWAR(out$openWAR)
 #' summary(war)
 
 summary.openWARPlayers = function(object, n = 25, ...) {
@@ -85,8 +85,8 @@ plot.openWARPlayers = function(x, ...) {
 #' @details Given an openWARPlayers object, draw a plot displaying each player's RAA, WAR, and replacement
 #' level shadow. 
 #' 
-#' @param x
-#' @param y
+#' @param x the x-coordinate
+#' @param y the y-coordinate
 #' @param ... arguments passed from \code{'plot.openWARPlayers'}
 #' 
 #' @export panel.war
@@ -145,9 +145,11 @@ panel.war = function(x, y, ...) {
 #' 
 #' @examples
 #' 
-#' ds = makeWAR(ds)
+#' ds = makeWAR(May)
+#' \dontrun{
 #' sim = shakeWAR(ds)
 #' summary(sim)
+#' }
 
 summary.do.openWARPlayers = function(object, n = 25, ...) {
 

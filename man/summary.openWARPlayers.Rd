@@ -17,7 +17,7 @@ A summary of players' WAR
 }
 \examples{
 out <- makeWAR(May)
-war <- getWAR(out$openWARPlays)
+war <- getWAR(out$openWAR)
 summary(war)
 }
 
