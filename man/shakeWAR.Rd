@@ -2,9 +2,12 @@
 % Please edit documentation in R/shakeWAR.R
 \name{shakeWAR}
 \alias{shakeWAR}
+\alias{shakeWAR.GameDayPlays}
 \title{shakeWAR}
 \usage{
 shakeWAR(data, resample = "plays", N = 10, ...)
+
+\method{shakeWAR}{GameDayPlays}(data, resample = "plays", N = 10, ...)
 }
 \arguments{
 \item{data}{An MLBAM data.frame}
@@ -23,8 +26,7 @@ resample a data.frame to obtain variance estimate for WAR
 Resamples the rows of an MLBAM data set
 }
 \examples{
-ds = getData()
-res = shakeWAR(ds, resample='plays', N=10)
+res = shakeWAR(May, resample='plays', N=10)
 summary(res)
 }
 
