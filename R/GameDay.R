@@ -63,7 +63,7 @@ gameday = function(gameId = "gid_2012_08_12_atlmlb_nynmlb_1", ...) {
 
 flush.gameday = function(x) {
     if (class(x) == "gameday") {
-        gameId = gd$gameId
+        gameId = x$gameId
     } else {
         gameId = x
     }
