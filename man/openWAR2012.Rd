@@ -3,6 +3,9 @@
 \docType{data}
 \name{openWAR2012}
 \alias{openWAR2012}
+\alias{openWAR2013}
+\alias{openWAR2014}
+\alias{openWAR2015}
 \title{Final openWAR values for 2012.}
 \format{An `openWARPlayers` object, which is also a \code{data.frame} with 1284
 rows (e.g. a player) and 41 columns. The columns are as follows:
@@ -55,6 +58,12 @@ rows (e.g. a player) and 41 columns. The columns are as follows:
    }}
 \usage{
 openWAR2012
+
+openWAR2013
+
+openWAR2014
+
+openWAR2015
 }
 \description{
 A dataset containing computed openWAR values for MLB players during the 2012 season along with

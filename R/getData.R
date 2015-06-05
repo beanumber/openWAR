@@ -34,7 +34,8 @@ getData <- function(start = Sys.Date() - 1, end = NULL, gameIds = NULL, drop.sus
     } else {
         gIds = gameIds
     }
-    # test<-getGameDay(gIds[1]) if (require(multicore)) { message('Using multicore to parallelize!') gd.list = mclapply(gIds,
+
+    # if (require(multicore)) { message('Using multicore to parallelize!') gd.list = mclapply(gIds,
     # gameday, mc.cores = max(1, getOption('core') - 1)) } else {
     gd.list = lapply(gIds, gameday)
     # }
