@@ -12,3 +12,12 @@ test_that("you can plot GameDayPlays", {
 test_that("getRunEx is a function", {
   expect_is(getRunEx(May14), "function")
 })
+
+test_that("tabulate works as expected", {
+  expect_is(tabulate(May), "grouped_df")
+})
+
+test_that("summary.openWARPlayers works", {
+  expect_is(summary(openWAR2012), "data.frame")
+})
+
