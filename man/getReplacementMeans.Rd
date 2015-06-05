@@ -19,9 +19,8 @@ Compute the mean RAA for replacement-level players
 Identifies replacement-level players, and then compute their contribution
 }
 \examples{
-ds = makeWAR(May)
-raa <- getRAA(ds$openWAR)
+raa <- getRAA(MayProcessed$openWAR)
 replIds = getReplacementPlayers(raa, 30)
-getReplacementMeans(ds$openWAR, replIds)
+getReplacementMeans(MayProcessed$openWAR, replIds)
 }
 

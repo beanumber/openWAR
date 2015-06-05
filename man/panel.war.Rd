@@ -21,8 +21,7 @@ Given an openWARPlayers object, draw a plot displaying each player's RAA, WAR, a
 level shadow.
 }
 \examples{
-out = makeWAR(May)
-players = getWAR(out$openWAR)
+players = getWAR(MayProcessed$openWAR)
 summary(players)
 plot(players)
 }

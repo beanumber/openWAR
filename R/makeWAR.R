@@ -47,8 +47,10 @@
 #' @export makeWAR.GameDayPlays
 #' @examples
 #' 
+#' \dontrun{
 #' res = makeWAR(May)
 #' summary(getWAR(res$openWAR))
+#' }
 
 makeWAR = function(data, models = list(), verbose = TRUE, ...) UseMethod("makeWAR")
 

@@ -20,7 +20,9 @@ Tabulates WAR
 Compute each player's WAR, given their RAA values
 }
 \examples{
-out = makeWAR(May)
-war = getWAR(out$openWAR)
+\dontrun{
+MayProcessed = makeWAR(May)
+}
+war = getWAR(MayProcessed$openWAR)
 }
 

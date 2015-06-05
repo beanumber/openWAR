@@ -13,8 +13,10 @@
 #' 
 #' @examples
 #' 
-#' out = makeWAR(May)
-#' war = getWAR(out$openWAR)
+#' \dontrun{
+#' MayProcessed = makeWAR(May)
+#' }
+#' war = getWAR(MayProcessed$openWAR)
 
 getWAR = function(data, dataRepl = NULL, nteams = 30, verbose = TRUE, ...) UseMethod("getWAR")
 

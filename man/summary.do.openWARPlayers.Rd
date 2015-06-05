@@ -16,9 +16,8 @@ Summarize WAR
 Summary of players' WAR
 }
 \examples{
-ds = makeWAR(May)
 \dontrun{
-sim = shakeWAR(ds)
+sim = shakeWAR(May)
 summary(sim)
 }
 }

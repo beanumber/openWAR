@@ -16,8 +16,7 @@ Summarize WAR among players
 A summary of players' WAR
 }
 \examples{
-out <- makeWAR(May)
-war <- getWAR(out$openWAR)
+war <- getWAR(MayProcessed$openWAR)
 summary(war)
 }
 

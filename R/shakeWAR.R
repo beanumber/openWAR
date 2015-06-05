@@ -16,8 +16,10 @@
 #' 
 #' @examples
 #' 
+#' \dontrun{
 #' res = shakeWAR(May, resample='plays', N=10)
 #' summary(res)
+#' }
 #' 
 
 shakeWAR = function(data, resample = "plays", N = 10, ...) UseMethod("shakeWAR")

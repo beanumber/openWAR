@@ -54,7 +54,9 @@ must be 'batterPos' (the defensive position of the batter)}
 }
 }
 \examples{
+\dontrun{
 res = makeWAR(May)
 summary(getWAR(res$openWAR))
+}
 }
 

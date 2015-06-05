@@ -49,8 +49,8 @@ getData <- function(start = Sys.Date() - 1, end = NULL, gameIds = NULL, drop.sus
     if (drop.suspended) {
         # test = ddply(out, ~gameId, summarise, Innings = max(inning))
         test <- dplyr::summarise(group_by(out, gameId), Innings = max(inning))
-        suspended = filter(test, Innings < 5)$gameId
-        out = filter(out, !gameId %in% suspended)
+        suspended = filter_(test, ~Innings < 5)$gameId
+        out = filter_(out, ~!gameId %in% suspended)
     }
     
     # Set the class attribute
@@ -167,7 +167,7 @@ getGameIds <- function(date = Sys.Date()) {
 #' 
 
 updateGame <- function(gameId.vec, data, ...) {
-    temp = dplyr::filter(data, !gameId %in% gameId.vec)
+    temp = dplyr::filter_(data, ~!gameId %in% gameId.vec)
     ds.new = getData(gameIds = unique(gameId.vec))
     out = rbind(temp, ds.new)
     return(out)

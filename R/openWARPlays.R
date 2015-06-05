@@ -23,8 +23,7 @@ setClass("openWARPlays", contains = "data.frame")
 #' @export getRAA.openWARPlays
 #' @examples
 #' 
-#' ds = makeWAR(May)
-#' players = getRAA(ds$openWAR)
+#' players = getRAA(MayProcessed$openWAR)
 #' 
 
 getRAA = function(data, ...) UseMethod("getRAA")

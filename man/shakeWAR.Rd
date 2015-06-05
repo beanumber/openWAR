@@ -26,7 +26,9 @@ resample a data.frame to obtain variance estimate for WAR
 Resamples the rows of an MLBAM data set
 }
 \examples{
+\dontrun{
 res = shakeWAR(May, resample='plays', N=10)
 summary(res)
+}
 }
 

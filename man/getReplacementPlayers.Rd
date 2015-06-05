@@ -18,8 +18,7 @@ In the openWAR framework, we first define a specific number of players to be con
 The performances of the players on this list are used to estimate the value of a replacement level player for use in converting runs above average into runs above replacement and ultimately wins above replacement.
 }
 \examples{
-out = makeWAR(May)
-players = getWAR(out$openWAR)
+players = getWAR(MayProcessed$openWAR)
 summary(players)
 replacementIds = getReplacementPlayers(players)
 }

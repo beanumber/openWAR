@@ -77,7 +77,37 @@ openWAR2012 %>%
   head(10)
 ```
 
+### Analysis
 
+
+#### The Leaders
+
+Here are our estimates of the top 50 players in baseball.
+
+```{r}
+summary(openWAR2012, n=50)
+```
+
+#### Making Comparisons
+
+We have our point estimates, but now let's put some variance estimates on those. Here is a graphical depiction of the composition of David Wright's openWAR:
+
+```{r, eval=FALSE}
+sims <- shakeWAR(May)
+plot(openWAR2012, playerIds = 431151)
+```
+
+Of course, comparing the openWAR components among players, along with their variance estimates, is most helpful.
+
+```{r, eval=FALSE}
+plot(sims, playerIds = c(431151, 502517, 408234, 285078, 518774, 285079))
+```
+
+There is widespread agreement that the three best players this season have been Miguel Cabrera, Chris Davis, and Mike Trout. We concur, but here is how you might visualize their respective contributions. 
+
+```{r, eval=FALSE}
+plot(sims, playerIds = c(408234, 448801, 545361))
+```
 
 ### Reference for the openWAR model
 

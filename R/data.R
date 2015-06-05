@@ -53,6 +53,17 @@
 #' 
 "May" 
 
+#' A sample of processed data that has been through \code{makeWAR}
+#' 
+#' @format A list with four components:
+#' \describe{
+#'    \item{plays}{the original \code{GameDayPlays} data on which the models were fit. NULL in this case}
+#'    \item{data}{NULL}
+#'    \item{models.used}{a list of model objects used in the computation of \code{makeWAR}}
+#'    \item{openWAR}{a data.frame with the resulting processed values, based on the openWAR model}
+#'    }
+#' 
+"MayProcessed" 
 
 #' Final openWAR values for 2012.
 #' 
