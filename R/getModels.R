@@ -177,13 +177,11 @@ getModelFieldingRF = function(data) {
 #' @importFrom KernSmooth bkde2D
 #' @importFrom Hmisc whichClosest
 #' 
-#' @examples
-#' 
-#' mod <- getModelFieldingCollective(May)
 #' 
 
 getModelFieldingCollective = function(data) {
     message("....Computing the collective fielding model...")
+    data = dplyr::mutate(data, wasFielded = !is.na(fielderId))
     outs = dplyr::select(dplyr::filter(data, wasFielded == TRUE), our.x, our.y)
     hits = dplyr::select(dplyr::filter(data, wasFielded == FALSE), our.x, our.y)
     # Find 2D kernel density estimates for hits and outs Make sure to specify the range, so that they over estimated over the

@@ -15,10 +15,9 @@
 #' 
 #' @examples
 #' 
-#' ds = getData()
-#' out = makeWAR(ds)
-#' players = getWAR(out)
-#' summary(out)
+#' out = makeWAR(May)
+#' players = getWAR(out$openWAR)
+#' summary(players)
 #' replacementIds = getReplacementPlayers(players)
 
 getReplacementPlayers = function(data, nteams = 30, ...) UseMethod("getReplacementPlayers")
@@ -64,8 +63,7 @@ getReplacementPlayers.openWARPlays = function(data, nteams = 30, ...) {
 #' @export getReplacementActivity.openWARPlays
 #' @examples
 #' 
-#' data = getData()
-#' ds = makeWAR(data)
+#' ds = makeWAR(May)
 #' players = getWAR(ds$openWAR)
 #' summary(players)
 #' 
@@ -108,8 +106,7 @@ getReplacementActivity.openWARPlays = function(data, replacementIds) {
 #' @export getReplacementMeans.openWARPlays
 #' @examples
 #' 
-#' data = getData()
-#' ds = makeWAR(data)
+#' ds = makeWAR(May)
 #' getReplacementMeans(ds$openWAR)
 #' 
 

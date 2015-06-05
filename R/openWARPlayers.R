@@ -19,8 +19,7 @@ setClass("openWARPlayers", contains = "data.frame")
 #' @export
 #' @examples
 #' 
-#' ds <- getData()
-#' out <-  (makeWAR(ds))
+#' out <- makeWAR(May)
 #' war <- getWAR(out$openWARPlays)
 #' summary(war)
 
@@ -53,8 +52,7 @@ summary.openWARPlayers = function(object, n = 25, ...) {
 #' 
 #' @examples
 #' 
-#' ds = getData()
-#' out = makeWAR(ds)
+#' out = makeWAR(May)
 #' players = getWAR(out$openWAR)
 #' summary(players)
 #' plot(players)
@@ -99,8 +97,7 @@ plot.openWARPlayers = function(x, ...) {
 #' 
 #' @examples
 #' 
-#' ds = getData()
-#' out = makeWAR(ds)
+#' out = makeWAR(May)
 #' players = getWAR(out$openWAR)
 #' summary(players)
 #' plot(players)

@@ -47,9 +47,8 @@
 #' @export makeWAR.GameDayPlays
 #' @examples
 #' 
-#' # ds = getData(start = '2013-03-31', end = '2013-09-30')
-#' res = makeWAR(ds)
-#' 
+#' res = makeWAR(May)
+#' summary(getWAR(res$openWAR))
 
 makeWAR = function(data, models = list(), verbose = TRUE, ...) UseMethod("makeWAR")
 
@@ -169,9 +168,8 @@ makeWARre24 = function(data, mod.re = NULL, verbose = TRUE, ...) {
 makeWARFielding = function(data, models = list(), verbose = TRUE, ...) {
     message("...Estimating Fielding Runs Above Average...")
     
-    data = dplyr::mutate(data, wasFielded = !is.na(fielderId))
     # Compute the collective responsibility of all fielders
-    p.hat = getModelFieldingCollective(data[, c("wasFielded", "our.x", "our.y")])
+    p.hat = getModelFieldingCollective(data[, c("fielderId", "our.x", "our.y")])
     # Step 2a: Define \delta.field for the defense, collectively
     delta.field = data$delta * p.hat
     

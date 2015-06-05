@@ -20,9 +20,7 @@ Tabulates WAR
 Compute each player's WAR, given their RAA values
 }
 \examples{
-ds = getData()
-out = makeWAR(ds)
-raa = getRAA(out$openWAR)
-war = getWAR(raa)
+out = makeWAR(May)
+war = getWAR(out$openWAR)
 }
 

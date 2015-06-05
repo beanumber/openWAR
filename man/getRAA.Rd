@@ -19,8 +19,7 @@ Tabulates RAA values per player
 takes an openWARPlays data.frame and consolidates the RAA values by player
 }
 \examples{
-data = getData()
-ds = makeWAR(data)
+ds = makeWAR(May)
 players = getRAA(ds$openWAR)
 summary(players)
 }

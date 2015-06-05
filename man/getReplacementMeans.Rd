@@ -19,8 +19,7 @@ Compute the mean RAA for replacement-level players
 Identifies replacement-level players, and then compute their contribution
 }
 \examples{
-data = getData()
-ds = makeWAR(data)
+ds = makeWAR(May)
 getReplacementMeans(ds$openWAR)
 }
 

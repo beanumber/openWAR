@@ -13,10 +13,8 @@
 #' 
 #' @examples
 #' 
-#' ds = getData()
-#' out = makeWAR(ds)
-#' raa = getRAA(out$openWAR)
-#' war = getWAR(raa)
+#' out = makeWAR(May)
+#' war = getWAR(out$openWAR)
 
 getWAR = function(data, dataRepl = NULL, nteams = 30, verbose = TRUE, ...) UseMethod("getWAR")
 

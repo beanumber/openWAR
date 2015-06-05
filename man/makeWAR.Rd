@@ -54,7 +54,7 @@ must be 'batterPos' (the defensive position of the batter)}
 }
 }
 \examples{
-# ds = getData(start = '2013-03-31', end = '2013-09-30')
-res = makeWAR(ds)
+res = makeWAR(May)
+summary(getWAR(res$openWAR))
 }
 

@@ -21,8 +21,4 @@ Determine the responsibility of the fielders, collectively
 Computes a 2D kernel smoothed estimate of the probability that *any* of the 9 fielders
 will make a play on a ball in play
 }
-\examples{
-ds = getData()
-ds$resp.field = getModelFieldingCollective(ds)
-}
 

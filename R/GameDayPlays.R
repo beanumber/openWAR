@@ -26,10 +26,7 @@ setClass("GameDayPlays", contains = "data.frame")
 #' @importFrom lattice panel.rect
 #' 
 #' @export
-#' @examples
-#' 
-#' ds = getData()
-#' plot(ds)
+#' @rdname plot.GameDayPlays
 
 panel.baseball <- function() {
     bgcol = "darkgray"
@@ -85,8 +82,7 @@ panel.baseball <- function() {
 #' @export
 #' @examples
 #' 
-#' ds = getData()
-#' plot(ds)
+#' plot(May)
 
 plot.GameDayPlays = function(x, batterName = NULL, pitcherName = NULL, event = NULL, pch = 1, ...) {
     data = x
@@ -132,8 +128,7 @@ plot.GameDayPlays = function(x, batterName = NULL, pitcherName = NULL, event = N
 #' @export
 #' @examples
 #' 
-#' ds = getData()
-#' summary(ds)
+#' summary(May)
 
 summary.GameDayPlays = function(object, ...) {
     gIds = sort(unique(object$gameId))

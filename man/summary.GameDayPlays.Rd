@@ -19,7 +19,6 @@ Summarize MLBAM data
 Prints information about the contents of an GameDayPlays data set.
 }
 \examples{
-ds = getData()
-summary(ds)
+summary(May)
 }
 

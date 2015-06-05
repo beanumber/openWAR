@@ -21,8 +21,7 @@ Isolates the plays involving replacement-level players
 Returns only the RAA values involving replacement-level players
 }
 \examples{
-data = getData()
-ds = makeWAR(data)
+ds = makeWAR(May)
 players = getWAR(ds$openWAR)
 summary(players)
 }
