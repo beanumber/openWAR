@@ -141,7 +141,7 @@ summary.GameDayPlays = function(object, ...) {
     summary.data.frame(object)
 }
 
-#' @title tabulate.GameDayPlays
+#' @title tabulate
 #' 
 #' @description Summarize MLBAM data
 #' 
@@ -151,14 +151,18 @@ summary.GameDayPlays = function(object, ...) {
 #' 
 #' @return A data.frame of seasonal totals for each team
 #' 
-#' @export tabulate.GameDayPlays
-#' @export tabulate
+#' @export 
 #' @examples
 #' 
-#' ds = getData()
-#' tabulate(ds)
+#' library(openWAR)
+#' tabulate(May)
+#' 
 
 tabulate = function(data) UseMethod("tabulate")
+setGeneric("tabulate")
+
+#' @rdname tabulate
+#' @export
 
 tabulate.GameDayPlays = function(data) {
     # data$bat_team = with(data, ifelse(half == 'top', as.character(away_team), as.character(home_team)))

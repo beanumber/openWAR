@@ -9,6 +9,7 @@
 #' @param write.pdf a LOGICAL indicating whether to write the contourplot to a file
 #' 
 #' @importFrom lattice contourplot
+#' @importFrom RColorBrewer brewer.pal
 #' 
 #' @return A contourplot object
 #' 

@@ -2,9 +2,12 @@
 % Please edit documentation in R/GameDayPlays.R
 \name{tabulate}
 \alias{tabulate}
-\title{tabulate.GameDayPlays}
+\alias{tabulate.GameDayPlays}
+\title{tabulate}
 \usage{
 tabulate(data)
+
+tabulate.GameDayPlays(data)
 }
 \arguments{
 \item{data}{A GameDayPlays set}
@@ -19,7 +22,7 @@ Summarize MLBAM data
 Tabulates Lahman-style statistics by team for the contents of a GameDayPlays data set.
 }
 \examples{
-ds = getData()
-tabulate(ds)
+library(openWAR)
+tabulate(May)
 }
 

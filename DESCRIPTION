@@ -28,12 +28,13 @@ Imports:
     dplyr,
     stringr,
     Sxslt,
-    Lahman,
     Hmisc,
     KernSmooth,
+    RColorBrewer,
     lattice
 Suggests: 
     openWARData,
+    Lahman,
     testthat,
     knitr
 License: GPL (>=2)
