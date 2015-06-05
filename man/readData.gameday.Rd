@@ -19,7 +19,7 @@ Grabs XML files from MLBAM and converts to data.frames in memory
 Grabs XML files from MLBAM and converts to data.frames in memory
 }
 \examples{
-gd = gameday()
-getURLs.gameday(gd)
+library(openWAR)
+gd <- gameday()
 }
 

@@ -45,34 +45,6 @@ gameday = function(gameId = "gid_2012_08_12_atlmlb_nynmlb_1", ...) {
 
 ############################################################################################### Utility functions
 
-#' @title flush.gameday
-#' 
-#' @description Remove a troublesome gameday cache
-#' 
-#' @details Given a gameday object or gameId, delete all local cache files
-#' 
-#' @param gd A gameday object
-#' @param gameId A valid MLBAM gameId
-#' 
-#' @return NULL
-#' 
-#' @examples
-#' 
-#' gd = gameday()
-#' getURLs.gameday(gd)
-
-flush.gameday = function(x) {
-    if (class(x) == "gameday") {
-        gameId = x$gameId
-    } else {
-        gameId = x
-    }
-    dirname = file.path(find.package("openWAR"), "data", gameId)
-    if (file.exists(dirname)) {
-        unlink(dirname, recursive = TRUE)
-    }
-}
-
 #' @title getURLs.gameday
 #' @aliases getXML.gameday
 #' 
@@ -84,11 +56,7 @@ flush.gameday = function(x) {
 #' @param type The type of file 
 #' 
 #' @return a URL, or an XML file
-#' 
-#' @examples
-#' 
-#' gd = gameday()
-#' getURLs.gameday(gd)
+
 
 getURLs.gameday = function(gd) {
     url = NULL
@@ -119,8 +87,8 @@ getURLs.gameday = function(gd) {
 #' @export
 #' @examples
 #' 
-#' gd = gameday()
-#' getURLs.gameday(gd)
+#' library(openWAR)
+#' gd <- gameday()
 
 readData.gameday = function(gd) {
   

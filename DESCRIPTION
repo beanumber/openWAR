@@ -27,6 +27,7 @@ Imports:
     RCurl,
     dplyr,
     stringr,
+    methods,
     Sxslt,
     Hmisc,
     KernSmooth,

@@ -2,6 +2,7 @@
 #' 
 #' @description Contains the output from getData()
 #' 
+#' @import methods
 #' @exportClass GameDayPlays
 #' @examples showClass('GameDayPlays')
 

@@ -26,15 +26,15 @@ The *gameday()* function downloads play-by-play data from the GameDay server hos
 Getting individual game data is as simple as:
 
 ```{r}
-require(openWAR)
-gd = gameday()
+library(openWAR)
+gd <- gameday()
 summary(gd)
 ```
 
 To retrieve a data.frame of many games worth, try:
 
 ```{r}
-ds = getData()
+ds <- getData()
 ```
 
 This will retrieve play-by-play data for all games played yesterday (by default). For each play, 62 variables are recorded. 
