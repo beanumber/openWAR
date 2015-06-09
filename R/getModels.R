@@ -43,7 +43,7 @@ getModelRunExpectancy.GameDayPlays = function(data, mod.re = NULL, verbose = TRU
         message("....Building in-sample Run Expectancy Model...")
         # Drop incomplete innings
         if (drop.incomplete) {
-            ds <- dplyr::filter(data, outsInInning == 3)
+            ds <- dplyr::filter_(data, ~outsInInning == 3)
         } else {
             ds <- data
         }
@@ -171,9 +171,9 @@ getModelFieldingRF = function(data) {
 
 getModelFieldingCollective = function(data) {
     message("....Computing the collective fielding model...")
-    data = dplyr::mutate(data, wasFielded = !is.na(fielderId))
-    outs = dplyr::select(dplyr::filter(data, wasFielded == TRUE), our.x, our.y)
-    hits = dplyr::select(dplyr::filter(data, wasFielded == FALSE), our.x, our.y)
+    data = dplyr::mutate_(data, wasFielded = ~!is.na(fielderId))
+    outs = dplyr::select_(dplyr::filter_(data, ~wasFielded == TRUE), ~our.x, ~our.y)
+    hits = dplyr::select_(dplyr::filter_(data, ~wasFielded == FALSE), ~our.x, ~our.y)
     # Find 2D kernel density estimates for hits and outs Make sure to specify the range, so that they over estimated over the
     # same grid
     grid = list(range(data$our.x, na.rm = TRUE), range(data$our.y, na.rm = TRUE))
@@ -186,7 +186,7 @@ getModelFieldingCollective = function(data) {
     # TRUE) wireframe(isHit ~ x + y, data=field.smooth, scales = list(arrows = FALSE), drape = TRUE, colorkey = TRUE)
     
     # Make sure to add a small amount to avoid division by zero
-    field.smooth = dplyr::mutate(field.smooth, wasFielded = isOut/(isOut + isHit + 1e-08))
+    field.smooth = dplyr::mutate_(field.smooth, wasFielded = ~(isOut/(isOut + isHit + 1e-08)))
     # summary(field.smooth) fieldingplot(wasFielded ~ x + y, data=field.smooth, label = 'cum_resp', write.pdf=TRUE)
     
     fit.all = function(x, y) {
