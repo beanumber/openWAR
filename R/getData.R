@@ -44,13 +44,13 @@ getData <- function(start = Sys.Date() - 1, end = NULL, gameIds = NULL, drop.sus
     # }
     ds.list = lapply(gd.list, "[[", "ds")
     out = do.call(rbind, ds.list)
-    out = dplyr::filter_(out, "game_type" == "R")
+    out = dplyr::filter(out, game_type == "R")
     # exclude suspended games
     if (drop.suspended) {
         # test = ddply(out, ~gameId, summarise, Innings = max(inning))
         test <- dplyr::summarise(group_by(out, gameId), Innings = max(inning))
-        suspended = filter_(test, ~Innings < 5)$gameId
-        out = filter_(out, ~!gameId %in% suspended)
+        suspended = dplyr::filter(test, Innings < 5)$gameId
+        out = dplyr::filter(out, !gameId %in% suspended)
     }
     
     # Set the class attribute
