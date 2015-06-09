@@ -48,9 +48,9 @@ getData <- function(start = Sys.Date() - 1, end = NULL, gameIds = NULL, drop.sus
     # exclude suspended games
     if (drop.suspended) {
         # test = ddply(out, ~gameId, summarise, Innings = max(inning))
-        test <- dplyr::summarise(group_by(out, gameId), Innings = max(inning))
-        suspended = dplyr::filter(test, Innings < 5)$gameId
-        out = dplyr::filter(out, !gameId %in% suspended)
+        test <- dplyr::summarise_(group_by_(out, ~gameId), Innings = ~max(inning))
+        suspended = dplyr::filter_(test, ~Innings < 5)$gameId
+        out = dplyr::filter_(out, ~!gameId %in% suspended)
     }
     
     # Set the class attribute
