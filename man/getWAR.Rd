@@ -14,6 +14,8 @@ getWAR(data, dataRepl = NULL, nteams = 30, verbose = TRUE, ...)
 \item{nteams}{The nteams argument to be passed to getReplacementPlayers}
 
 \item{verbose}{do you want information about how many replacement-level players there are?}
+
+\item{...}{currently ignored}
 }
 \description{
 Tabulates WAR

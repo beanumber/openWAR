@@ -8,7 +8,7 @@
 panel.baseball()
 
 \method{plot}{GameDayPlays}(x, batterName = NULL, pitcherName = NULL,
-  event = NULL, pch = 1, ...)
+  event = NULL, ...)
 }
 \arguments{
 \item{x}{A GameDayPlays data set with fields 'our.x' and 'our.y'}
@@ -17,7 +17,9 @@ panel.baseball()
 
 \item{pitcherName}{A character string containing the last name of a pitcher}
 
-\item{pch}{A numeric}
+\item{event}{An MLBAM event type for which to filter. (e.g. "Home Run")}
+
+\item{...}{arguments passed to \code{\link{panel.xyplot}}}
 }
 \value{
 nothing
@@ -39,5 +41,7 @@ to xyplot().
 }
 \examples{
 plot(May)
+plot(May, event = c("Single", "Home Run"), pch = 16)
+plot(May, batterName = "Trout", main = "Mike Trout's May 2013")
 }
 
