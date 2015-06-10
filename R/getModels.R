@@ -3,20 +3,16 @@
 #' 
 #' @description Retrieve various models trained on GameDayPlays data
 #' 
-#' @details This function will build various models based on the MLBAM data set and the openWAR framework.
+#' @details This function will retrieve various models based on the MLBAM data 
+#' set and the openWAR framework. Currently this only returns the Run Expectancy Model.
 #' 
 #' @param data a GameDayPlays dataset
 #' @param ... currently ignored
-#' @param type the type of model to be built. 
-#' @param drop.incomplete a LOGICAL indicating whether incomplete innings (e.g. walk-off innings)
-#' should be excluded
 #' 
-#' @return A model object with a predict() method 
+#' @return A list of model objects
 #' 
 #' @export getModels
 #' @export getModels.GameDayPlays
-#' @export getModelRunExpectancy
-#' @export getModelRunExpectancy.GameDayPlays
 #' @examples
 #' 
 #' data(May)
@@ -34,6 +30,33 @@ getModels.GameDayPlays = function(data, ...) {
     
     return(models)
 }
+
+#' @title getModelRunExpectancy
+#' @aliases getModelRunExpectancy
+#' 
+#' @description Build the Run Expectancy Model
+#' 
+#' @details This function will build the Run Expectancy Model used in \code{openWAR}.
+#' 
+#' @param data a GameDayPlays dataset
+#' @param mod.re an existing Run Expectancy Model
+#' @param verbose print messages to screen during operation?
+#' @param drop.incomplete a LOGICAL indicating whether incomplete innings (e.g. walk-off innings)
+#' should be excluded
+#' @param ... currently ignored
+#' 
+#' @return An \code{\link{lm}} object 
+#' 
+#' @export getModelRunExpectancy
+#' @export getModelRunExpectancy.GameDayPlays
+#' @examples
+#' 
+#' data(May)
+#' re.mod <- getModelRunExpectancy(May)
+#' 
+#' # Display the Run Expectancy Matrix
+#' states = expand.grid(startCode = 0:7, startOuts = 0:2)
+#' matrix(predict(re.mod, newdata=states), ncol=3)
 
 getModelRunExpectancy = function(data, mod.re = NULL, verbose = TRUE, drop.incomplete = TRUE, ...) UseMethod("getModelRunExpectancy")
 

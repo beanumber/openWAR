@@ -156,8 +156,9 @@ getGameIds <- function(date = Sys.Date()) {
 #' 
 #' @details Deletes, and then rbinds fresh information from a particular game.
 #' 
-#' @param gameId A valid MLBAM gameId
-#' @param data a data.frame returned by getData()
+#' @param gameIds A character vector of valid MLBAM gameIds
+#' @param data a data.frame returned by \code{\link{getData}}
+#' @param ... currently ignored
 #'  
 #' @return a data.frame
 #' 
@@ -165,12 +166,16 @@ getGameIds <- function(date = Sys.Date()) {
 #' @examples
 #' 
 #' data(May)
-#' newMay <- updateGame('gid_2013_05_14_kcamlb_anamlb_1', data = May)
-#' 
+#' dim(May)
+#' tail(May)
+#' newMay <- updateGame(gameIds = 'gid_2013_05_14_kcamlb_anamlb_1', data = May)
+#' dim(newMay)
+#' # the replaced games are now at the bottom of the data frame
+#' tail(newMay)
 
-updateGame <- function(gameId.vec, data, ...) {
-    temp = dplyr::filter_(data, ~!gameId %in% gameId.vec)
-    ds.new = getData(gameIds = unique(gameId.vec))
+updateGame <- function(gameIds, data, ...) {
+    temp = dplyr::filter_(data, ~!gameId %in% gameIds)
+    ds.new = getData(gameIds = unique(gameIds))
     out = rbind(temp, ds.new)
     return(out)
 }

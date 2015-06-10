@@ -150,8 +150,35 @@ makeWAR.GameDayPlays = function(data, models = list(), verbose = TRUE, low.memor
 }
 
 
-makeWARre24 = function(data, mod.re = NULL, verbose = TRUE, ...) {
+#' @title makeWARre24
+#' 
+#' @description Compute the Run Expectancy at the beginning and end of every play
+#' in a data frame, as well as their difference (RE24).
+#' 
+#' @param data a \code{GameDayPlays} object
+#' @param mod.re an \code{lm} object giving the Run Expectancy Model. If 
+#' NULL (the default), the run expectancy model will be generated from \code{data}
+#' @param ... currently ignored
+#' 
+#' @return a data frame with three columns: \code{startExR}, \code{endExR}, and 
+#' \code{delta}. The latter is the change in run expectancy.
+#' 
+#' @export
+#' @examples
+#' 
+#' Maymod.re = getModelRunExpectancy(May)
+#' re24 <- makeWARre24(May14)
+#' re24full <- makeWARre24(May14, mod.re = Maymod.re)
+#' sum(re24$delta)
+#' sum(re24full$delta)
+
+
+makeWARre24 = function(data, mod.re = NULL, ...) {
     message("...Estimating Expected Runs...")
+    
+    if (is.null(mod.re)) {
+      mod.re = getModelRunExpectancy(data)
+    }
     
     begin.states = data[, c("startCode", "startOuts")]
     end.states = data[, c("endCode", "endOuts")]

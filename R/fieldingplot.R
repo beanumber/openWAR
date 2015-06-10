@@ -4,9 +4,13 @@
 #' 
 #' @details This is a convenience function for visually checking the fielding models.
 #' 
+#' @param x a model object, currently \code{\link{lm}} and \code{\link{glm}} are supported
+#' @param y y-coordinate
+#' @param z z-coordinate
 #' @param data a GameDayPlays dataset
-#' @param model a model object that has a `predict` method
+#' @param label a string to be used in the resulting filename
 #' @param write.pdf a LOGICAL indicating whether to write the contourplot to a file
+#' @param ... arguments passed to \code{\link{panel.contourplot}}
 #' 
 #' @importFrom lattice contourplot
 #' @importFrom RColorBrewer brewer.pal
@@ -14,14 +18,25 @@
 #' 
 #' @return A contourplot object
 #' 
-#' 
+#' @examples
+#' deltas <- makeWARre24(May)
+#' Mayplus = cbind(May, deltas)
+#' library(dplyr)
+#' BIP <- filter(Mayplus, isBIP == TRUE)
+#' \dontrun{
+#' fielding = makeWARFielding(BIP)
+#' }
 #' 
 
 fieldingplot = function(x, data, ...) UseMethod("fieldingplot")
 
+#' @rdname fieldingplot
+
 fieldingplot.glm = function(x, data, ...) {
     fieldingplot.lm(x, data, ...)
 }
+
+#' @rdname fieldingplot
 
 fieldingplot.lm = function(x, data, ...) {
     model = x
@@ -40,6 +55,8 @@ fieldingplot.lm = function(x, data, ...) {
     fieldingplot.formula(z.hat ~ our.x + our.y, data = my.grid, label = label, ...)
 }
 
+#' @rdname fieldingplot
+
 fieldingplot.formula = function(x, data, label = "label", write.pdf = FALSE, ...) {
     
     if (write.pdf) {
@@ -57,10 +74,13 @@ fieldingplot.formula = function(x, data, label = "label", write.pdf = FALSE, ...
     }
 }
 
+#' @rdname fieldingplot
+
 fieldingplot.default = function(x, y, z, label = "label", write.pdf = FALSE, ...) {
     stop("No available methods")
 }
 
+#' @rdname fieldingplot
 #' @importFrom lattice panel.contourplot
 
 panel.fielding = function(x, y, z, ...) {
