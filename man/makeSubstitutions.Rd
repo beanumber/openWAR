@@ -7,7 +7,7 @@
 makeSubstitutions(dat)
 }
 \arguments{
-\item{data}{as dat}
+\item{dat}{a data frame}
 }
 \description{
 make substitutions

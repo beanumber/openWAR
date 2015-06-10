@@ -8,6 +8,10 @@
 }
 \arguments{
 \item{object}{An object of class \code{'openWARPlayers'}}
+
+\item{n}{the number of players to display}
+
+\item{...}{currently ignored}
 }
 \description{
 Summarize WAR

@@ -10,6 +10,8 @@
 \item{x}{A data.frame resulting from shakeWAR() of class \code{do.openWARPlayers}}
 
 \item{playerIds}{A vector of valid MLBAM player IDs present in the data argument}
+
+\item{...}{currently ignored}
 }
 \value{
 a faceted densityplot

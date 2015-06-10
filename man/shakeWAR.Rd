@@ -15,6 +15,8 @@ shakeWAR(data, resample = "plays", N = 10, ...)
 \item{resample}{An element of \code{c('plays', 'models', 'both')}}
 
 \item{N}{the number of resamples (default 5000)}
+
+\item{...}{currently ignored}
 }
 \value{
 a data.frame with RAA values

@@ -14,6 +14,8 @@ setClass("openWARPlayers", contains = "data.frame")
 #' @details A summary of players' WAR
 #' 
 #' @param object An object of class \code{'openWARPlayers'}
+#' @param n the number of players to display
+#' @param ... currently ignored
 #' 
 #' @import dplyr
 #' @export
@@ -47,6 +49,7 @@ summary.openWARPlayers = function(object, n = 25, ...) {
 #' level shadow. 
 #' 
 #' @param x A data.frame object of class \code{'openWARPlayers'}
+#' @param ... arguments passed to \code{xyplot}.
 #' 
 #' @export
 #' 
@@ -136,6 +139,8 @@ panel.war = function(x, y, ...) {
 #' @details Summary of players' WAR
 #' 
 #' @param object An object of class \code{'openWARPlayers'}
+#' @param n the number of players to display
+#' @param ... currently ignored
 #' 
 #' @import dplyr
 #'
@@ -174,6 +179,7 @@ summary.do.openWARPlayers = function(object, n = 25, ...) {
 #' 
 #' @param playerIds A vector of valid MLBAM player IDs present in the data argument
 #' @param x A data.frame resulting from shakeWAR() of class \code{do.openWARPlayers}
+#' @param ... currently ignored
 #' 
 #' @return a faceted densityplot
 #' 

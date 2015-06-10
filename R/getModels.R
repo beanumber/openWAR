@@ -6,6 +6,7 @@
 #' @details This function will build various models based on the MLBAM data set and the openWAR framework.
 #' 
 #' @param data a GameDayPlays dataset
+#' @param ... currently ignored
 #' @param type the type of model to be built. 
 #' @param drop.incomplete a LOGICAL indicating whether incomplete innings (e.g. walk-off innings)
 #' should be excluded

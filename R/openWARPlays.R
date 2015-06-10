@@ -14,6 +14,7 @@ setClass("openWARPlays", contains = "data.frame")
 #' @details takes an openWARPlays data.frame and consolidates the RAA values by player
 #' 
 #' @param data An openWARPlays data.frame
+#' @param ... currently ignored
 #' 
 #' @return an RAA object
 #' 

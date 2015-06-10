@@ -7,6 +7,8 @@
 #' 
 #' @param start A valid date in yyyy-mm-dd format (default yesterday)
 #' @param end A valid date in yyyy-mm-dd format (default start)
+#' @param gameIds a vector of specific gameIds that you want to retrieve. If 
+#' NULL (the default), then the dates are used to fetch the relevant gameIds
 #' @param drop.suspended Logical indicating whether games with fewer than 5 innings should be excluded.  Default is TRUE.
 #' 
 #' @return A data.frame of class 'GameDayPlays' consisting of play-by-play data 

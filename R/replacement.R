@@ -8,6 +8,10 @@
 #' The performances of the players on this list are used to estimate the value of a replacement level player for use in converting runs above average into runs above replacement and ultimately wins above replacement.  
 #' 
 #' @param data An object of class \code{'RAA'}
+#' @param nteams the number of teams used to calculate the number of non-replacement
+#' players. The default is 30 since that is the number of MLB teams. Using 27.5
+#' seems to result in a total WAR that is close to 1000. 
+#' @param ... currently ignored
 #' 
 #' @export getReplacementPlayers
 #' @export getReplacementPlayers.openWARPlayers
@@ -98,6 +102,7 @@ getReplacementActivity.openWARPlays = function(data, replacementIds) {
 #' @details Identifies replacement-level players, and then compute their contribution
 #' 
 #' @param data An openWARPlays data.frame
+#' @param replIds MLBAM IDs of specific players that you want to designate as replacement level
 #' 
 #' @return a vector of mean contributions per activity for replacement-level players
 #' 

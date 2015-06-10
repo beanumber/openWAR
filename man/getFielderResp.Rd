@@ -8,6 +8,8 @@ getFielderResp(data, ...)
 }
 \arguments{
 \item{data}{An MLBAM data.frame}
+
+\item{...}{currently ignored}
 }
 \value{
 data.frame with 9 columns, each row representing a ball in play

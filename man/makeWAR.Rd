@@ -14,6 +14,8 @@ makeWAR(data, models = list(), verbose = TRUE, ...)
 
 \item{verbose}{A LOGICAL indicating whether you want various messages and information to be displayed
 during the computation}
+
+\item{...}{currently ignored}
 }
 \value{
 An object of class 'openWARPlays' which is a list of length 4 containing the following:

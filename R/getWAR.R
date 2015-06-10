@@ -7,6 +7,7 @@
 #' @param data An object of class \code{'openWARPlays'}
 #' @param dataRepl An object of class \code{'openWARPlays'} that will be used to calculate the replacement level.  
 #' @param nteams The nteams argument to be passed to getReplacementPlayers
+#' @param verbose do you want information about how many replacement-level players there are?
 #' 
 #' @export getWAR
 #' @export getWAR.openWARPlays

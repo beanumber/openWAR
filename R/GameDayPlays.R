@@ -122,6 +122,7 @@ plot.GameDayPlays = function(x, batterName = NULL, pitcherName = NULL, event = N
 #' @details Prints information about the contents of an GameDayPlays data set.
 #' 
 #' @param object A GameDayPlays data set
+#' @param ... currently ignored
 #' 
 #' @return nothing
 #' 

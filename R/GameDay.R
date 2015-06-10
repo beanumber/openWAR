@@ -6,6 +6,7 @@
 #' @details Each gameId corresponds to one object of class 'gameday'
 #' 
 #' @param gameId A valid MLBAM gameId
+#' @param ... currently ignored
 #' 
 #' @return An object of class 'gameday', which consists of a list containing
 #' \item{gameId}{The ID of the game (e.g. 'gid_2012_08_12_atlmlb_nynmlb_1')}
@@ -52,10 +53,9 @@ gameday = function(gameId = "gid_2012_08_12_atlmlb_nynmlb_1", ...) {
 #' 
 #' @details Given a gameId string, this function can return several URLs
 #' 
-#' @param gameId A valid MLBAM gameId
-#' @param type The type of file 
+#' @param gd A \code{gameday} object
 #' 
-#' @return a URL, or an XML file
+#' @return a vector of URLs
 
 
 getURLs.gameday = function(gd) {
@@ -296,6 +296,8 @@ updateHalfInning <- function(dat) {
 
 #' @title getRunnerMovement
 #' 
+#' @param x a character vector of runner movements
+#' 
 #' @importFrom stringr str_split
 #' @import dplyr
 #'
@@ -346,7 +348,7 @@ getRunnerMovement = function(x) {
 
 #' @title make substitutions
 #' @description make substitutions
-#' @param data as dat
+#' @param dat a data frame
 #' @importFrom stringr str_count
 #'
 makeSubstitutions <- function(dat) {

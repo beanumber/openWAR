@@ -11,6 +11,8 @@ getRunEx(data, drop.incomplete = TRUE, ...)
 
 \item{drop.incomplete}{a LOGICAL indicating whether incomplete innings (e.g. walk-off innings)
 should be excluded from the run expectancy model.  Default is TRUE.}
+
+\item{...}{currently ignored}
 }
 \value{
 A function that takes two arguments: baseCode and outs, and returns a run value

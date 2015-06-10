@@ -10,6 +10,8 @@ getModels(data, ...)
 \arguments{
 \item{data}{a GameDayPlays dataset}
 
+\item{...}{currently ignored}
+
 \item{type}{the type of model to be built.}
 
 \item{drop.incomplete}{a LOGICAL indicating whether incomplete innings (e.g. walk-off innings)

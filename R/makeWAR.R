@@ -32,6 +32,7 @@
 #' @param models A named list of models, each with a predict() method. See Details.
 #' @param verbose A LOGICAL indicating whether you want various messages and information to be displayed
 #' during the computation
+#' @param ... currently ignored
 #' 
 #' @return An object of class 'openWARPlays' which is a list of length 4 containing the following: 
 #' \itemize{
@@ -237,6 +238,7 @@ getFielderRAA = function(data) {
 #' ball into at least one out.
 #' 
 #' @param data An MLBAM data.frame 
+#' @param ... currently ignored
 #' 
 #' @return data.frame with 9 columns, each row representing a ball in play
 #' 

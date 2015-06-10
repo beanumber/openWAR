@@ -12,6 +12,8 @@ getWAR(data, dataRepl = NULL, nteams = 30, verbose = TRUE, ...)
 \item{dataRepl}{An object of class \code{'openWARPlays'} that will be used to calculate the replacement level.}
 
 \item{nteams}{The nteams argument to be passed to getReplacementPlayers}
+
+\item{verbose}{do you want information about how many replacement-level players there are?}
 }
 \description{
 Tabulates WAR
