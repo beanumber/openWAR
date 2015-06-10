@@ -11,8 +11,9 @@
 #' @return A function that takes two arguments: baseCode and outs, and returns a run value 
 #' 
 #' @note baseCode takes on integer values between 0 and 7 with each value correpsonding to a unique 
-#' base state.  The baseCode is the binary representation of the base state with first, second, and third base represented
-#' by 1, 2, and 4, respectively.  For example, runners on second and third corresponds to a baseCode of 6 (i.e. 2 + 4 = 6).  
+#' base state (e.g. runner on second, runners on first and third, bases loaded).  The baseCode is the binary representation of the
+#'  base state with first, second, and third base represented by 1, 2, and 4, respectively. 
+#'   For example, runners on second and third corresponds to a baseCode of 6 (i.e. 2 + 4 = 6).  
 #'
 #'
 #' 
