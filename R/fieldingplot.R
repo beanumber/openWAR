@@ -61,7 +61,7 @@ fieldingplot.default = function(x, y, z, label = "label", write.pdf = FALSE, ...
     stop("No available methods")
 }
 
-
+#' @importFrom lattice panel.contourplot
 
 panel.fielding = function(x, y, z, ...) {
   panel.baseball()

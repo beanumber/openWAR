@@ -192,7 +192,7 @@ getModelFieldingCollective = function(data) {
     fit.all = function(x, y) {
         x.idx = Hmisc::whichClosest(field.smooth$x, x)
         y.idx = Hmisc::whichClosest(field.smooth$y, y)
-        match = dplyr::filter(field.smooth, x == field.smooth$x[x.idx] & y == field.smooth$y[y.idx])
+        match = dplyr::filter_(field.smooth, ~x == field.smooth$x[x.idx] & y == field.smooth$y[y.idx])
         return(match$wasFielded)
     }
     
