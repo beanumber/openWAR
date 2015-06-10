@@ -8,12 +8,10 @@
 getURLs.gameday(gd)
 }
 \arguments{
-\item{gameId}{A valid MLBAM gameId}
-
-\item{type}{The type of file}
+\item{gd}{A \code{gameday} object}
 }
 \value{
-a URL, or an XML file
+a vector of URLs
 }
 \description{
 Convenience function for returning data related to a game

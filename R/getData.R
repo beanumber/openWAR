@@ -7,6 +7,8 @@
 #' 
 #' @param start A valid date in yyyy-mm-dd format (default yesterday)
 #' @param end A valid date in yyyy-mm-dd format (default start)
+#' @param gameIds a vector of specific gameIds that you want to retrieve. If 
+#' NULL (the default), then the dates are used to fetch the relevant gameIds
 #' @param drop.suspended Logical indicating whether games with fewer than 5 innings should be excluded.  Default is TRUE.
 #' 
 #' @return A data.frame of class 'GameDayPlays' consisting of play-by-play data 
@@ -48,9 +50,9 @@ getData <- function(start = Sys.Date() - 1, end = NULL, gameIds = NULL, drop.sus
     # exclude suspended games
     if (drop.suspended) {
         # test = ddply(out, ~gameId, summarise, Innings = max(inning))
-        test <- dplyr::summarise(group_by(out, gameId), Innings = max(inning))
-        suspended = dplyr::filter(test, Innings < 5)$gameId
-        out = dplyr::filter(out, !gameId %in% suspended)
+        test <- dplyr::summarise_(group_by_(out, ~gameId), Innings = ~max(inning))
+        suspended = dplyr::filter_(test, ~Innings < 5)$gameId
+        out = dplyr::filter_(out, ~!gameId %in% suspended)
     }
     
     # Set the class attribute
@@ -154,8 +156,9 @@ getGameIds <- function(date = Sys.Date()) {
 #' 
 #' @details Deletes, and then rbinds fresh information from a particular game.
 #' 
-#' @param gameId A valid MLBAM gameId
-#' @param data a data.frame returned by getData()
+#' @param gameIds A character vector of valid MLBAM gameIds
+#' @param data a data.frame returned by \code{\link{getData}}
+#' @param ... currently ignored
 #'  
 #' @return a data.frame
 #' 
@@ -163,12 +166,16 @@ getGameIds <- function(date = Sys.Date()) {
 #' @examples
 #' 
 #' data(May)
-#' newMay <- updateGame('gid_2013_05_14_kcamlb_anamlb_1', data = May)
-#' 
+#' dim(May)
+#' tail(May)
+#' newMay <- updateGame(gameIds = 'gid_2013_05_14_kcamlb_anamlb_1', data = May)
+#' dim(newMay)
+#' # the replaced games are now at the bottom of the data frame
+#' tail(newMay)
 
-updateGame <- function(gameId.vec, data, ...) {
-    temp = dplyr::filter_(data, ~!gameId %in% gameId.vec)
-    ds.new = getData(gameIds = unique(gameId.vec))
+updateGame <- function(gameIds, data, ...) {
+    temp = dplyr::filter_(data, ~!gameId %in% gameIds)
+    ds.new = getData(gameIds = unique(gameIds))
     out = rbind(temp, ds.new)
     return(out)
 }

@@ -9,6 +9,8 @@ gameday(gameId = "gid_2012_08_12_atlmlb_nynmlb_1", ...)
 }
 \arguments{
 \item{gameId}{A valid MLBAM gameId}
+
+\item{...}{currently ignored}
 }
 \value{
 An object of class 'gameday', which consists of a list containing

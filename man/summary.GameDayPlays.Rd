@@ -8,6 +8,8 @@
 }
 \arguments{
 \item{object}{A GameDayPlays data set}
+
+\item{...}{currently ignored}
 }
 \value{
 nothing

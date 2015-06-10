@@ -8,6 +8,8 @@ getRAA(data, ...)
 }
 \arguments{
 \item{data}{An openWARPlays data.frame}
+
+\item{...}{currently ignored}
 }
 \value{
 an RAA object

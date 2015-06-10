@@ -8,6 +8,8 @@ getReplacementMeans(data, replIds)
 }
 \arguments{
 \item{data}{An openWARPlays data.frame}
+
+\item{replIds}{MLBAM IDs of specific players that you want to designate as replacement level}
 }
 \value{
 a vector of mean contributions per activity for replacement-level players

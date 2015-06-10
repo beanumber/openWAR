@@ -72,7 +72,8 @@ panel.baseball <- function() {
 #' @param x A GameDayPlays data set with fields 'our.x' and 'our.y'
 #' @param batterName A character string containing the last name of a batter
 #' @param pitcherName A character string containing the last name of a pitcher 
-#' @param pch A numeric 
+#' @param event An MLBAM event type for which to filter. (e.g. "Home Run")
+#' @param ... arguments passed to \code{\link{panel.xyplot}}
 #' 
 #' @return an xyplot() 
 #' 
@@ -83,8 +84,10 @@ panel.baseball <- function() {
 #' @examples
 #' 
 #' plot(May)
+#' plot(May, event = c("Single", "Home Run"), pch = 16)
+#' plot(May, batterName = "Trout", main = "Mike Trout's May 2013")
 
-plot.GameDayPlays = function(x, batterName = NULL, pitcherName = NULL, event = NULL, pch = 1, ...) {
+plot.GameDayPlays = function(x, batterName = NULL, pitcherName = NULL, event = NULL, ...) {
     data = x
     xy.fields = c("our.x", "our.y")
     if (!length(intersect(xy.fields, names(data))) == length(xy.fields)) {
@@ -100,9 +103,9 @@ plot.GameDayPlays = function(x, batterName = NULL, pitcherName = NULL, event = N
     if (!is.null(event)) {
         data = data[data$event %in% event, ]
     }
-    ds <- filter(data, !is.na(our.y) & !is.na(our.x))
-    ds$event <- factor(ds$event)
-    plot = xyplot(our.y ~ our.x, groups = event, data = ds, pch = pch
+    ds <- filter_(data, ~!is.na(our.y) & !is.na(our.x))
+    ds <- mutate_(ds, event = ~factor(event))
+    plot = xyplot(our.y ~ our.x, groups = event, data = ds, ...
                   , panel = function(x, y, ...) {
                     panel.baseball()
                     panel.xyplot(x, y, alpha = 0.3, ...)
@@ -122,6 +125,7 @@ plot.GameDayPlays = function(x, batterName = NULL, pitcherName = NULL, event = N
 #' @details Prints information about the contents of an GameDayPlays data set.
 #' 
 #' @param object A GameDayPlays data set
+#' @param ... currently ignored
 #' 
 #' @return nothing
 #' 
@@ -171,14 +175,16 @@ tabulate.GameDayPlays = function(data) {
     # == 'Triple') + 4*sum(event == 'Home Run') ) / sum(isAB) )
     
     data %>% 
-      mutate(bat_team = factor(ifelse(half == "top", as.character(away_team), as.character(home_team)))) %>% 
-      mutate(yearId = as.numeric(substr(gameId, start = 5, stop = 8))) %>% 
-      group_by(yearId, bat_team) %>% 
-      summarise(G = length(unique(gameId)), PA = sum(isPA), AB = sum(isAB), 
-        R = sum(runsOnPlay), H = sum(isHit), HR = sum(event == "Home Run"), 
-        BB = sum(event %in% c("Walk", "Intent Walk")), K = sum(event %in% c("Strikeout", "Strikeout - DP")), 
-        BA = sum(isHit)/sum(isAB), 
-        OBP = sum(isHit | event %in% c("Walk", "Intent Walk", "Hit By Pitch"))/sum(isPA & !event %in% c("Sac Bunt", "Sacrifice Bunt DP")), 
-        SLG = (sum(event == "Single") + 2 * sum(event == "Double") + 3 * sum(event == "Triple") + 4 * sum(event == "Home Run"))/sum(isAB)
+      mutate_(bat_team = ~factor(ifelse(half == "top", as.character(away_team), as.character(home_team)))) %>% 
+      mutate_(yearId = ~as.numeric(substr(gameId, start = 5, stop = 8))) %>% 
+      group_by_(~yearId, ~bat_team) %>% 
+      summarise_(G = ~length(unique(gameId)), PA = ~sum(isPA), AB = ~sum(isAB), 
+        R = ~sum(runsOnPlay), H = ~sum(isHit), 
+        HR = ~sum(event == "Home Run"), 
+        BB = ~sum(event %in% c("Walk", "Intent Walk")), 
+        K = ~sum(event %in% c("Strikeout", "Strikeout - DP")), 
+        BA = ~sum(isHit)/sum(isAB), 
+        OBP = ~sum(isHit | event %in% c("Walk", "Intent Walk", "Hit By Pitch"))/sum(isPA & !event %in% c("Sac Bunt", "Sacrifice Bunt DP")), 
+        SLG = ~(sum(event == "Single") + 2 * sum(event == "Double") + 3 * sum(event == "Triple") + 4 * sum(event == "Home Run"))/sum(isAB)
         )
 }

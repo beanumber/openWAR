@@ -6,6 +6,7 @@
 #' @details Each gameId corresponds to one object of class 'gameday'
 #' 
 #' @param gameId A valid MLBAM gameId
+#' @param ... currently ignored
 #' 
 #' @return An object of class 'gameday', which consists of a list containing
 #' \item{gameId}{The ID of the game (e.g. 'gid_2012_08_12_atlmlb_nynmlb_1')}
@@ -52,10 +53,9 @@ gameday = function(gameId = "gid_2012_08_12_atlmlb_nynmlb_1", ...) {
 #' 
 #' @details Given a gameId string, this function can return several URLs
 #' 
-#' @param gameId A valid MLBAM gameId
-#' @param type The type of file 
+#' @param gd A \code{gameday} object
 #' 
-#' @return a URL, or an XML file
+#' @return a vector of URLs
 
 
 getURLs.gameday = function(gd) {
@@ -132,24 +132,24 @@ readData.gameday = function(gd) {
       out <- cbind(out, gd$data$game)
       
       # Make sure R understands that timestamp is a date
-      out <- dplyr::mutate(out, timestamp = as.character(strptime(timestamp.x, format = "%Y-%m-%dT%H:%M:%S")))
+      out <- dplyr::mutate_(out, timestamp = ~as.character(strptime(timestamp.x, format = "%Y-%m-%dT%H:%M:%S")))
       # Make sure that the runnerMovement is not a factor
-      out <- dplyr::mutate(out, runnerMovement = as.character(runnerMovement))
+      out <- dplyr::mutate_(out, runnerMovement = ~as.character(runnerMovement))
       
       # Merge again to get the starting fielders
-      out <- dplyr::mutate(out, field_teamId = ifelse(half == "top", as.character(home_teamId), as.character(away_teamId)))
+      out <- dplyr::mutate_(out, field_teamId = ~ifelse(half == "top", as.character(home_teamId), as.character(away_teamId)))
       # Create a lookup for the player's name
       lkup = gd$data$bis_boxscore
       lkup = lkup[!duplicated(lkup$playerId), ]
       
       # suppressWarnings for na
-      lkup <- dplyr::mutate(lkup, bo = suppressWarnings(as.numeric(as.character(bo))))
+      lkup <- dplyr::mutate_(lkup, bo = ~suppressWarnings(as.numeric(as.character(bo))))
       
       # Weed out pitchers
-      lineup = dplyr::filter(lkup, bo %% 100 == 0)
+      lineup = dplyr::filter_(lkup, ~bo %% 100 == 0)
       lineup$batterPos = sapply(strsplit(as.character(lineup$pos), split = "-"), "[", 1)
 #      lineup.long = lineup[order(lineup$teamId, lineup$batterPos), ]
-      lineup.long <- arrange(lineup, teamId, batterPos)
+      lineup.long <- dplyr::arrange_(lineup, ~teamId, ~batterPos)
       lineup.wide <- reshape(lineup.long, v.names = "playerId", timevar = "batterPos", idvar = "teamId", direction = "wide", 
                              drop = c("playerName", "bo", "pos"))
       def.pos <- c("playerId.C", "playerId.1B", "playerId.2B", "playerId.3B", "playerId.SS", "playerId.LF", "playerId.CF", 
@@ -185,18 +185,18 @@ readData.gameday = function(gd) {
       out$batterPos[missing.idx] = "UN"
       
       # Experimental -- I think we can filter out non-inning-all events now
-      out = dplyr::filter(out, !is.na(batterId))
-      out = dplyr::filter(out, !event %in% c("Game Advisory", "Defensive Switch", "Offensive sub", "Pitching Substitution", "Defensive Sub", 
+      out = dplyr::filter_(out, ~!is.na(batterId))
+      out = dplyr::filter_(out, ~!event %in% c("Game Advisory", "Defensive Switch", "Offensive sub", "Pitching Substitution", "Defensive Sub", 
                                       "Player Injured", "Ejection", "Umpire Substitution"))
       
       # Runs on play out$runsOnPlay = str_count(out$description, ' scores.') + str_count(out$description, 'homers')
       out$runsOnPlay = stringr::str_count(as.character(out$runnerMovement), ":T:")
       
       # runner movement, score, and outs out = ddply(out, ~inning + half, updateHalfInning)
-      out <- dplyr::do(dplyr::group_by(out, inning, half), updateHalfInning(.))
+      out <- dplyr::do_(dplyr::group_by_(out, ~inning, ~half), ~updateHalfInning(.))
       # Once the non-PA related events have been removed, best to sort by ab_num, since the timestamp is occassionally missing!
 #      out = out[order(out$ab_num), ]
-      out <- arrange(out, ab_num)
+      out <- arrange_(out, ~ab_num)
       
       # number of baserunners
       out$startCode <- as.numeric((1 * (!is.na(as.data.frame(out)[, c("start1B", "start2B", "start3B")]))) %*% c(1, 2, 4))
@@ -211,13 +211,13 @@ readData.gameday = function(gd) {
       
       out$gameId = as.character(gd$gameId)
 #      out = out[order(out$ab_num), ]
-      out <- arrange(out, ab_num)
+      out <- arrange_(out, ~ab_num)
       
       # add some convenience calculation fields
-      out <- dplyr::mutate(out, isPA = !event %in% c("Defensive Indiff", "Stolen Base 2B", "Runner Out"))
-      out <- dplyr::mutate(out, isAB = isPA & !event %in% c("Walk", "Intent Walk", "Hit By Pitch", "Sac Fly", "Sac Bunt"))
-      out <- dplyr::mutate(out, isHit = event %in% c("Single", "Double", "Triple", "Home Run"))
-      out <- dplyr::mutate(out, isBIP = event != "Home Run" & !is.na(x) & !is.na(y))
+      out <- dplyr::mutate_(out, isPA = ~!event %in% c("Defensive Indiff", "Stolen Base 2B", "Runner Out"))
+      out <- dplyr::mutate_(out, isAB = ~isPA & !event %in% c("Walk", "Intent Walk", "Hit By Pitch", "Sac Fly", "Sac Bunt"))
+      out <- dplyr::mutate_(out, isHit = ~event %in% c("Single", "Double", "Triple", "Home Run"))
+      out <- dplyr::mutate_(out, isBIP = ~event != "Home Run" & !is.na(x) & !is.na(y))
       
       # translate the coordinates so that home plate is (0,0) and second base is (0, 127' 3 3/8')
       out = recenter(out)
@@ -243,11 +243,11 @@ updateHalfInning <- function(dat) {
     # IMPORTANT: Have to sort the data frame just in case data = data[order(data$timestamp),] 
     # Sometimes the timestamp is blank -- so sort these by AB num
 #    dat = dat[order(dat$ab_num), ]
-    dat <- arrange(dat, ab_num)
+    dat <- arrange_(dat, ~ab_num)
     dat$startOuts = 0
     dat$runsInInning = sum(dat$runsOnPlay)
     dat$runsITD = cumsum(c(0, dat$runsOnPlay))[1:nrow(dat)]
-    dat = dplyr::mutate(dat, runsFuture = runsInInning - runsITD)
+    dat = dplyr::mutate_(dat, runsFuture = ~runsInInning - runsITD)
     dat$start1B = as.character(NA)
     dat$start2B = as.character(NA)
     dat$start3B = as.character(NA)
@@ -296,6 +296,8 @@ updateHalfInning <- function(dat) {
 
 #' @title getRunnerMovement
 #' 
+#' @param x a character vector of runner movements
+#' 
 #' @importFrom stringr str_split
 #' @import dplyr
 #'
@@ -318,26 +320,26 @@ getRunnerMovement = function(x) {
         rm.df$end = ifelse(rm.df$end == "", "4B", rm.df$end)
         # rm.df = ddply(rm.df, ~ id, summarise, start = min(start), end = max(end))
         
-        rm.df <- dplyr::summarize(dplyr::group_by(rm.df, id), start = min(start), end = max(end))
+        rm.df <- dplyr::summarize(dplyr::group_by_(rm.df, ~id), start = min(start), end = max(end))
         
         rm.df$end = ifelse(rm.df$end == "4B", "", rm.df$end)
-        if (nrow(dplyr::filter(rm.df, start == "1B")) > 0) {
-            rm.vec["start1B"] = dplyr::filter(rm.df, start == "1B")$id
+        if (nrow(dplyr::filter_(rm.df, ~start == "1B")) > 0) {
+            rm.vec["start1B"] = dplyr::filter_(rm.df, ~start == "1B")$id
         }
-        if (nrow(dplyr::filter(rm.df, start == "2B")) > 0) {
-            rm.vec["start2B"] = dplyr::filter(rm.df, start == "2B")$id
+        if (nrow(dplyr::filter_(rm.df, ~start == "2B")) > 0) {
+            rm.vec["start2B"] = dplyr::filter_(rm.df, ~start == "2B")$id
         }
-        if (nrow(dplyr::filter(rm.df, start == "3B")) > 0) {
-            rm.vec["start3B"] = dplyr::filter(rm.df, start == "3B")$id
+        if (nrow(dplyr::filter_(rm.df, ~start == "3B")) > 0) {
+            rm.vec["start3B"] = dplyr::filter_(rm.df, ~start == "3B")$id
         }
-        if (nrow(dplyr::filter(rm.df, end == "1B")) > 0) {
-            rm.vec["end1B"] = dplyr::filter(rm.df, end == "1B")$id
+        if (nrow(dplyr::filter_(rm.df, ~end == "1B")) > 0) {
+            rm.vec["end1B"] = dplyr::filter_(rm.df, ~end == "1B")$id
         }
-        if (nrow(dplyr::filter(rm.df, end == "2B")) > 0) {
-            rm.vec["end2B"] = dplyr::filter(rm.df, end == "2B")$id
+        if (nrow(dplyr::filter_(rm.df, ~end == "2B")) > 0) {
+            rm.vec["end2B"] = dplyr::filter_(rm.df, ~end == "2B")$id
         }
-        if (nrow(dplyr::filter(rm.df, end == "3B")) > 0) {
-            rm.vec["end3B"] = dplyr::filter(rm.df, end == "3B")$id
+        if (nrow(dplyr::filter_(rm.df, ~end == "3B")) > 0) {
+            rm.vec["end3B"] = dplyr::filter_(rm.df, ~end == "3B")$id
         }
         # rm.vec = as.numeric(rm.vec)
     }
@@ -346,13 +348,13 @@ getRunnerMovement = function(x) {
 
 #' @title make substitutions
 #' @description make substitutions
-#' @param data as dat
+#' @param dat a data frame
 #' @importFrom stringr str_count
 #'
 makeSubstitutions <- function(dat) {
     # IMPORTANT: Have to sort the data frame just in case Have to sort by timestamp here, NOT by ab_num!
 #    dat = dat[order(dat$timestamp), ]
-    dat <- arrange(dat, timestamp)
+    dat <- dplyr::arrange_(dat, ~timestamp)
     n = nrow(dat)
     top = which(dat$half == "top")
     bottom = which(dat$half != "top")
@@ -515,13 +517,13 @@ getFielderId = function(dat) {
 
 recenter = function(dat, ...) {
     # From MLBAM specs
-    dat = dplyr::mutate(dat, our.x = x - 125)
-    dat = dplyr::mutate(dat, our.y = 199 - y)
+    dat = dplyr::mutate_(dat, our.x = ~x - 125)
+    dat = dplyr::mutate_(dat, our.y = ~199 - y)
     # set distance from home to 2B
     scale = sqrt(90^2 + 90^2)/51
-    dat = dplyr::mutate(dat, r = scale * sqrt(our.x^2 + our.y^2))
-    dat = dplyr::mutate(dat, theta = atan2(our.y, our.x))
-    dat = dplyr::mutate(dat, our.x = r * cos(theta))
-    dat = dplyr::mutate(dat, our.y = r * sin(theta))
+    dat = dplyr::mutate_(dat, r = ~scale * sqrt(our.x^2 + our.y^2))
+    dat = dplyr::mutate_(dat, theta = ~atan2(our.y, our.x))
+    dat = dplyr::mutate_(dat, our.x = ~r * cos(theta))
+    dat = dplyr::mutate_(dat, our.y = ~r * sin(theta))
     return(dat)
 }

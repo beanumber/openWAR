@@ -7,6 +7,8 @@
 #' @param data An object of class \code{'openWARPlays'}
 #' @param dataRepl An object of class \code{'openWARPlays'} that will be used to calculate the replacement level.  
 #' @param nteams The nteams argument to be passed to getReplacementPlayers
+#' @param verbose do you want information about how many replacement-level players there are?
+#' @param ... currently ignored
 #' 
 #' @export getWAR
 #' @export getWAR.openWARPlays
@@ -46,8 +48,8 @@ getWAR.openWARPlays = function(data, dataRepl = NULL, nteams = 30, verbose = TRU
     
     # Attach the replacement values to the list of players war = merge(x=players, y=data.frame(batterId = row.names(repl.value),
     # repl = repl.value), all.x = TRUE)
-    war <- mutate(players, WAR = (RAA - repl)/10)
-    war <- mutate(war, isReplacement = playerId %in% replIds)
+    war <- mutate_(players, WAR = ~((RAA - repl)/10))
+    war <- mutate_(war, isReplacement = ~playerId %in% replIds)
     class(war) = c("openWARPlayers", class(war))
     return(war)
 } 

@@ -12,6 +12,9 @@ getData(start = Sys.Date() - 1, end = NULL, gameIds = NULL,
 
 \item{end}{A valid date in yyyy-mm-dd format (default start)}
 
+\item{gameIds}{a vector of specific gameIds that you want to retrieve. If
+NULL (the default), then the dates are used to fetch the relevant gameIds}
+
 \item{drop.suspended}{Logical indicating whether games with fewer than 5 innings should be excluded.  Default is TRUE.}
 }
 \value{

@@ -9,6 +9,12 @@ getReplacementPlayers(data, nteams = 30, ...)
 }
 \arguments{
 \item{data}{An object of class \code{'RAA'}}
+
+\item{nteams}{the number of teams used to calculate the number of non-replacement
+players. The default is 30 since that is the number of MLB teams. Using 27.5
+seems to result in a total WAR that is close to 1000.}
+
+\item{...}{currently ignored}
 }
 \description{
 This function determines and returns a list of players who are considered to be replacement level players.

@@ -6,6 +6,9 @@
 \usage{
 getRunnerMovement(x)
 }
+\arguments{
+\item{x}{a character vector of runner movements}
+}
 \description{
 getRunnerMovement
 }

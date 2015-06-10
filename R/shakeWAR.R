@@ -7,6 +7,7 @@
 #' @param data An MLBAM data.frame 
 #' @param resample An element of \code{c('plays', 'models', 'both')}
 #' @param N the number of resamples (default 5000)
+#' @param ... currently ignored
 #' 
 #' @return a data.frame with RAA values 
 #' 

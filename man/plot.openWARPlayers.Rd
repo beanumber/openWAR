@@ -8,6 +8,8 @@
 }
 \arguments{
 \item{x}{A data.frame object of class \code{'openWARPlayers'}}
+
+\item{...}{arguments passed to \code{xyplot}.}
 }
 \description{
 Display a season's worth of openWAR results

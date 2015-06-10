@@ -4,12 +4,14 @@
 \alias{updateGame}
 \title{updateGame}
 \usage{
-updateGame(gameId.vec, data, ...)
+updateGame(gameIds, data, ...)
 }
 \arguments{
-\item{data}{a data.frame returned by getData()}
+\item{gameIds}{A character vector of valid MLBAM gameIds}
 
-\item{gameId}{A valid MLBAM gameId}
+\item{data}{a data.frame returned by \code{\link{getData}}}
+
+\item{...}{currently ignored}
 }
 \value{
 a data.frame
@@ -22,6 +24,11 @@ Deletes, and then rbinds fresh information from a particular game.
 }
 \examples{
 data(May)
-newMay <- updateGame('gid_2013_05_14_kcamlb_anamlb_1', data = May)
+dim(May)
+tail(May)
+newMay <- updateGame(gameIds = 'gid_2013_05_14_kcamlb_anamlb_1', data = May)
+dim(newMay)
+# the replaced games are now at the bottom of the data frame
+tail(newMay)
 }
 

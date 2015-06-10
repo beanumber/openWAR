@@ -2,16 +2,41 @@
 % Please edit documentation in R/fieldingplot.R
 \name{fieldingplot}
 \alias{fieldingplot}
+\alias{fieldingplot.default}
+\alias{fieldingplot.formula}
+\alias{fieldingplot.glm}
+\alias{fieldingplot.lm}
+\alias{panel.fielding}
 \title{fieldingplot}
 \usage{
 fieldingplot(x, data, ...)
+
+\method{fieldingplot}{glm}(x, data, ...)
+
+\method{fieldingplot}{lm}(x, data, ...)
+
+\method{fieldingplot}{formula}(x, data, label = "label", write.pdf = FALSE,
+  ...)
+
+\method{fieldingplot}{default}(x, y, z, label = "label", write.pdf = FALSE,
+  ...)
+
+panel.fielding(x, y, z, ...)
 }
 \arguments{
+\item{x}{a model object, currently \code{\link{lm}} and \code{\link{glm}} are supported}
+
 \item{data}{a GameDayPlays dataset}
 
-\item{model}{a model object that has a `predict` method}
+\item{...}{arguments passed to \code{\link{panel.contourplot}}}
+
+\item{label}{a string to be used in the resulting filename}
 
 \item{write.pdf}{a LOGICAL indicating whether to write the contourplot to a file}
+
+\item{y}{y-coordinate}
+
+\item{z}{z-coordinate}
 }
 \value{
 A contourplot object
@@ -21,5 +46,14 @@ Plot the fielding model for an individual player
 }
 \details{
 This is a convenience function for visually checking the fielding models.
+}
+\examples{
+deltas <- makeWARre24(May)
+Mayplus = cbind(May, deltas)
+library(dplyr)
+BIP <- filter(Mayplus, isBIP == TRUE)
+\dontrun{
+fielding = makeWARFielding(BIP)
+}
 }
 

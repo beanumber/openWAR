@@ -10,19 +10,17 @@ getModels(data, ...)
 \arguments{
 \item{data}{a GameDayPlays dataset}
 
-\item{type}{the type of model to be built.}
-
-\item{drop.incomplete}{a LOGICAL indicating whether incomplete innings (e.g. walk-off innings)
-should be excluded}
+\item{...}{currently ignored}
 }
 \value{
-A model object with a predict() method
+A list of model objects
 }
 \description{
 Retrieve various models trained on GameDayPlays data
 }
 \details{
-This function will build various models based on the MLBAM data set and the openWAR framework.
+This function will retrieve various models based on the MLBAM data
+set and the openWAR framework. Currently this only returns the Run Expectancy Model.
 }
 \examples{
 data(May)

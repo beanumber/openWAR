@@ -14,6 +14,8 @@ setClass("openWARPlayers", contains = "data.frame")
 #' @details A summary of players' WAR
 #' 
 #' @param object An object of class \code{'openWARPlayers'}
+#' @param n the number of players to display
+#' @param ... currently ignored
 #' 
 #' @import dplyr
 #' @export
@@ -23,15 +25,16 @@ setClass("openWARPlayers", contains = "data.frame")
 #' summary(war)
 
 summary.openWARPlayers = function(object, n = 25, ...) {
-    cat(paste("Displaying information for", nrow(object), "players, of whom", nrow(filter(object, RAA.pitch != 0)), "have pitched\n"))
+    cat(paste("Displaying information for", nrow(object), "players, of whom", 
+              nrow(dplyr::filter_(object, ~RAA.pitch != 0)), "have pitched\n"))
     
     # classic syntax head(data[order(data$WAR, decreasing=TRUE), c('Name', 'TPA', 'WAR', 'RAA', 'repl', 'RAA.bat', 'RAA.br',
     # 'RAA.field', 'RAA.pitch')], n)
     
     # dplyr syntax
     object %>% 
-      dplyr::select(Name, TPA, WAR, RAA, repl, RAA.bat, RAA.br, RAA.field, RAA.pitch) %>%
-      arrange(desc(WAR)) %>% 
+      dplyr::select_(~Name, ~TPA, ~WAR, ~RAA, ~repl, ~RAA.bat, ~RAA.br, ~RAA.field, ~RAA.pitch) %>%
+      arrange_(~desc(WAR)) %>% 
       head(n)
 }
 
@@ -46,6 +49,7 @@ summary.openWARPlayers = function(object, n = 25, ...) {
 #' level shadow. 
 #' 
 #' @param x A data.frame object of class \code{'openWARPlayers'}
+#' @param ... arguments passed to \code{xyplot}.
 #' 
 #' @export
 #' 
@@ -58,7 +62,7 @@ summary.openWARPlayers = function(object, n = 25, ...) {
 plot.openWARPlayers = function(x, ...) {
     data = x
     # Add the combined playing time
-    data = dplyr::mutate(data, TPA = PA.bat + BF)
+    data = dplyr::mutate_(data, TPA = ~PA.bat + BF)
     
     supp = data[, c("playerId", "Name", "WAR", "TPA", "repl", "RAA", "RAA.pitch")]
     names(supp) = c("playerId", "Name", "WAR", "TPA", "repl", "RAA", "RAA_pitch")
@@ -111,7 +115,7 @@ panel.war = function(x, y, ...) {
     with(ds[best.idx, ], panel.arrows(TPA, repl, TPA, RAA, code = 3, lwd = 2, col = "darkgray", length = 0.1))
     with(ds[best.idx, ], panel.text(TPA, RAA, Name, pos = 4))
     # annotate the best pitcher
-    pitchers = filter(ds, RAA_pitch > 0)
+    pitchers = filter_(ds, ~RAA_pitch > 0)
     pitcher.idx = which.max(pitchers$WAR)
     with(pitchers[pitcher.idx, ], panel.arrows(TPA, repl, TPA, RAA, code = 3, lwd = 2, col = "darkgray", length = 0.1))
     with(pitchers[pitcher.idx, ], panel.text(TPA, RAA, Name, pos = 3))
@@ -135,6 +139,8 @@ panel.war = function(x, y, ...) {
 #' @details Summary of players' WAR
 #' 
 #' @param object An object of class \code{'openWARPlayers'}
+#' @param n the number of players to display
+#' @param ... currently ignored
 #' 
 #' @import dplyr
 #'
@@ -149,11 +155,16 @@ panel.war = function(x, y, ...) {
 
 summary.do.openWARPlayers = function(object, n = 25, ...) {
 
-    object %>% dplyr::select(Name, WAR) %>% 
-      group_by(Name) %>% 
-      summarise(q0 = min(WAR), q2.5 = quantile(WAR, 0.025), q25 = quantile(WAR, 
-        0.25), q50 = mean(WAR), q75 = quantile(WAR, 0.75), q97.5 = quantile(WAR, 0.975), q100 = max(WAR)) %>%
-      arrange(desc(q50)) %>% 
+    object %>% dplyr::select_(~Name, ~WAR) %>% 
+      group_by_(~Name) %>% 
+      summarise_(q0 = ~min(WAR), 
+                 q2.5 = ~quantile(WAR, 0.025), 
+                 q25 = ~quantile(WAR, 0.25), 
+                 q50 = ~mean(WAR), 
+                 q75 = ~quantile(WAR, 0.75), 
+                 q97.5 = ~quantile(WAR, 0.975), 
+                 q100 = ~max(WAR)) %>%
+      arrange_(~desc(q50)) %>% 
       head(n)
 }
 
@@ -168,6 +179,7 @@ summary.do.openWARPlayers = function(object, n = 25, ...) {
 #' 
 #' @param playerIds A vector of valid MLBAM player IDs present in the data argument
 #' @param x A data.frame resulting from shakeWAR() of class \code{do.openWARPlayers}
+#' @param ... currently ignored
 #' 
 #' @return a faceted densityplot
 #' 
@@ -185,13 +197,13 @@ summary.do.openWARPlayers = function(object, n = 25, ...) {
 plot.do.openWARPlayers = function(x, playerIds = c(431151, 285079), ...) {
     playerIds = sort(playerIds)
     # is it worth the trouble to filter the rows?
-    rows = filter(x, batterId %in% playerIds)
+    rows = filter_(x, ~batterId %in% playerIds)
     # Remove unused factor levels
     rows$Name = factor(rows$Name)
     
     lkup = unique(rows[, c("batterId", "Name")])
 #    labels = as.character(lkup[order(lkup$batterId), ]$Name)
-    labels = as.character(arrange(lkup, batterId)$Name)
+    labels = as.character(arrange_(lkup, ~batterId)$Name)
     
     sims.long = reshape(rows[, c("batterId", "Name", "RAA", "RAA.bat", "RAA.br", "RAA.field", "RAA.pitch")], varying = 3:7, 
         timevar = "component", direction = "long")
