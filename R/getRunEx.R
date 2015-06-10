@@ -25,7 +25,7 @@
 
 getRunEx = function(data, drop.incomplete = TRUE, ...) {
     if (drop.incomplete) {
-        ds = filter(data, outsInInning == 3)
+        ds = dplyr::filter_(data, ~outsInInning == 3)
     } else {
         ds = data
     }
