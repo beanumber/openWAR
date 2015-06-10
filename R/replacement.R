@@ -26,12 +26,12 @@ getReplacementPlayers.openWARPlayers = function(data, nteams = 30, ...) {
     # Get the list of all playerIds
     playerIds = data$playerId
     # Order by plate appearances universe = data[order(data$PA.bat, decreasing=TRUE),]
-    universe <- arrange(data, desc(PA.bat))
+    universe <- arrange_(data, ~desc(PA.bat))
     # Find the players with the most plate appearances, 13 for each club
     mlb.pos.playerIds = universe$batterId[1:round(nteams * 13)]
     
     # universe = data[order(data$BF, decreasing=TRUE),]
-    universe <- arrange(data, desc(BF))
+    universe <- arrange_(data, ~desc(BF))
     # Find the players with the most batters faced, 12 per club
     mlb.pitcherIds = universe$playerId[1:round(nteams * 12)]
     
@@ -72,20 +72,20 @@ getReplacementActivity = function(data, replacementIds) UseMethod("getReplacemen
 
 getReplacementActivity.openWARPlays = function(data, replacementIds) {
     out = list()
-    out[["bat"]] = dplyr::filter(data, batterId %in% replacementIds)$raa.bat
-    out[["br1"]] = dplyr::filter(data, start1B %in% replacementIds)$raa.br1
-    out[["br2"]] = dplyr::filter(data, start2B %in% replacementIds)$raa.br2
-    out[["br3"]] = dplyr::filter(data, start3B %in% replacementIds)$raa.br3
-    out[["pitch"]] = dplyr::filter(data, pitcherId %in% replacementIds)$raa.pitch
-    out[["P"]] = dplyr::filter(data, pitcherId %in% replacementIds)$raa.P
-    out[["C"]] = dplyr::filter(data, playerId.C %in% replacementIds)$raa.C
-    out[["1B"]] = dplyr::filter(data, playerId.1B %in% replacementIds)$raa.1B
-    out[["2B"]] = dplyr::filter(data, playerId.2B %in% replacementIds)$raa.2B
-    out[["3B"]] = dplyr::filter(data, playerId.3B %in% replacementIds)$raa.3B
-    out[["SS"]] = dplyr::filter(data, playerId.SS %in% replacementIds)$raa.SS
-    out[["LF"]] = dplyr::filter(data, playerId.LF %in% replacementIds)$raa.LF
-    out[["CF"]] = dplyr::filter(data, playerId.CF %in% replacementIds)$raa.CF
-    out[["RF"]] = dplyr::filter(data, playerId.RF %in% replacementIds)$raa.RF
+    out[["bat"]] = dplyr::filter_(data, ~batterId %in% replacementIds)$raa.bat
+    out[["br1"]] = dplyr::filter_(data, ~start1B %in% replacementIds)$raa.br1
+    out[["br2"]] = dplyr::filter_(data, ~start2B %in% replacementIds)$raa.br2
+    out[["br3"]] = dplyr::filter_(data, ~start3B %in% replacementIds)$raa.br3
+    out[["pitch"]] = dplyr::filter_(data, ~pitcherId %in% replacementIds)$raa.pitch
+    out[["P"]] = dplyr::filter_(data, ~pitcherId %in% replacementIds)$raa.P
+    out[["C"]] = dplyr::filter_(data, ~playerId.C %in% replacementIds)$raa.C
+    out[["1B"]] = dplyr::filter_(data, ~playerId.1B %in% replacementIds)$raa.1B
+    out[["2B"]] = dplyr::filter_(data, ~playerId.2B %in% replacementIds)$raa.2B
+    out[["3B"]] = dplyr::filter_(data, ~playerId.3B %in% replacementIds)$raa.3B
+    out[["SS"]] = dplyr::filter_(data, ~playerId.SS %in% replacementIds)$raa.SS
+    out[["LF"]] = dplyr::filter_(data, ~playerId.LF %in% replacementIds)$raa.LF
+    out[["CF"]] = dplyr::filter_(data, ~playerId.CF %in% replacementIds)$raa.CF
+    out[["RF"]] = dplyr::filter_(data, ~playerId.RF %in% replacementIds)$raa.RF
     return(out)
 }
 
