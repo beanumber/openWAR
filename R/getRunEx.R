@@ -7,6 +7,7 @@
 #' @param data an MLBAM dataset
 #' @param drop.incomplete a LOGICAL indicating whether incomplete innings (e.g. walk-off innings)
 #' should be excluded from the run expectancy model.  Default is TRUE.  
+#' @param ... currently ignored
 #' 
 #' @return A function that takes two arguments: baseCode and outs, and returns a run value 
 #' 

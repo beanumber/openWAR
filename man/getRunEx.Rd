@@ -23,6 +23,12 @@ Find the Run Expectancy for a given state
 \details{
 Given a data set, returns a function giving the run expectancy for any base/out state
 }
+\note{
+baseCode takes on integer values between 0 and 7 with each value correpsonding to a unique
+base state (e.g. runner on second, runners on first and third, bases loaded).  The baseCode is the binary representation of the
+ base state with first, second, and third base represented by 1, 2, and 4, respectively.
+  For example, runners on second and third corresponds to a baseCode of 6 (i.e. 2 + 4 = 6).
+}
 \examples{
 #Data from May 2013
 data(May)

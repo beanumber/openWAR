@@ -33,7 +33,7 @@ summary.openWARPlayers = function(object, n = 25, ...) {
     
     # dplyr syntax
     object %>% 
-      dplyr::select_(~Name, ~TPA, ~WAR, ~RAA, ~repl, ~RAA.bat, ~RAA.br, ~RAA.field, ~RAA.pitch) %>%
+      dplyr::select_(~playerId, ~Name, ~TPA, ~WAR, ~RAA, ~repl, ~RAA.bat, ~RAA.br, ~RAA.field, ~RAA.pitch) %>%
       arrange_(~desc(WAR)) %>% 
       head(n)
 }
@@ -155,9 +155,9 @@ panel.war = function(x, y, ...) {
 
 summary.do.openWARPlayers = function(object, n = 25, ...) {
 
-    object %>% dplyr::select_(~Name, ~WAR) %>% 
-      group_by_(~Name) %>% 
-      summarise_(q0 = ~min(WAR), 
+    object %>% dplyr::select_(~playerId, ~Name, ~WAR) %>% 
+      group_by_(~playerId) %>% 
+      summarise_(Name = ~Name[1], q0 = ~min(WAR), 
                  q2.5 = ~quantile(WAR, 0.025), 
                  q25 = ~quantile(WAR, 0.25), 
                  q50 = ~mean(WAR), 
