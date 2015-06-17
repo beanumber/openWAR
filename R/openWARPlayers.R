@@ -5,7 +5,7 @@
 #' @exportClass openWARPlayers
 #' @examples showClass('openWARPlayers')
 #' 
-#' #' @format An `openWARPLayers` object.
+#' #' @format An `openWARPlayers` object.
 #' \describe{
 #'    \item{playerId}{The MLBAM id for the player}
 #'    \item{batterId}{The MLBAM id for the batter}
