@@ -42,8 +42,7 @@ shakeWAR.list <- function(data, N = 10, ...) {
 #' @export shakeWAR.openWARPlays
 #' 
 #' @examples 
-#' madeWAR <- makeWAR(May)
-#' owar <- shakeWAR(madeWAR$openWAR, N = 5)
+#' owar <- shakeWAR(MayProcessed$openWAR, N = 5)
 #' summary(owar)
 
 shakeWAR.openWARPlays <- function(data, N = 10, ...) {
@@ -62,9 +61,9 @@ shakeWAR.openWARPlays <- function(data, N = 10, ...) {
 #' @export shakeWAR.GameDayPlays
 #' 
 #' @examples 
+#' \dontrun{
 #' owar <- shakeWAR(May, N = 7)
 #' summary(owar)
-#' \dontrun{
 #' owar <- shakeWAR(May, N = 2, resample = "both")
 #' summary(owar)
 #' }

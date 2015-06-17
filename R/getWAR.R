@@ -18,9 +18,47 @@
 #' \dontrun{
 #' MayProcessed = makeWAR(May)
 #' }
-#' war = getWAR(MayProcessed$openWAR)
+#' war = getWAR(MayProcessed)
+#' war = getWAR(MayProcessed, nteams = 27.5)
 
 getWAR = function(data, dataRepl = NULL, nteams = 30, verbose = TRUE, ...) UseMethod("getWAR")
+
+#' @rdname getWAR
+#' @export
+#' 
+#' @examples 
+#' \dontrun{
+#' war = getWAR(May)  
+#' }
+
+getWAR.GameDayPlays = function(data, dataRepl = NULL, nteams = 30, verbose = TRUE, ...) {
+  madeWAR <- makeWAR(data)
+  return(getWAR.list(madeWAR$openWAR, dataRepl, nteams, verbose, ...))
+}
+
+#' @rdname getWAR
+#' @export getWAR.list
+#' 
+#' @examples
+#' 
+#' \dontrun{
+#' MayProcessed = makeWAR(May)
+#' }
+#' war = getWAR(MayProcessed)  
+
+getWAR.list = function(data, dataRepl = NULL, nteams = 30, verbose = TRUE, ...) {
+  return(getWAR.openWARPlays(data$openWAR, dataRepl, nteams, verbose, ...))
+}
+
+#' @rdname getWAR
+#' @export getWAR.openWARPlays
+#' 
+#' @examples
+#' 
+#' \dontrun{
+#' MayProcessed = makeWAR(May)
+#' }
+#' war = getWAR(MayProcessed$openWAR)
 
 getWAR.openWARPlays = function(data, dataRepl = NULL, nteams = 30, verbose = TRUE, ...) {
     # If no dataRepl is provided, then use all the data to define replacement level.

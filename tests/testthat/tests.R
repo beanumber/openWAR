@@ -21,6 +21,11 @@ test_that("summary.openWARPlayers works", {
   expect_is(summary(openWAR2012), "data.frame")
 })
 
+test_that("getWAR works on objects of multiple classes", {
+  expect_is(getWAR(MayProcessed), "openWARPlayers")
+  expect_is(getWAR(MayProcessed$openWAR), "openWARPlayers")
+})
+
 test_that("shakeWAR works on objects of multiple classes", {
   expect_is(shakeWAR(MayProcessed, N=1), "do.openWARPlayers")
   expect_is(shakeWAR(MayProcessed$openWAR, N=1), "do.openWARPlayers")

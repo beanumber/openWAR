@@ -2,9 +2,21 @@
 % Please edit documentation in R/getWAR.R
 \name{getWAR}
 \alias{getWAR}
+\alias{getWAR.GameDayPlays}
+\alias{getWAR.list}
+\alias{getWAR.openWARPlays}
 \title{getWAR}
 \usage{
 getWAR(data, dataRepl = NULL, nteams = 30, verbose = TRUE, ...)
+
+\method{getWAR}{GameDayPlays}(data, dataRepl = NULL, nteams = 30,
+  verbose = TRUE, ...)
+
+\method{getWAR}{list}(data, dataRepl = NULL, nteams = 30, verbose = TRUE,
+  ...)
+
+\method{getWAR}{openWARPlays}(data, dataRepl = NULL, nteams = 30,
+  verbose = TRUE, ...)
 }
 \arguments{
 \item{data}{An object of class \code{'openWARPlays'}}
@@ -24,6 +36,18 @@ Tabulates WAR
 Compute each player's WAR, given their RAA values
 }
 \examples{
+\dontrun{
+MayProcessed = makeWAR(May)
+}
+war = getWAR(MayProcessed)
+war = getWAR(MayProcessed, nteams = 27.5)
+\dontrun{
+war = getWAR(May)
+}
+\dontrun{
+MayProcessed = makeWAR(May)
+}
+war = getWAR(MayProcessed)
 \dontrun{
 MayProcessed = makeWAR(May)
 }
