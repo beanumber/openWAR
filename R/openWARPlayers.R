@@ -157,7 +157,7 @@ summary.do.openWARPlayers = function(object, n = 25, ...) {
 
     object %>% dplyr::select_(~playerId, ~Name, ~WAR) %>% 
       group_by_(~playerId) %>% 
-      summarise_(Name = ~Name[1], q0 = ~min(WAR), 
+      summarise_(Name = ~Name[1], N = ~n(), q0 = ~min(WAR), 
                  q2.5 = ~quantile(WAR, 0.025), 
                  q25 = ~quantile(WAR, 0.25), 
                  q50 = ~mean(WAR), 

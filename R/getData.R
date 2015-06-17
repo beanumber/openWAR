@@ -56,7 +56,7 @@ getData <- function(start = Sys.Date() - 1, end = NULL, gameIds = NULL, drop.sus
     }
     
     # Set the class attribute
-    class(out) <- c("GameDayPlays", "data.frame")
+    class(out) <- c("GameDayPlays", class(out))
     return(out)
 }
 

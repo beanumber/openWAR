@@ -133,7 +133,7 @@ makeWAR.GameDayPlays = function(data, models = list(), verbose = TRUE, low.memor
     data = merge(x = data, y = raa.br, by = "idx", all.x = TRUE)
     
     ########################################################################################### Add the new class
-    class(data) = c("GameDayPlaysExt", "GameDayPlays", "data.frame")
+    class(data) = c("GameDayPlaysExt", "GameDayPlays", class(data))
     # include the computations as a separate data.frame
     id.fields = c("batterId", "start1B", "start2B", "start3B", "pitcherId", "playerId.C", "playerId.1B", "playerId.2B", "playerId.3B", 
         "playerId.SS", "playerId.LF", "playerId.CF", "playerId.RF", "batterName", "pitcherName", "gameId", "event", "isPA")
@@ -141,7 +141,7 @@ makeWAR.GameDayPlays = function(data, models = list(), verbose = TRUE, low.memor
     raa.fields = c("raa.bat", "raa.br1", "raa.br2", "raa.br3", "raa.pitch", "raa.P", "raa.C", "raa.1B", "raa.2B", "raa.3B", 
         "raa.SS", "raa.LF", "raa.CF", "raa.RF")
     openWARPlays = data[, c(id.fields, delta.fields, raa.fields)]
-    class(openWARPlays) = c("openWARPlays", "data.frame")
+    class(openWARPlays) = c("openWARPlays", class(openWARPlays))
     if (low.memory) {
         return(list(plays = NULL, data = NULL, models.used = NULL, openWAR = openWARPlays))
     } else {

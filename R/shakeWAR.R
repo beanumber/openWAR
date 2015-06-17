@@ -1,13 +1,12 @@
 #' @title shakeWAR
 #' 
-#' @description resample a data.frame to obtain variance estimate for WAR
+#' @description resample a data.frame to obtain variance estimates for WAR
 #' 
 #' @details Resamples the rows of an MLBAM data set
 #' 
 #' @param data An MLBAM data.frame 
-#' @param resample An element of \code{c('plays', 'models', 'both')}
-#' @param N the number of resamples (default 5000)
-#' @param ... currently ignored
+#' @param N the number of resamples (default 10)
+#' @param ... additional arguments passed to \code{shakeWAR} methods
 #' 
 #' @return a data.frame with RAA values 
 #' 
@@ -23,41 +22,69 @@
 #' }
 #' 
 
-shakeWAR = function(data, resample = "plays", N = 10, ...) UseMethod("shakeWAR")
+shakeWAR <- function(data, N = 10, ...) UseMethod("shakeWAR")
 
 #' @rdname shakeWAR
-#' @export shakeWAR.GameDayPlays
+#' @export shakeWAR.list
+#' 
+#' @examples 
+#' owar <- shakeWAR(MayProcessed, N = 5)
+#' summary(owar)
 
-shakeWAR.GameDayPlays = function(data, resample = "plays", N = 10, ...) {
-  
+shakeWAR.list <- function(data, N = 10, ...) {
+  if (!"openWAR" %in% names(data)) {
+    stop("the 'data' list does not contain processed openWAR!")
+  }
+  return(shakeWAR.openWARPlays(data$openWAR, N, ...))
+}
+
+#' @rdname shakeWAR
+#' @export shakeWAR.openWARPlays
+#' 
+#' @examples 
+#' madeWAR <- makeWAR(May)
+#' owar <- shakeWAR(madeWAR$openWAR, N = 5)
+#' summary(owar)
+
+shakeWAR.openWARPlays <- function(data, N = 10, ...) {
+  # assume the models are fixed, and resample the RAA values this captures the sampling error
+  bstrap = mosaic.do(N) * getWAR(mosaic::resample(data), verbose = FALSE)
+  # bstrap should be a data.frame of class 'do.openWARPlayers'
+  class(bstrap) <- c("do.openWARPlayers", class(bstrap))
+  # with roughly N * M rows, where M is the numbers of players
+  return(bstrap)
+}
+
+#' @param resample An element of \code{c('plays', 'models', 'both')}. Currently only \code{plays}
+#' and \code{both} are implemented. 
+#' 
+#' @rdname shakeWAR
+#' @export shakeWAR.GameDayPlays
+#' 
+#' @examples 
+#' owar <- shakeWAR(May, N = 7)
+#' summary(owar)
+#' \dontrun{
+#' owar <- shakeWAR(May, N = 2, resample = "both")
+#' summary(owar)
+#' }
+
+
+shakeWAR.GameDayPlays <- function(data, N = 10, ...) {
+  dots <- list(...)
+  if (!"resample" %in% dots) {
+    resample = "plays"
+  } 
   if (resample == "both") {
     # resample the actual plays AND rebuild the models each time this captures both measurement error and sampling error
     bstrap = mosaic.do(N) * getWAR(makeWAR(mosaic::resample(data), low.memory = TRUE)$openWAR)
+    # bstrap should be a data.frame of class 'do.openWARPlayers'
+    class(bstrap) <- c("do.openWARPlayers", class(bstrap))
+    # with roughly N * M rows, where M is the numbers of players
+    return(bstrap)
   } else {
-    
+    # resample = 'plays'
     ext = makeWAR(data, verbose = FALSE, low.memory = TRUE)
-    # Keep track of the original data
-    reality = data
-    # Keep track of the models built on the original data
-    reality.models = ext$models
-    # Keep track of the original RAA values
-    reality.raa = ext$openWAR
-    
-    if (resample == "plays") {
-      # assume the models are fixed, and resample the RAA values this captures the sampling error
-      
-      # supposedly the performance of do() is really bad
-      bstrap = mosaic.do(N) * getWAR(mosaic::resample(reality.raa), verbose = FALSE)
-      # use replicate() instead bstrap = rdply(N, getWAR(resample(reality.raa), verbose=FALSE)) class(bstrap) =
-      # c('do.openWARPlayers', class(bstrap)) } else { # to isolate the measurement error, use the models we built on the
-      # resampled rows # but apply them exclusively to the real data ext.list = lapply(sims$models.used, makeWAR, data = reality,
-      # verbose=FALSE) raa.list = lapply(ext.list, '[[', 'openWAR') war.list = t(lapply(raa.list, getWAR)) bstrap =
-      # do.call('rbind', war.list) class(bstrap) = c('do.openWARPlayers', class(bstrap))
-    }
+    return(shakeWAR.openWARPlays(ext$openWAR, N, ...))
   }
-  
-  # bstrap should be a data.frame of class 'do.openWARPlayers'
-  class(bstrap) <- c("do.openWARPlayers", "data.frame")
-  # with roughly N * M rows, where M is the numbers of players
-  return(bstrap)
 } 

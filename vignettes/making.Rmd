@@ -37,7 +37,7 @@ summary(owar)
 ### Simulations
 
 ```{r, fig.width=6, fig.height=6}
-owar.sim <- shakeWAR(May)
+owar.sim <- shakeWAR(madeWAR)
 plot(owar.sim)
 ```
 
