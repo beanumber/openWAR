@@ -10,12 +10,12 @@
 #' @param verbose do you want information about how many replacement-level players there are?
 #' @param ... currently ignored
 #' 
-#' @return An data.frame of class "openWARPlayers"
+#' @return An data.frame of class \code{openWARPlayers}
 #' 
 #' @export getWAR
 #' @export getWAR.openWARPlays
-#' @export getWAR.list()
-#' @export getWAR.GameDayPlays()
+#' @export getWAR.list
+#' @export getWAR.GameDayPlays
 #' 
 #' @examples
 #' 
