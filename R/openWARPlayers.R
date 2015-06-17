@@ -71,6 +71,9 @@ setClass("openWARPlayers", contains = "data.frame")
 #' @export
 #' @examples
 #' 
+#' #' \dontrun{
+#' MayProcessed = makeWAR(May)
+#' }
 #' war <- getWAR(MayProcessed$openWAR)
 #' summary(war)
 
@@ -95,7 +98,7 @@ summary.openWARPlayers = function(object, n = 25, ...) {
 #' 
 #' @description Display a season's worth of openWAR results
 #' 
-#' @details Given an openWARPlayers object, draw a plot displaying each player's RAA, WAR, and replacement
+#' @details Given an \code{openWARPlayers} object, draw a plot displaying each player's RAA, WAR, and replacement
 #' level shadow. 
 #' 
 #' @param x A data.frame object of class \code{'openWARPlayers'}
@@ -105,9 +108,12 @@ summary.openWARPlayers = function(object, n = 25, ...) {
 #' 
 #' @examples
 #' 
-#' players = getWAR(MayProcessed$openWAR)
-#' summary(players)
-#' plot(players)
+#' #' \dontrun{
+#' MayProcessed = makeWAR(May)
+#' }
+#' war = getWAR(MayProcessed$openWAR)
+#' summary(war)
+#' plot(war)
 
 plot.openWARPlayers = function(x, ...) {
     data = x
@@ -134,7 +140,7 @@ plot.openWARPlayers = function(x, ...) {
 #' 
 #' @description Display a season's worth of openWAR results
 #' 
-#' @details Given an openWARPlayers object, draw a plot displaying each player's RAA, WAR, and replacement
+#' @details Given an \code{openWARPlayers} object, draw a plot displaying each player's RAA, WAR, and replacement
 #' level shadow. 
 #' 
 #' @param x the x-coordinate
@@ -149,9 +155,12 @@ plot.openWARPlayers = function(x, ...) {
 #' 
 #' @examples
 #' 
-#' players = getWAR(MayProcessed$openWAR)
-#' summary(players)
-#' plot(players)
+#' #' \dontrun{
+#' MayProcessed = makeWAR(May)
+#' }
+#' war = getWAR(MayProcessed$openWAR)
+#' summary(war)
+#' plot(war)
 
 panel.war = function(x, y, ...) {
     panel.abline(h = 0, col = "black")
