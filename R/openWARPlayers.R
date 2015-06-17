@@ -2,10 +2,10 @@
 #' 
 #' @description A data.frame of players and their tabulated openWAR values.  The function \code{getWAR} returns an object of class \code{openWARPlayers}.
 #' 
-#' @exportClass openWARPlayers
+#' @exportClass \code{openWARPlayers}
 #' @examples showClass('openWARPlayers')
 #' 
-#' #' @format An `openWARPlayers` object.
+#' #' @format An \code{openWARPlayers} object.
 #' \describe{
 #'    \item{playerId}{The MLBAM id for the player}
 #'    \item{batterId}{The MLBAM id for the batter}
