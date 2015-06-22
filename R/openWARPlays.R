@@ -132,7 +132,7 @@ getRAA.openWARPlays = function(data, ...) {
     players = mutate_(players, RAA.field = ~(RAA.P + RAA.C + RAA.1B + RAA.2B + RAA.3B + RAA.SS + RAA.LF + RAA.CF + RAA.RF))
     players = mutate_(players, RAA = ~(RAA.bat + RAA.br + RAA.pitch + RAA.field))
     players = mutate_(players, TPA = ~(PA.bat + BF))
-    players = players[, setdiff(names(players), c("Name.x", "Name.y"))]
+    players = players[, setdiff(names(players), c("Name.x", "Name.y", "batterId"))]
     class(players) = c("openWARPlayers", class(players))
     return(players)
 } 

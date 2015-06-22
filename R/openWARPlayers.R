@@ -9,7 +9,6 @@
 #' #' @format An \code{openWARPlayers} object.
 #' \describe{
 #'    \item{playerId}{The MLBAM id for the player}
-#'    \item{batterId}{The MLBAM id for the batter}
 #'    \item{PA.bat}{The number of plate appearances as a batter for that player}
 #'    \item{G}{The number of games the player appeared in}
 #'    \item{HR}{The number of home runs hit by that player}
