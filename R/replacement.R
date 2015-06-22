@@ -31,15 +31,21 @@ getReplacementPlayers = function(data, nteams = 30, ...) UseMethod("getReplaceme
 getReplacementPlayers.openWARPlayers = function(data, nteams = 30, ...) {
     # Get the list of all playerIds
     playerIds = data$playerId
-    # Order by plate appearances universe = data[order(data$PA.bat, decreasing=TRUE),]
-    universe <- arrange_(data, ~desc(PA.bat))
-    # Find the players with the most plate appearances, 13 for each club
-    mlb.pos.playerIds = universe$batterId[1:round(nteams * 13)]
     
-    # universe = data[order(data$BF, decreasing=TRUE),]
-    universe <- arrange_(data, ~desc(BF))
+    # Order by plate appearances 
+    # Find the players with the most plate appearances, 13 for each club
+    mlb.pos.playerIds <- data %>%
+      arrange_(~desc(PA.bat)) %>%
+      select(playerId) %>%
+      head(round(nteams * 13)) %>%
+      .$playerId
+
     # Find the players with the most batters faced, 12 per club
-    mlb.pitcherIds = universe$playerId[1:round(nteams * 12)]
+    mlb.pitcherIds <- data %>%
+      arrange_(~desc(BF)) %>%
+      select(playerId) %>%
+      head(round(nteams * 12)) %>%
+      .$playerId
     
     # Their union are the MLB players
     mlb.playerIds = union(mlb.pos.playerIds, mlb.pitcherIds)
