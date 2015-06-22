@@ -29,6 +29,9 @@ getWAR(data, dataRepl = NULL, nteams = 30, verbose = TRUE, ...)
 
 \item{...}{currently ignored}
 }
+\value{
+An data.frame of class \code{openWARPlayers}
+}
 \description{
 Tabulates WAR
 }
@@ -51,6 +54,7 @@ war = getWAR(MayProcessed)
 \dontrun{
 MayProcessed = makeWAR(May)
 }
-war = getWAR(MayProcessed$openWAR)
+war <- getWAR(MayProcessed$openWAR)
+war <- getWAR(MayProcessed$openWAR, dataRepl = head(MayProcessed$openWAR, 10000))
 }
 

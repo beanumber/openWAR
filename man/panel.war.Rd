@@ -17,12 +17,15 @@ panel.war(x, y, ...)
 Display a season's worth of openWAR results
 }
 \details{
-Given an openWARPlayers object, draw a plot displaying each player's RAA, WAR, and replacement
+Given an \code{openWARPlayers} object, draw a plot displaying each player's RAA, WAR, and replacement
 level shadow.
 }
 \examples{
-players = getWAR(MayProcessed$openWAR)
-summary(players)
-plot(players)
+#' \dontrun{
+MayProcessed = makeWAR(May)
+}
+war = getWAR(MayProcessed$openWAR)
+summary(war)
+plot(war)
 }
 

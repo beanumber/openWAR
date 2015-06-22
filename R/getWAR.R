@@ -62,25 +62,23 @@ getWAR.list = function(data, dataRepl = NULL, nteams = 30, verbose = TRUE, ...) 
 #' \dontrun{
 #' MayProcessed = makeWAR(May)
 #' }
-#' war = getWAR(MayProcessed$openWAR)
+#' war <- getWAR(MayProcessed$openWAR)
+#' war <- getWAR(MayProcessed$openWAR, dataRepl = head(MayProcessed$openWAR, 10000))
 #' 
 
 getWAR.openWARPlays = function(data, dataRepl = NULL, nteams = 30, verbose = TRUE, ...) {
-   # If dataRepl is provided, calculate replacement level based on this data.  
-    if (!is.null(dataRepl)) {
-      playersRepl = getRAA(dataRepl)
-      players = getRAA(data)
-    }  
   
-  # If dataRepl is not provided, then use all the data to define replacement level.
-  #getRAA will only be run once.  
-    if (is.null(dataRepl)) {
-        dataRepl <- data
-        # Compute RAA for all players
-        playersRepl = players = getRAA(data)
+    # Compute RAA for all players
+    players <- getRAA(data)
+    # If dataRepl is provided, calculate replacement level based on this data.  
+    if (!is.null(dataRepl) & "openWARPlays" %in% class(dataRepl)) {
+      playersRepl = getRAA(dataRepl)
+    }  else {
+    # If dataRepl is not provided, then use all the data to define replacement level.
+    # getRAA will only be run once.  
+      dataRepl <- data
+      playersRepl <- players
     }
-    
-    
     
     replIds = getReplacementPlayers(playersRepl, nteams)
     repl = playersRepl[playersRepl$playerId %in% replIds, ]

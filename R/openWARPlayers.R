@@ -1,8 +1,9 @@
 #' @title openWARPlayers
 #' 
-#' @description A data.frame of players and their tabulated openWAR values.  The function \code{getWAR} returns an object of class \code{openWARPlayers}.
+#' @description A data.frame of players and their tabulated openWAR values.  The
+#'  function \code{getWAR} returns an object of class \code{openWARPlayers}.
 #' 
-#' @exportClass \code{openWARPlayers}
+#' @exportClass openWARPlayers
 #' @examples showClass('openWARPlayers')
 #' 
 #' #' @format An \code{openWARPlayers} object.

@@ -20,6 +20,9 @@ Summarize WAR among players
 A summary of players' WAR
 }
 \examples{
+#' \dontrun{
+MayProcessed = makeWAR(May)
+}
 war <- getWAR(MayProcessed$openWAR)
 summary(war)
 }

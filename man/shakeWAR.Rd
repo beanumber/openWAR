@@ -41,12 +41,11 @@ summary(res)
 }
 owar <- shakeWAR(MayProcessed, N = 5)
 summary(owar)
-madeWAR <- makeWAR(May)
-owar <- shakeWAR(madeWAR$openWAR, N = 5)
-summary(owar)
-owar <- shakeWAR(May, N = 7)
+owar <- shakeWAR(MayProcessed$openWAR, N = 5)
 summary(owar)
 \dontrun{
+owar <- shakeWAR(May, N = 7)
+summary(owar)
 owar <- shakeWAR(May, N = 2, resample = "both")
 summary(owar)
 }

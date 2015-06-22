@@ -4,10 +4,60 @@
 \name{openWARPlayers-class}
 \alias{openWARPlayers-class}
 \title{openWARPlayers}
+\format{An \code{openWARPlayers} object.
+\describe{
+   \item{playerId}{The MLBAM id for the player}
+   \item{batterId}{The MLBAM id for the batter}
+   \item{PA.bat}{The number of plate appearances as a batter for that player}
+   \item{G}{The number of games the player appeared in}
+   \item{HR}{The number of home runs hit by that player}
+   \item{RAA.bat}{Runs aboved average produced by this player from batting}
+   \item{PA.br1}{The number of plate appearances that the player was a base runner on first base}
+   \item{RAA.br1}{Runs above average produced by this player when they were a base runner on first base}
+   \item{PA.br2}{The number of plate appearances that the player was a base runner on second base}
+   \item{RAA.br2}{Runs above average produced by this player when they were a base runner on second base}
+   \item{PA.br3}{The number of plate appearances that the player was a base runner on third base}
+   \item{RAA.br3}{Runs above average produced by this player when they were a base runner on third base}
+   \item{BF}{Number of batters faced by the player as a pitcher}
+   \item{RAA.pitch}{Runs above average produced by this player from pitching}
+   \item{Name}{Name of the player}
+   \item{PA.P}{The number of plate appearances that the player's defensive position was pitcher}
+   \item{RAA.P}{Runs above average produced by this player from fielding as a pitcher}
+   \item{PA.C}{The number of plate appearances that the player's defensive position was catcher}
+   \item{RAA.C}{Runs above average produced by this player from fielding as a catcher}
+   \item{PA.1B}{The number of plate appearances that the player's defensive position was first base}
+   \item{RAA.1B}{Runs above average produced by this player from fielding as a first base}
+   \item{PA.2B}{The number of plate appearances that the player's defensive position was second base}
+   \item{RAA.2B}{Runs above average produced by this player from fielding as a second base}
+   \item{PA.3B}{The number of plate appearances that the player's defensive position was third base}
+   \item{RAA.3B}{Runs above average produced by this player from fielding as a third base}
+   \item{PA.SS}{The number of plate appearances that the player's defensive position was shortstop}
+   \item{RAA.SS}{Runs above average produced by this player from fielding as a shortstop}
+   \item{PA.LF}{The number of plate appearances that the player's defensive position was left field}
+   \item{RAA.LF}{Runs above average produced by this player from fielding as a left field}
+   \item{PA.CF}{The number of plate appearances that the player's defensive position was center field}
+   \item{RAA.CF}{Runs above average produced by this player from fielding as a center field}
+   \item{PA.RF}{The number of plate appearances that the player's defensive position was right field}
+   \item{RAA.RF}{Runs above average produced by this player from fielding as a right field}
+   \item{RAA.br}{Runs above average produced by this player as a base runner. Sum of RAA.br1, RAA.br2, and RAA.br3}
+   \item{RAA.off}{Runs above average produced by this player as an offensive player. Sum of RAA.br and RAA.off}
+   \item{RAA.field}{Runs above average produced by this player as a fielder. Sum of RAA.P, RAA.C, RAA.1B, RAA.2B, RAA.3B, RAA.SS, RAA.LF, RAA.CF, and RAA.RF}
+   \item{RAA}{Total runs above average produced by this player.  Sum of RAA.bat, RAA.br, RAA.field, and RAA.pitch}
+   \item{TPA}{Total plate appearances of the player as a batter or pitcher.  Sum of PA.bat and BF}
+   \item{repl}{Runs above average produced by a shadow replacement level player with the same profile (i.e. same number of batting, pitching, base running, and fielding opportunities) as the actual player}
+   \item{WAR}{Wins above replacement for the player.  Calculated as the difference between RAA and repl divided by 10}
+   \item{isReplacement}{A boolean indicating if the player was part of the replacement pool for calculating replacement level}
+
+
+
+     }}
 \description{
-A data.frame of players and their tabulated openWAR values.  The function \code{getWAR} returns an object of class \code{openWARPlayers}
+A data.frame of players and their tabulated openWAR values.  The
+ function \code{getWAR} returns an object of class \code{openWARPlayers}.
 }
 \examples{
 showClass('openWARPlayers')
+
+#'
 }
 
