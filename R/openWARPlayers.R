@@ -123,7 +123,7 @@ plot.openWARPlayers = function(x, ...) {
     supp = data[, c("playerId", "Name", "WAR", "TPA", "repl", "RAA", "RAA.pitch")]
     names(supp) = c("playerId", "Name", "WAR", "TPA", "repl", "RAA", "RAA_pitch")
     
-    p = xyplot(RAA ~ TPA, groups = isReplacement, data = data, panel = panel.war
+    p = xyplot(RAA ~ TPA, groups = ~isReplacement, data = data, panel = panel.war
                , data2 = supp, alpha = 0.3, pch = 19, type = c("p", "r")
                , par.settings = list(superpose.symbol = list(pch = 19))
                , ylab = "openWAR Runs Above Average"
@@ -267,7 +267,7 @@ plot.do.openWARPlayers = function(x, playerIds = c(431151, 285079), ...) {
     sims.long = reshape(rows[, c("playerId", "Name", "RAA", "RAA.bat", "RAA.br", "RAA.field", "RAA.pitch")], varying = 3:7, 
         timevar = "component", direction = "long")
     
-    plot = densityplot(~RAA | component, groups = playerId, data = sims.long
+    plot = densityplot(~RAA | component, groups = ~playerId, data = sims.long
                        , panel = function(x, y, ...) { 
                          panel.densityplot(x, plot.points = FALSE, lwd = 3, ...)
                          }

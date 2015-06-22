@@ -46,6 +46,8 @@ panel.baseball <- function() {
     panel.polygon(c(base3.x, base3.x + bw, base3.x + 2 * bw, base3.x + bw), c(base1.y, base1.y - bw, base1.y, base1.y + bw), 
         col = bgcol)
     # infield cutout is 95' from the pitcher's mound
+    x <- NULL; rm(x); # Dummy to trick R CMD check 
+    # http://r.789695.n4.nabble.com/R-CMD-check-tells-me-no-visible-binding-for-global-variable-what-does-it-mean-td1837236.html
     panel.curve(60.5 + sqrt(95^2 - x^2), from = base3.x - 26, to = base1.x + 26, col = bgcol)
     # pitching rubber
     panel.rect(-bw, 60.5 - bw/2, bw, 60.5 + bw/2, col = bgcol)

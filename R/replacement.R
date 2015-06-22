@@ -36,16 +36,16 @@ getReplacementPlayers.openWARPlayers = function(data, nteams = 30, ...) {
     # Find the players with the most plate appearances, 13 for each club
     mlb.pos.playerIds <- data %>%
       arrange_(~desc(PA.bat)) %>%
-      select(playerId) %>%
+      select_(~playerId) %>%
       head(round(nteams * 13)) %>%
-      .$playerId
+      ~.$playerId
 
     # Find the players with the most batters faced, 12 per club
     mlb.pitcherIds <- data %>%
       arrange_(~desc(BF)) %>%
-      select(playerId) %>%
+      select_(~playerId) %>%
       head(round(nteams * 12)) %>%
-      .$playerId
+      ~.$playerId
     
     # Their union are the MLB players
     mlb.playerIds = union(mlb.pos.playerIds, mlb.pitcherIds)
