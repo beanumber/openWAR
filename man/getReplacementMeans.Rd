@@ -2,9 +2,12 @@
 % Please edit documentation in R/replacement.R
 \name{getReplacementMeans}
 \alias{getReplacementMeans}
+\alias{getReplacementMeans.openWARPlays}
 \title{getReplacementMeans}
 \usage{
 getReplacementMeans(data, replIds)
+
+\method{getReplacementMeans}{openWARPlays}(data, replIds)
 }
 \arguments{
 \item{data}{An openWARPlays data.frame}

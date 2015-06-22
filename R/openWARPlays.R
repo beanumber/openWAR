@@ -21,13 +21,16 @@ setClass("openWARPlays", contains = "data.frame")
 #' @import dplyr
 #' 
 #' @export getRAA
-#' @export getRAA.openWARPlays
 #' @examples
 #' 
 #' players = getRAA(MayProcessed$openWAR)
 #' 
 
 getRAA = function(data, ...) UseMethod("getRAA")
+
+#' @export
+#' @rdname getRAA
+#' @method getRAA openWARPlays
 
 getRAA.openWARPlays = function(data, ...) {
     message("...Tabulating RAA per player...")

@@ -6,6 +6,8 @@
 \title{getModels}
 \usage{
 getModels(data, ...)
+
+\method{getModels}{GameDayPlays}(data, ...)
 }
 \arguments{
 \item{data}{a GameDayPlays dataset}

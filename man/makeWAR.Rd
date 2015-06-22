@@ -5,15 +5,21 @@
 \alias{makeWAR.GameDayPlays}
 \title{makeWAR}
 \usage{
-makeWAR(data, models = list(), verbose = TRUE, ...)
+makeWAR(data, models = list(), verbose = TRUE, low.memory = TRUE, ...)
+
+\method{makeWAR}{GameDayPlays}(data, models = list(), verbose = TRUE,
+  low.memory = TRUE, ...)
 }
 \arguments{
 \item{data}{An object of class 'GameDayPlays'}
 
 \item{models}{A named list of models, each with a predict() method. See Details.}
 
-\item{verbose}{A LOGICAL indicating whether you want various messages and information to be displayed
-during the computation}
+\item{verbose}{A \code{logical} indicating whether you want various messages
+and information to be displayed during the computation}
+
+\item{low.memory}{A \code{logical} indicating whether to conserve memory by
+not storing the model objects.}
 
 \item{...}{currently ignored}
 }

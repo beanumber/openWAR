@@ -30,8 +30,10 @@
 #' 
 #' @param data An object of class 'GameDayPlays'
 #' @param models A named list of models, each with a predict() method. See Details.
-#' @param verbose A LOGICAL indicating whether you want various messages and information to be displayed
-#' during the computation
+#' @param verbose A \code{logical} indicating whether you want various messages 
+#' and information to be displayed during the computation
+#' @param low.memory A \code{logical} indicating whether to conserve memory by 
+#' not storing the model objects. 
 #' @param ... currently ignored
 #' 
 #' @return An object of class 'openWARPlays' which is a list of length 4 containing the following: 
@@ -45,7 +47,6 @@
 #' @import dplyr
 #' @importFrom stringr str_count
 #' @export makeWAR
-#' @export makeWAR.GameDayPlays
 #' @examples
 #' 
 #' \dontrun{
@@ -53,7 +54,11 @@
 #' summary(getWAR(res$openWAR))
 #' }
 
-makeWAR = function(data, models = list(), verbose = TRUE, ...) UseMethod("makeWAR")
+makeWAR = function(data, models = list(), verbose = TRUE, low.memory = TRUE, ...) UseMethod("makeWAR")
+
+#' @export
+#' @rdname makeWAR
+#' @method makeWAR GameDayPlays
 
 makeWAR.GameDayPlays = function(data, models = list(), verbose = TRUE, low.memory = TRUE, ...) {
     orig = data

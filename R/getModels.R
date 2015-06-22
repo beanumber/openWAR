@@ -12,7 +12,6 @@
 #' @return A list of model objects
 #' 
 #' @export getModels
-#' @export getModels.GameDayPlays
 #' @examples
 #' 
 #' data(May)
@@ -24,6 +23,10 @@
 
 getModels = function(data, ...) UseMethod("getModels")
 
+#' @export
+#' @rdname getModels
+#' @method getModels GameDayPlays
+#' 
 getModels.GameDayPlays = function(data, ...) {
     models = list()
     models[["run-expectancy"]] = getModelRunExpectancy(data)
@@ -48,7 +51,6 @@ getModels.GameDayPlays = function(data, ...) {
 #' @return An \code{\link{lm}} object 
 #' 
 #' @export getModelRunExpectancy
-#' @export getModelRunExpectancy.GameDayPlays
 #' @examples
 #' 
 #' data(May)
@@ -59,6 +61,10 @@ getModels.GameDayPlays = function(data, ...) {
 #' matrix(predict(re.mod, newdata=states), ncol=3)
 
 getModelRunExpectancy = function(data, mod.re = NULL, verbose = TRUE, drop.incomplete = TRUE, ...) UseMethod("getModelRunExpectancy")
+
+#' @export
+#' @rdname getModelRunExpectancy
+#' @method getModelRunExpectancy GameDayPlays
 
 getModelRunExpectancy.GameDayPlays = function(data, mod.re = NULL, verbose = TRUE, drop.incomplete = TRUE, ...) {
     # Check to see whether the supplied run expectancy model has a predict() method

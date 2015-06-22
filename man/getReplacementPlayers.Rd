@@ -3,9 +3,15 @@
 \name{getReplacementPlayers}
 \alias{getReplacementPlayers}
 \alias{getReplacementPlayers.RAA}
+\alias{getReplacementPlayers.openWARPlayers}
+\alias{getReplacementPlayers.openWARPlays}
 \title{getReplacementPlayers}
 \usage{
 getReplacementPlayers(data, nteams = 30, ...)
+
+\method{getReplacementPlayers}{openWARPlayers}(data, nteams = 30, ...)
+
+\method{getReplacementPlayers}{openWARPlays}(data, nteams = 30, ...)
 }
 \arguments{
 \item{data}{An object of class \code{'RAA'}}

@@ -13,9 +13,6 @@
 #' @return An data.frame of class \code{openWARPlayers}
 #' 
 #' @export getWAR
-#' @export getWAR.openWARPlays
-#' @export getWAR.list
-#' @export getWAR.GameDayPlays
 #' 
 #' @examples
 #' 
@@ -29,6 +26,7 @@ getWAR = function(data, dataRepl = NULL, nteams = 30, verbose = TRUE, ...) UseMe
 
 #' @rdname getWAR
 #' @export
+#' @method getWAR GameDayPlays
 #' 
 #' @examples 
 #' \dontrun{
@@ -41,7 +39,8 @@ getWAR.GameDayPlays = function(data, dataRepl = NULL, nteams = 30, verbose = TRU
 }
 
 #' @rdname getWAR
-#' @export getWAR.list
+#' @export
+#' @method getWAR list
 #' 
 #' @examples
 #' 
@@ -55,7 +54,8 @@ getWAR.list = function(data, dataRepl = NULL, nteams = 30, verbose = TRUE, ...) 
 }
 
 #' @rdname getWAR
-#' @export getWAR.openWARPlays
+#' @export
+#' @method getWAR openWARPlays
 #' 
 #' @examples
 #' 

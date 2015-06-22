@@ -19,7 +19,7 @@ Given an \code{openWARPlayers} object, draw a plot displaying each player's RAA,
 level shadow.
 }
 \examples{
-#' \dontrun{
+\dontrun{
 MayProcessed = makeWAR(May)
 }
 war = getWAR(MayProcessed$openWAR)

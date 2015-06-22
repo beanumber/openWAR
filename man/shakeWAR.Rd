@@ -7,42 +7,48 @@
 \alias{shakeWAR.openWARPlays}
 \title{shakeWAR}
 \usage{
-shakeWAR(data, N = 10, ...)
+shakeWAR(data, N = 10, resample = "plays", ...)
 
-\method{shakeWAR}{list}(data, N = 10, ...)
+\method{shakeWAR}{list}(data, N = 10, resample = "plays", ...)
 
-\method{shakeWAR}{openWARPlays}(data, N = 10, ...)
+\method{shakeWAR}{openWARPlays}(data, N = 10, resample = "plays", ...)
 
-\method{shakeWAR}{GameDayPlays}(data, N = 10, ...)
+\method{shakeWAR}{GameDayPlays}(data, N = 10, resample = "plays", ...)
 }
 \arguments{
 \item{data}{An MLBAM data.frame}
 
 \item{N}{the number of resamples (default 10)}
 
-\item{...}{additional arguments passed to \code{shakeWAR} methods}
-
 \item{resample}{An element of \code{c('plays', 'models', 'both')}. Currently only \code{plays}
-and \code{both} are implemented.}
+and \code{both} are implemented. Only works with \code{shakeWAR.GameDayPlays} method.}
+
+\item{...}{additional arguments passed to \code{shakeWAR} methods}
 }
 \value{
 a data.frame with RAA values
 }
 \description{
 resample a data.frame to obtain variance estimates for WAR
+
+
 }
 \details{
 Resamples the rows of an MLBAM data set
 }
 \examples{
 \dontrun{
-res = shakeWAR(May, resample='plays', N=10)
+res = shakeWAR(May, resample='plays', N=5)
 summary(res)
 }
+\dontrun{
 owar <- shakeWAR(MayProcessed, N = 5)
 summary(owar)
+}
+\dontrun{
 owar <- shakeWAR(MayProcessed$openWAR, N = 5)
 summary(owar)
+}
 \dontrun{
 owar <- shakeWAR(May, N = 7)
 summary(owar)

@@ -2,9 +2,12 @@
 % Please edit documentation in R/openWARPlays.R
 \name{getRAA}
 \alias{getRAA}
+\alias{getRAA.openWARPlays}
 \title{getRAA}
 \usage{
 getRAA(data, ...)
+
+\method{getRAA}{openWARPlays}(data, ...)
 }
 \arguments{
 \item{data}{An openWARPlays data.frame}

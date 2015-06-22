@@ -2,10 +2,14 @@
 % Please edit documentation in R/getModels.R
 \name{getModelRunExpectancy}
 \alias{getModelRunExpectancy}
+\alias{getModelRunExpectancy.GameDayPlays}
 \title{getModelRunExpectancy}
 \usage{
 getModelRunExpectancy(data, mod.re = NULL, verbose = TRUE,
   drop.incomplete = TRUE, ...)
+
+\method{getModelRunExpectancy}{GameDayPlays}(data, mod.re = NULL,
+  verbose = TRUE, drop.incomplete = TRUE, ...)
 }
 \arguments{
 \item{data}{a GameDayPlays dataset}

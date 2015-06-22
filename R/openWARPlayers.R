@@ -71,7 +71,7 @@ setClass("openWARPlayers", contains = "data.frame")
 #' @export
 #' @examples
 #' 
-#' #' \dontrun{
+#' \dontrun{
 #' MayProcessed = makeWAR(May)
 #' }
 #' war <- getWAR(MayProcessed$openWAR)
@@ -108,7 +108,7 @@ summary.openWARPlayers = function(object, n = 25, ...) {
 #' 
 #' @examples
 #' 
-#' #' \dontrun{
+#' \dontrun{
 #' MayProcessed = makeWAR(May)
 #' }
 #' war = getWAR(MayProcessed$openWAR)
@@ -155,7 +155,7 @@ plot.openWARPlayers = function(x, ...) {
 #' 
 #' @examples
 #' 
-#' #' \dontrun{
+#' \dontrun{
 #' MayProcessed = makeWAR(May)
 #' }
 #' war = getWAR(MayProcessed$openWAR)
@@ -256,18 +256,18 @@ summary.do.openWARPlayers = function(object, n = 25, ...) {
 plot.do.openWARPlayers = function(x, playerIds = c(431151, 285079), ...) {
     playerIds = sort(playerIds)
     # is it worth the trouble to filter the rows?
-    rows = filter_(x, ~batterId %in% playerIds)
+    rows = filter_(x, ~playerId %in% playerIds)
     # Remove unused factor levels
     rows$Name = factor(rows$Name)
     
-    lkup = unique(rows[, c("batterId", "Name")])
+    lkup = unique(rows[, c("playerId", "Name")])
 #    labels = as.character(lkup[order(lkup$batterId), ]$Name)
-    labels = as.character(arrange_(lkup, ~batterId)$Name)
+    labels = as.character(arrange_(lkup, ~playerId)$Name)
     
-    sims.long = reshape(rows[, c("batterId", "Name", "RAA", "RAA.bat", "RAA.br", "RAA.field", "RAA.pitch")], varying = 3:7, 
+    sims.long = reshape(rows[, c("playerId", "Name", "RAA", "RAA.bat", "RAA.br", "RAA.field", "RAA.pitch")], varying = 3:7, 
         timevar = "component", direction = "long")
     
-    plot = densityplot(~RAA | component, groups = batterId, data = sims.long
+    plot = densityplot(~RAA | component, groups = playerId, data = sims.long
                        , panel = function(x, y, ...) { 
                          panel.densityplot(x, plot.points = FALSE, lwd = 3, ...)
                          }

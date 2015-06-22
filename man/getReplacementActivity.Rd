@@ -2,9 +2,12 @@
 % Please edit documentation in R/replacement.R
 \name{getReplacementActivity}
 \alias{getReplacementActivity}
+\alias{getReplacementActivity.openWARPlays}
 \title{getReplacementActivity}
 \usage{
 getReplacementActivity(data, replacementIds)
+
+\method{getReplacementActivity}{openWARPlays}(data, replacementIds)
 }
 \arguments{
 \item{data}{An openWARPlays data.frame}

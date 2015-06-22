@@ -7,7 +7,7 @@
 \usage{
 tabulate(data)
 
-tabulate.GameDayPlays(data)
+\method{tabulate}{GameDayPlays}(data)
 }
 \arguments{
 \item{data}{A GameDayPlays set}

@@ -158,13 +158,13 @@ summary.GameDayPlays = function(object, ...) {
 #' tabulate(May)
 #' 
 
-tabulate = function(data) UseMethod("tabulate")
-setGeneric("tabulate")
+tabulate <- function(data) UseMethod("tabulate")
 
 #' @rdname tabulate
 #' @export
+#' @method tabulate GameDayPlays
 
-tabulate.GameDayPlays = function(data) {
+tabulate.GameDayPlays <- function(data) {
     # data$bat_team = with(data, ifelse(half == 'top', as.character(away_team), as.character(home_team)))
     
     # data <- mutate(data, yearId = as.numeric(substr(gameId, start=5, stop=8))) teams = plyr::ddply(data, ~ yearId + bat_team,

@@ -14,8 +14,6 @@
 #' @param ... currently ignored
 #' 
 #' @export getReplacementPlayers
-#' @export getReplacementPlayers.openWARPlayers
-#' @export getReplacementPlayers.openWARPlays
 #' 
 #' @examples
 #' 
@@ -25,6 +23,10 @@
 #' replacementIds = getReplacementPlayers(players)
 
 getReplacementPlayers = function(data, nteams = 30, ...) UseMethod("getReplacementPlayers")
+
+#' @export
+#' @rdname getReplacementPlayers
+#' @method getReplacementPlayers openWARPlayers
 
 getReplacementPlayers.openWARPlayers = function(data, nteams = 30, ...) {
     # Get the list of all playerIds
@@ -47,6 +49,10 @@ getReplacementPlayers.openWARPlayers = function(data, nteams = 30, ...) {
     return(repl.playerIds)
 }
 
+#' @export
+#' @rdname getReplacementPlayers
+#' @method getReplacementPlayers openWARPlays
+#' 
 getReplacementPlayers.openWARPlays = function(data, nteams = 30, ...) {
     players = getWAR(data)
     return(getReplacementPlayers.openWARPlayers(players, nteams = 30, ...))
@@ -64,7 +70,6 @@ getReplacementPlayers.openWARPlays = function(data, nteams = 30, ...) {
 #' @return a list of RAA values for each type of activity
 #' 
 #' @export getReplacementActivity
-#' @export getReplacementActivity.openWARPlays
 #' @examples
 #' 
 #' players = getWAR(MayProcessed$openWAR)
@@ -73,6 +78,11 @@ getReplacementPlayers.openWARPlays = function(data, nteams = 30, ...) {
 
 
 getReplacementActivity = function(data, replacementIds) UseMethod("getReplacementActivity")
+
+
+#' @export
+#' @rdname getReplacementActivity
+#' @method getReplacementActivity openWARPlays
 
 getReplacementActivity.openWARPlays = function(data, replacementIds) {
     out = list()
@@ -107,7 +117,6 @@ getReplacementActivity.openWARPlays = function(data, replacementIds) {
 #' @return a vector of mean contributions per activity for replacement-level players
 #' 
 #' @export getReplacementMeans
-#' @export getReplacementMeans.openWARPlays
 #' @examples
 #' 
 #' 
@@ -117,6 +126,10 @@ getReplacementActivity.openWARPlays = function(data, replacementIds) {
 #' 
 
 getReplacementMeans = function(data, replIds) UseMethod("getReplacementMeans")
+
+#' @export
+#' @rdname getReplacementMeans
+#' @method getReplacementMeans openWARPlays
 
 getReplacementMeans.openWARPlays = function(data, replIds) {
     repl = getReplacementActivity(data, replIds)
