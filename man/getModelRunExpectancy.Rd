@@ -3,9 +3,13 @@
 \name{getModelRunExpectancy}
 \alias{getModelRunExpectancy}
 \alias{getModelRunExpectancy.GameDayPlays}
+\alias{getModelRunExpectancy.default}
 \title{getModelRunExpectancy}
 \usage{
 getModelRunExpectancy(data, mod.re = NULL, verbose = TRUE,
+  drop.incomplete = TRUE, ...)
+
+\method{getModelRunExpectancy}{default}(data, mod.re = NULL, verbose = TRUE,
   drop.incomplete = TRUE, ...)
 
 \method{getModelRunExpectancy}{GameDayPlays}(data, mod.re = NULL,

@@ -64,6 +64,15 @@ getModelRunExpectancy = function(data, mod.re = NULL, verbose = TRUE, drop.incom
 
 #' @export
 #' @rdname getModelRunExpectancy
+#' @method getModelRunExpectancy default
+
+getModelRunExpectancy.default = function(data, mod.re = NULL, verbose = TRUE, drop.incomplete = TRUE, ...) {
+  return(getModelRunExpectancy.GameDayPlays(data, mod.re, verbose, drop.incomplete, ...))
+}
+
+
+#' @export
+#' @rdname getModelRunExpectancy
 #' @method getModelRunExpectancy GameDayPlays
 
 getModelRunExpectancy.GameDayPlays = function(data, mod.re = NULL, verbose = TRUE, drop.incomplete = TRUE, ...) {
