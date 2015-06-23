@@ -2,16 +2,18 @@
 #' @aliases getReplacementPlayers.RAA
 #' @aliases getReplacementPlayers.openWARPlays
 #' 
-#' @description  This function determines and returns a list of players who are considered to be replacement level players.  
+#' @description  This function determines and returns the group of players who are considered to be replacement level players.  
 #' 
-#' @details In the openWAR framework, we first define a specific number of players to be considered 'true' major league talent.  This function returns a list of players who do not appear on the list of 'true' major league talent.
-#' The performances of the players on this list are used to estimate the value of a replacement level player for use in converting runs above average into runs above replacement and ultimately wins above replacement.  
+#' @details In the openWAR framework, we first define a specific number of players to be considered 'true' major league talent.  This function returns the group of players who do not appear in the group of 'true' major league talent.
+#' The performances of the players in this group are used to estimate the value of a replacement level player for use in converting runs above average (RAA) into runs above replacement (RAR) and ultimately wins above replacement (WAR).  
 #' 
-#' @param data An object of class \code{'RAA'}
+#' @param data An object of class 'openWARPlays'
 #' @param nteams the number of teams used to calculate the number of non-replacement
-#' players. The default is 30 since that is the number of MLB teams. Using 27.5
-#' seems to result in a total WAR that is close to 1000. 
+#' players. The default is 30 since that is the number of MLB teams. (Note: Using 27.5
+#' seems to result in a total WAR that is close to 1000.)
 #' @param ... currently ignored
+#' 
+#' @note This function is used internally in the function \code{getWAR}
 #' 
 #' @export getReplacementPlayers
 #' 
@@ -64,20 +66,24 @@ getReplacementPlayers.openWARPlays = function(data, nteams = 30, ...) {
 
 #' @title getReplacementActivity
 #' 
-#' @description Isolates the plays involving replacement-level players
+#' @description Isolates the plays involving replacement level players
 #' 
-#' @details Returns only the RAA values involving replacement-level players
+#' @details Returns only the RAA values involving replacement level players
 #' 
-#' @param data An openWARPlays data.frame
-#' @param replacementIds A vector of playerIds for replacement-level players
+#' @param data A data.frame of class 'openWARPlays'
+#' @param replacementIds A vector of playerIds for replacement level players
 #' 
-#' @return a list of RAA values for each type of activity
+#' @return A list of RAA values for each type of activity that generates RAA values
+#' 
+#' @note This function is used internally in the function \code{getWAR}
 #' 
 #' @export getReplacementActivity
 #' @examples
 #' 
 #' players = getWAR(MayProcessed$openWAR)
 #' summary(players)
+#' replIds = getReplacementPlayers(players)
+#' replacementActivity = getReplacementActivity(MayProcessed$openWAR,replIds)
 #' 
 
 
@@ -111,22 +117,23 @@ getReplacementActivity.openWARPlays = function(data, replacementIds) {
 
 #' @title getReplacementMeans
 #' 
-#' @description Compute the mean RAA for replacement-level players
+#' @description Compute the mean RAA for replacement level players
 #' 
-#' @details Identifies replacement-level players, and then compute their contribution
+#' @details Identifies replacement level players and then computes their mean contribution
 #' 
-#' @param data An openWARPlays data.frame
+#' @param data A data.frame of class 'openWARPlays'
 #' @param replIds MLBAM IDs of specific players that you want to designate as replacement level
 #' 
-#' @return a vector of mean contributions per activity for replacement-level players
+#' @return A numeric vector of mean contributions per activity for replacement level players
 #' 
 #' @export getReplacementMeans
 #' @examples
 #' 
 #' 
-#' raa <- getRAA(MayProcessed$openWAR)
-#' replIds = getReplacementPlayers(raa, 30)
-#' getReplacementMeans(MayProcessed$openWAR, replIds)
+#' players = getWAR(MayProcessed$openWAR)
+#' summary(players)
+#' replIds = getReplacementPlayers(players)
+#' replMeans = getReplacementMeans(MayProcessed$openWAR, replIds)
 #' 
 
 getReplacementMeans = function(data, replIds) UseMethod("getReplacementMeans")
