@@ -51,7 +51,7 @@
 #' 
 #' \dontrun{
 #' res = makeWAR(May)
-#' summary(getWAR(res$openWAR))
+#' summary(getWAR(res))
 #' }
 
 makeWAR = function(data, models = list(), verbose = TRUE, low.memory = TRUE, ...) UseMethod("makeWAR")
@@ -63,15 +63,20 @@ makeWAR = function(data, models = list(), verbose = TRUE, low.memory = TRUE, ...
 makeWAR.GameDayPlays = function(data, models = list(), verbose = TRUE, low.memory = TRUE, ...) {
     orig = data
     data$idx = 1:nrow(data)
-    ########################################################################################### Step 1: Define \delta, the change in expected runs
-    mod.re = getModelRunExpectancy(data[, c("outsInInning", "runsFuture", "startCode", "startOuts")], models[["run-expectancy"]], 
-        verbose)
+    ############################################################################
+    ############### Step 1: Define \delta, the change in expected runs
+    mod.re = getModelRunExpectancy(select_(data, "outsInInning", "runsFuture", "startCode", "startOuts"), 
+                                   models[["run-expectancy"]], verbose)
     models.used = list(`run-expectancy` = mod.re)
-    deltas = makeWARre24(data[, c("startCode", "startOuts", "endCode", "endOuts", "runsOnPlay")], mod.re, verbose)
+    deltas = makeWARre24(select_(data, "startCode", "startOuts", "endCode", "endOuts", "runsOnPlay"), 
+                         mod.re, verbose)
     data = cbind(data, deltas)
     
-    ########################################################################################### Step 2: Define RAA for the defense Work only with the subset of data for which the ball is in play and keep track of the
-    ########################################################################################### indices
+    ############################################################################
+    ############### Step 2: Define RAA for the defense Work only with the subset
+    ############### of data for which the ball is in play and keep track of the 
+    ############### indices 
+    ############################################################################
     bip.idx = which(data$isBIP == TRUE)
     ds.field = data[bip.idx, ]
     fielding = makeWARFielding(ds.field, models, verbose)
@@ -80,10 +85,12 @@ makeWAR.GameDayPlays = function(data, models = list(), verbose = TRUE, low.memor
         data[bip.idx, col.name] = fielding[, col.name]
     }
     
-    ########################################################################################### Step 3: Define RAA for the pitcher
-    data$delta.pitch = with(data, ifelse(is.na(delta.field), delta, delta - delta.field))
+    ############################################################################
+    ############### Step 3: Define RAA for the pitcher
+    data <- mutate_(data, delta.pitch = ~ifelse(is.na(delta.field), delta, delta - delta.field))
     message("...Estimating Pitching Runs Above Average...")
-    mod.pitch = getModelPitching(data[, c("delta.pitch", "venueId", "throws", "stand")], models[["pitching"]], verbose)
+    mod.pitch = getModelPitching(select_(data, "delta.pitch", "venueId", "throws", "stand"), 
+                                 models[["pitching"]], verbose)
     if (verbose) {
         message("....Pitching Model....")
         print(sort(coef(mod.pitch)))
@@ -91,23 +98,26 @@ makeWAR.GameDayPlays = function(data, models = list(), verbose = TRUE, low.memor
     
     models.used[["pitching"]] = mod.pitch
     # Note the pitcher RAA's are the negative residuals!
-    data$raa.pitch = predict(mod.pitch, newdata = data[, c("venueId", "throws", "stand")]) - data$delta.pitch
+    data <- mutate_(data, raa.pitch = ~predict(mod.pitch, newdata = data[, c("venueId", "throws", "stand")]) - delta.pitch)
     
-    ########################################################################################### Step 4: Define RAA for the batter
+    ############################################################################
+    ############### Step 4: Define RAA for the batter
     message("...Building model for offense...")
-    mod.off = getModelOffense(data[, c("delta", "venueId", "throws", "stand")], models[["offense"]], verbose)
+    mod.off = getModelOffense(select_(data, "delta", "venueId", "throws", "stand"), 
+                              models[["offense"]], verbose)
     if (verbose) {
         message("....Offense Model....")
         print(sort(coef(mod.off)))
     }
     models.used[["offense"]] = mod.off
     # delta.off is the contribution above average of the batter AND all of the runners
-    data$delta.off = data$delta - predict(mod.off, newdata = data[, c("venueId", "throws", "stand")])
+    data <- mutate_(data, delta.off = ~delta - predict(mod.off, newdata = data[, c("venueId", "throws", "stand")]))
     
     # If runners are on base, partition delta between the batter and baserunners
     br.idx = which(data$startCode > 0)
     message("...Partitioning Offense into Batting and Baserunning...")
-    mod.br = getModelBaserunning(data[br.idx, c("delta.off", "event", "startCode", "startOuts")], models[["baserunning"]], verbose)
+    mod.br = getModelBaserunning(data[br.idx, c("delta.off", "event", "startCode", "startOuts")], 
+                                 models[["baserunning"]], verbose)
     if (verbose) {
         message("....Baserunning Model....")
         message(paste("....", length(coef(mod.br)), "coefficients -- suppressing output..."))
@@ -118,9 +128,10 @@ makeWAR.GameDayPlays = function(data, models = list(), verbose = TRUE, low.memor
     data[br.idx, "delta.br"] = data[br.idx, "delta.off"] - predict(mod.br, newdata = data[br.idx, c("event", "startCode", "startOuts")])
     
     # Whatever is left over goes to the batter -- just control for defensive position
-    data$delta.bat = with(data, ifelse(is.na(delta.br), delta, delta - delta.br))
+    data <- mutate_(data, delta.bat = ~ifelse(is.na(delta.br), delta, delta - delta.br))
     message("...Estimating Batting Runs Above Average...")
-    mod.bat = getModelBatting(data[, c("delta.bat", "batterPos")], models[["batting"]], verbose)
+    mod.bat = getModelBatting(select_(data, "delta.bat", "batterPos"), 
+                              models[["batting"]], verbose)
     if (verbose) {
         message("....Batting Model....")
         print(sort(coef(mod.bat)))
@@ -128,16 +139,18 @@ makeWAR.GameDayPlays = function(data, models = list(), verbose = TRUE, low.memor
     models.used[["batting"]] = mod.bat
     # Control for batter position Note that including 'idx' is not necessary -- it just ensure that the argument passed is a
     # data.frame
-    data$raa.bat = data$delta.bat - predict(mod.bat, newdata = data[, c("batterPos", "idx")])
+    data <- mutate_(data, raa.bat = ~delta.bat - predict(mod.bat, newdata = data[, c("batterPos", "idx")]))
     
     
-    ########################################################################################### Step 5: Define RAA for the baserunners
+    ############################################################################
+    ############### Step 5: Define RAA for the baserunners
     br.fields = c("idx", "delta.br", "start1B", "start2B", "start3B", "end1B", "end2B", "end3B", "runnerMovement", "event", 
         "startCode", "startOuts")
     raa.br = makeWARBaserunning(data[br.idx, br.fields], models[["baserunning"]], verbose)
     data = merge(x = data, y = raa.br, by = "idx", all.x = TRUE)
     
-    ########################################################################################### Add the new class
+    ############################################################################
+    ############### Add the new class
     class(data) = c("GameDayPlaysExt", "GameDayPlays", class(data))
     # include the computations as a separate data.frame
     id.fields = c("batterId", "start1B", "start2B", "start3B", "pitcherId", "playerId.C", "playerId.1B", "playerId.2B", "playerId.3B", 
