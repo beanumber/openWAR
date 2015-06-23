@@ -12,13 +12,13 @@ setClass("GameDayPlays", contains = "data.frame")
 
 #' @title panel.baseball
 #' 
-#' @description Visualize Balls in Play
+#' @description Visualize balls in play
 #' 
 #' @details A convenience function for drawing a generic baseball field using a Cartesian coordinate
 #' system scaled in feet with home plate at the origin. 
 #' 
 #' 
-#' @return nothing
+#' @return NULL
 #' 
 #' @importFrom lattice panel.segments
 #' @importFrom lattice panel.polygon
@@ -67,14 +67,14 @@ panel.baseball <- function() {
 #' 
 #' @description Visualize Balls in Play
 #' 
-#' @details Plots the balls in play from GameDay data. This function will plot (x,y)-coordinates
+#' @details Plots the balls in play from an object of class 'GameDayPlays'. This function will plot (x,y)-coordinates
 #' with a generic baseball field plotted in the background. Other lattice options can be passed
 #' to xyplot().
 #' 
-#' @param x A GameDayPlays data set with fields 'our.x' and 'our.y'
+#' @param x A an object of class 'GameDayPlays'
 #' @param batterName A character string containing the last name of a batter
 #' @param pitcherName A character string containing the last name of a pitcher 
-#' @param event An MLBAM event type for which to filter. (e.g. "Home Run")
+#' @param event An MLBAM event type for which to filter. (e.g. 'Home Run')
 #' @param ... arguments passed to \code{\link{panel.xyplot}}
 #' 
 #' @return an xyplot() 
@@ -86,8 +86,10 @@ panel.baseball <- function() {
 #' @examples
 #' 
 #' plot(May)
-#' plot(May, event = c("Single", "Home Run"), pch = 16)
-#' plot(May, batterName = "Trout", main = "Mike Trout's May 2013")
+#' plot(May, event = c("Single","Double","Triple","Home Run"), pch = 16)
+#' plot(May, batterName = "Trout", main = "Mike Trout's May 2013", pch = 16)
+#' plot(May, pitcherName = "Kershaw", main = "Clayton Kershaw's May 2013", pch = 16)
+#' plot(May, batterName = "Tulowitzki", pitcherName = "Kershaw", main = "Clayton Kershaw versus May 2013", pch = 16, cex = 3)
 
 plot.GameDayPlays = function(x, batterName = NULL, pitcherName = NULL, event = NULL, ...) {
     data = x
@@ -124,12 +126,12 @@ plot.GameDayPlays = function(x, batterName = NULL, pitcherName = NULL, event = N
 #' 
 #' @description Summarize MLBAM data
 #' 
-#' @details Prints information about the contents of an GameDayPlays data set.
+#' @details Prints information about the contents of an object of class 'GameDayPlays' 
 #' 
-#' @param object A GameDayPlays data set
+#' @param object A 'GameDayPlays' data set
 #' @param ... currently ignored
 #' 
-#' @return nothing
+#' @return NULL
 #' 
 #' @export
 #' @examples
@@ -147,11 +149,13 @@ summary.GameDayPlays = function(object, ...) {
 #' 
 #' @description Summarize MLBAM data
 #' 
-#' @details Tabulates Lahman-style statistics by team for the contents of a GameDayPlays data set.
+#' @details Tabulates Lahman-style statistics by team for the contents of a 'GameDayPlays' data set.
 #' 
-#' @param data A GameDayPlays set
+#' @param data An object of class 'GameDayPlays'
 #' 
 #' @return A data.frame of seasonal totals for each team
+#' 
+#' @note Sean Lahman database <http://www.seanlahman.com/baseball-archive/statistics/>
 #' 
 #' @export 
 #' @examples
