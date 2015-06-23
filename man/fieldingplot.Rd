@@ -24,7 +24,9 @@ fieldingplot(x, data, ...)
 panel.fielding(x, y, z, ...)
 }
 \arguments{
-\item{x}{a model object, currently \code{\link{lm}} and \code{\link{glm}} are supported}
+\item{x}{a model object, currently \code{\link{lm}} and \code{\link{glm}} are
+supported. For the default method this is an x-coordinate to be passed to
+\code{\link{contourplot}}.}
 
 \item{data}{a GameDayPlays dataset}
 
@@ -32,20 +34,25 @@ panel.fielding(x, y, z, ...)
 
 \item{label}{a string to be used in the resulting filename}
 
-\item{write.pdf}{a LOGICAL indicating whether to write the contourplot to a file}
+\item{write.pdf}{a \code{logical} indicating whether to write the contourplot
+to a file}
 
-\item{y}{y-coordinate}
+\item{y}{y-coordinate for default method passed to \code{\link{contourplot}}.}
 
-\item{z}{z-coordinate}
+\item{z}{z-coordinate for default method passed to \code{\link{contourplot}}.}
 }
 \value{
 A contourplot object
 }
 \description{
-Plot the fielding model for an individual player
+Creates a plot of the fielding model for an individual player
 }
 \details{
 This is a convenience function for visually checking the fielding models.
+It provides a way to inspect the quality of the fielding models for individual
+players, and was used to generate one of the figures used in the \code{\link{openWAR}}
+paper. However, this function is not exported, since it is not really accessible
+to end users. We hope to add this functionality in a future release.
 }
 \examples{
 deltas <- makeWARre24(May)

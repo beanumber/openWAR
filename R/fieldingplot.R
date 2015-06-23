@@ -1,15 +1,22 @@
 #' @title fieldingplot
 #' 
-#' @description Plot the fielding model for an individual player
+#' @description Creates a plot of the fielding model for an individual player
 #' 
-#' @details This is a convenience function for visually checking the fielding models.
+#' @details This is a convenience function for visually checking the fielding models. 
+#' It provides a way to inspect the quality of the fielding models for individual
+#' players, and was used to generate one of the figures used in the \code{\link{openWAR}}
+#' paper. However, this function is not exported, since it is not really accessible
+#' to end users. We hope to add this functionality in a future release. 
 #' 
-#' @param x a model object, currently \code{\link{lm}} and \code{\link{glm}} are supported
-#' @param y y-coordinate
-#' @param z z-coordinate
+#' @param x a model object, currently \code{\link{lm}} and \code{\link{glm}} are
+#'  supported. For the default method this is an x-coordinate to be passed to
+#'  \code{\link{contourplot}}.
+#' @param y y-coordinate for default method passed to \code{\link{contourplot}}.
+#' @param z z-coordinate for default method passed to \code{\link{contourplot}}.
 #' @param data a GameDayPlays dataset
 #' @param label a string to be used in the resulting filename
-#' @param write.pdf a LOGICAL indicating whether to write the contourplot to a file
+#' @param write.pdf a \code{logical} indicating whether to write the contourplot
+#'  to a file
 #' @param ... arguments passed to \code{\link{panel.contourplot}}
 #' 
 #' @importFrom lattice contourplot
