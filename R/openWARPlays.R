@@ -1,6 +1,6 @@
 #' @title openWARPlays
 #' 
-#' @description Contains the output from makeWAR() specific to openWAR
+#' @description Contains the output from the function \code{makeWAR} specific to openWAR
 #' 
 #' @exportClass openWARPlays
 #' @examples showClass('openWARPlays')
@@ -9,14 +9,14 @@ setClass("openWARPlays", contains = "data.frame")
 
 #' @title getRAA
 #' 
-#' @description Tabulates RAA values per player
+#' @description Tabulates runs above average (RAA) values per player
 #' 
-#' @details takes an openWARPlays data.frame and consolidates the RAA values by player
+#' @details Takes an object of class 'openWARPlays' and consolidates the RAA values by player
 #' 
-#' @param data An openWARPlays data.frame
+#' @param data An object of class 'openWARPlays' 
 #' @param ... currently ignored
 #' 
-#' @return an RAA object
+#' @return A data.frame of class 'openWARPlayers'
 #' 
 #' @import dplyr
 #' 
