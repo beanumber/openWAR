@@ -5,11 +5,11 @@
 #' @details Given a beginning and end date, this function will retrieve all data from the MLABM
 #' GameDay server in the specified interval and process them into a single data.frame. 
 #' 
-#' @param start A valid date in yyyy-mm-dd format (default yesterday)
-#' @param end A valid date in yyyy-mm-dd format (default start)
+#' @param start A valid date in yyyy-mm-dd format (default is \code{Sys.Date() - 1} (i.e. yesterday))
+#' @param end A valid date in yyyy-mm-dd format (default is \code{NULL}, which then uses the same value as \code{start} (i.e. yesterday))
 #' @param gameIds a vector of specific gameIds that you want to retrieve. If 
 #' NULL (the default), then the dates are used to fetch the relevant gameIds
-#' @param drop.suspended Logical indicating whether games with fewer than 5 innings should be excluded.  Default is TRUE.
+#' @param drop.suspended Logical indicating whether games with fewer than 5 innings should be excluded.  Default is \code{TRUE}.
 #' 
 #' @return A data.frame of class 'GameDayPlays' consisting of play-by-play data 
 #' 
@@ -69,9 +69,9 @@ getData <- function(start = Sys.Date() - 1, end = NULL, gameIds = NULL, drop.sus
 #' GameDay server from the specified month and process them into a single data.frame.
 #' 
 #' @param yyyy A year
-#' @param m a numeric value corresponding to a month
+#' @param m A numeric value corresponding to a month
 #' 
-#' @return A data.frame of class GameDayPlays consisting of play-by-play data 
+#' @return A data.frame of class 'GameDayPlays' consisting of play-by-play data 
 #' 
 #' @export
 #' @export getDataMonthly
@@ -119,7 +119,7 @@ getDataWeekly <- function(start = Sys.Date() - 8) {
 #' @description Retrieves MLBAM gameIds for a specified date
 #' 
 #' @details Downloads information for a given day from the MLBAM website and retrieves
-#' a list of valid gameIds. This function is used internally in the function getData.
+#' a list of valid gameIds. This function is used internally in the function \code{getData}.
 #' 
 #' @param date A date in 'yyyy-mm-dd' format
 #'  
@@ -154,13 +154,13 @@ getGameIds <- function(date = Sys.Date()) {
 #' 
 #' @description Replaces data from a single game
 #' 
-#' @details Deletes, and then rbinds fresh information from a particular game.
+#' @details Deletes and then appends fresh information from a particular game to the original data
 #' 
 #' @param gameIds A character vector of valid MLBAM gameIds
 #' @param data a data.frame returned by \code{\link{getData}}
 #' @param ... currently ignored
 #'  
-#' @return a data.frame
+#' @return A data.frame of class 'GameDayPlays' consisting of play-by-play data 
 #' 
 #' @export
 #' @examples
