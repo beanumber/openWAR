@@ -89,7 +89,8 @@ panel.baseball <- function() {
 #' plot(May, event = c("Single","Double","Triple","Home Run"), pch = 16)
 #' plot(May, batterName = "Trout", main = "Mike Trout's May 2013", pch = 16)
 #' plot(May, pitcherName = "Kershaw", main = "Clayton Kershaw's May 2013", pch = 16)
-#' plot(May, batterName = "Tulowitzki", pitcherName = "Kershaw", main = "Clayton Kershaw versus May 2013", pch = 16, cex = 3)
+#' plot(May, batterName = "Tulowitzki", pitcherName = "Kershaw", 
+#'      main = "Clayton Kershaw versus Troy Tulowitzki: May 2013", pch = 16, cex = 3)
 
 plot.GameDayPlays = function(x, batterName = NULL, pitcherName = NULL, event = NULL, ...) {
     data = x

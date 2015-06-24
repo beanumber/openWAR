@@ -14,13 +14,13 @@ updateGame(gameIds, data, ...)
 \item{...}{currently ignored}
 }
 \value{
-a data.frame
+A data.frame of class 'GameDayPlays' consisting of play-by-play data
 }
 \description{
 Replaces data from a single game
 }
 \details{
-Deletes, and then rbinds fresh information from a particular game.
+Deletes and then appends fresh information from a particular game to the original data
 }
 \examples{
 data(May)

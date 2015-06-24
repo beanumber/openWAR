@@ -7,18 +7,15 @@
 \method{summary}{GameDayPlays}(object, ...)
 }
 \arguments{
-\item{object}{A GameDayPlays data set}
+\item{object}{A 'GameDayPlays' data set}
 
 \item{...}{currently ignored}
-}
-\value{
-nothing
 }
 \description{
 Summarize MLBAM data
 }
 \details{
-Prints information about the contents of an GameDayPlays data set.
+Prints information about the contents of an object of class 'GameDayPlays'
 }
 \examples{
 summary(May)

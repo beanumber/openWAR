@@ -14,20 +14,23 @@ getReplacementPlayers(data, nteams = 30, ...)
 \method{getReplacementPlayers}{openWARPlays}(data, nteams = 30, ...)
 }
 \arguments{
-\item{data}{An object of class \code{'RAA'}}
+\item{data}{An object of class 'openWARPlays'}
 
 \item{nteams}{the number of teams used to calculate the number of non-replacement
-players. The default is 30 since that is the number of MLB teams. Using 27.5
-seems to result in a total WAR that is close to 1000.}
+players. The default is 30 since that is the number of MLB teams. (Note: Using 27.5
+seems to result in a total WAR that is close to 1000.)}
 
 \item{...}{currently ignored}
 }
 \description{
-This function determines and returns a list of players who are considered to be replacement level players.
+This function determines and returns the group of players who are considered to be replacement level players.
 }
 \details{
-In the openWAR framework, we first define a specific number of players to be considered 'true' major league talent.  This function returns a list of players who do not appear on the list of 'true' major league talent.
-The performances of the players on this list are used to estimate the value of a replacement level player for use in converting runs above average into runs above replacement and ultimately wins above replacement.
+In the openWAR framework, we first define a specific number of players to be considered 'true' major league talent.  This function returns the group of players who do not appear in the group of 'true' major league talent.
+The performances of the players in this group are used to estimate the value of a replacement level player for use in converting runs above average (RAA) into runs above replacement (RAR) and ultimately wins above replacement (WAR).
+}
+\note{
+This function is used internally in the function \code{getWAR}
 }
 \examples{
 players = getWAR(MayProcessed$openWAR)

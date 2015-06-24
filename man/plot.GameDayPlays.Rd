@@ -11,23 +11,21 @@ panel.baseball()
   event = NULL, ...)
 }
 \arguments{
-\item{x}{A GameDayPlays data set with fields 'our.x' and 'our.y'}
+\item{x}{A an object of class 'GameDayPlays'}
 
 \item{batterName}{A character string containing the last name of a batter}
 
 \item{pitcherName}{A character string containing the last name of a pitcher}
 
-\item{event}{An MLBAM event type for which to filter. (e.g. "Home Run")}
+\item{event}{An MLBAM event type for which to filter. (e.g. 'Home Run')}
 
 \item{...}{arguments passed to \code{\link{panel.xyplot}}}
 }
 \value{
-nothing
-
 an xyplot()
 }
 \description{
-Visualize Balls in Play
+Visualize balls in play
 
 Visualize Balls in Play
 }
@@ -35,13 +33,16 @@ Visualize Balls in Play
 A convenience function for drawing a generic baseball field using a Cartesian coordinate
 system scaled in feet with home plate at the origin.
 
-Plots the balls in play from GameDay data. This function will plot (x,y)-coordinates
+Plots the balls in play from an object of class 'GameDayPlays'. This function will plot (x,y)-coordinates
 with a generic baseball field plotted in the background. Other lattice options can be passed
 to xyplot().
 }
 \examples{
 plot(May)
-plot(May, event = c("Single", "Home Run"), pch = 16)
-plot(May, batterName = "Trout", main = "Mike Trout's May 2013")
+plot(May, event = c("Single","Double","Triple","Home Run"), pch = 16)
+plot(May, batterName = "Trout", main = "Mike Trout's May 2013", pch = 16)
+plot(May, pitcherName = "Kershaw", main = "Clayton Kershaw's May 2013", pch = 16)
+plot(May, batterName = "Tulowitzki", pitcherName = "Kershaw",
+     main = "Clayton Kershaw versus May 2013", pch = 16, cex = 3)
 }
 

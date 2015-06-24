@@ -8,14 +8,14 @@ getData(start = Sys.Date() - 1, end = NULL, gameIds = NULL,
   drop.suspended = TRUE)
 }
 \arguments{
-\item{start}{A valid date in yyyy-mm-dd format (default yesterday)}
+\item{start}{A valid date in yyyy-mm-dd format (default is \code{Sys.Date() - 1} (i.e. yesterday))}
 
-\item{end}{A valid date in yyyy-mm-dd format (default start)}
+\item{end}{A valid date in yyyy-mm-dd format (default is \code{NULL}, which then uses the same value as \code{start} (i.e. yesterday))}
 
 \item{gameIds}{a vector of specific gameIds that you want to retrieve. If
 NULL (the default), then the dates are used to fetch the relevant gameIds}
 
-\item{drop.suspended}{Logical indicating whether games with fewer than 5 innings should be excluded.  Default is TRUE.}
+\item{drop.suspended}{Logical indicating whether games with fewer than 5 innings should be excluded.  Default is \code{TRUE}.}
 }
 \value{
 A data.frame of class 'GameDayPlays' consisting of play-by-play data
