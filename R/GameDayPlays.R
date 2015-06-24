@@ -110,12 +110,13 @@ plot.GameDayPlays = function(x, batterName = NULL, pitcherName = NULL, event = N
     }
     ds <- filter_(data, ~!is.na(our.y) & !is.na(our.x))
     ds <- mutate_(ds, event = ~factor(event))
+    nkeycols = min(5, nlevels(ds$event))
     plot = xyplot(our.y ~ our.x, groups = event, data = ds, ...
                   , panel = function(x, y, ...) {
                     panel.baseball()
                     panel.xyplot(x, y, alpha = 0.3, ...)
                     }
-                  , auto.key = list(columns = 4)
+                  , auto.key = list(columns = nkeycols)
                   , xlim = c(-350, 350), ylim = c(-20, 525)
                   , xlab = "Horizontal Distance from Home Plate (ft.)"
                   , ylab = "Vertical Distance from Home Plate (ft.)"
