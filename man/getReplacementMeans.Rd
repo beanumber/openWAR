@@ -12,13 +12,13 @@ getReplacementMeans(data, replIds)
 \arguments{
 \item{data}{A data.frame of class 'openWARPlays'}
 
-\item{replIds}{MLBAM IDs of specific players that you want to designate as replacement level}
+\item{replIds}{MLBAM IDs of specific players that you want to designate as replacement-level}
 }
 \value{
-A numeric vector of mean contributions per activity for replacement level players
+A numeric vector of mean contributions per activity for replacement-level players
 }
 \description{
-Compute the mean RAA for replacement level players
+Compute the mean RAA for replacement-level players
 }
 \details{
 Identifies replacement level players and then computes their mean contribution

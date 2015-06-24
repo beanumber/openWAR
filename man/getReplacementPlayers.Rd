@@ -23,11 +23,16 @@ seems to result in a total WAR that is close to 1000.)}
 \item{...}{currently ignored}
 }
 \description{
-This function determines and returns the group of players who are considered to be replacement level players.
+This function determines and returns the group of players who
+are considered to be replacement-level players.
 }
 \details{
-In the openWAR framework, we first define a specific number of players to be considered 'true' major league talent.  This function returns the group of players who do not appear in the group of 'true' major league talent.
-The performances of the players in this group are used to estimate the value of a replacement level player for use in converting runs above average (RAA) into runs above replacement (RAR) and ultimately wins above replacement (WAR).
+In the openWAR framework, we first define a specific number of
+players to be considered 'true' major league talent.  This function returns
+the group of players who do not appear in the group of 'true' major league talent.
+The performances of the players in this group are used to estimate the value
+of a replacement-level player for use in converting runs above average (RAA)
+into runs above replacement (RAR) and ultimately wins above replacement (WAR).
 }
 \note{
 This function is used internally in the function \code{getWAR}
