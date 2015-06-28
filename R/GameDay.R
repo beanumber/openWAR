@@ -1,5 +1,4 @@
 #' @title gameday
-#' @aliases gameday.default
 #' 
 #' @description Convenience class for dealing with MLBAM GameDay files 
 #' 
@@ -12,7 +11,8 @@
 #' \item{gameId}{The ID of the game (e.g. 'gid_2012_08_12_atlmlb_nynmlb_1')}
 #' \item{base}{The base URL for the game (e.g. 'http://gd2.mlb.com/components/game/mlb/year_2012/month_08/day_12/')}
 #' \item{url}{A character vector containing the names of the XML files downloaded from the GameDay server}
-#' \item{ds}{The processed data set for use with openWAR containing all play-by-play information for the game indicated by the gameId}
+#' \item{ds}{The \code{\link{GameDayPlays}} object for use with openWAR containing all 
+#' play-by-play information for the game indicated by the gameId}
 #' 
 #' @export
 #' @examples
@@ -22,6 +22,7 @@
 #' exampleGameday$gameId
 #' # Summary of the different types fo game events for gameId = 'gid_2012_08_12_atlmlb_nynmlb_1'
 #' summary(exampleGameday$ds$event)
+#' plot(exampleGameday$ds)
 
 gameday = function(gameId = "gid_2012_08_12_atlmlb_nynmlb_1", ...) {
     # Check to make the gameId is at least potentially valid
@@ -225,6 +226,7 @@ readData.gameday = function(gd) {
       warning("Game data is no bueno -- most likely a rainout")
       out = NULL
     }
+    class(out) <- c("GameDayPlays", class(out))
     return(out)
 }
 

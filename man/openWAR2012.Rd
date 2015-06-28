@@ -7,8 +7,8 @@
 \alias{openWAR2014}
 \alias{openWAR2015}
 \title{Final openWAR values for 2012.}
-\format{An `openWARPlayers` object, which is also a \code{data.frame} with 1284
-rows (e.g. a player) and 41 columns. The columns are as follows:
+\format{An \code{\link{openWARPlayers}} object, which is also a \code{\link{data.frame}} with
+41 columns. Each row represents a single player. The columns are as follows:
 \describe{
    \item{playerId}{the MLBAM id of the player}
    \item{batterId}{the MLBAM id of the batter}
@@ -68,6 +68,10 @@ openWAR2015
 \description{
 A dataset containing computed openWAR values for MLB players during the 2012 season along with
 the runs above average for each component of openWAR.
+}
+\seealso{
+\code{\link{getWAR}}, \code{\link{plot.openWARPlayers}},
+\code{\link{summary.openWARPlayers}}
 }
 \keyword{datasets}
 

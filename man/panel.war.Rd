@@ -11,13 +11,13 @@ panel.war(x, y, ...)
 
 \item{y}{the y-coordinate}
 
-\item{...}{arguments passed from \code{'plot.openWARPlayers'}}
+\item{...}{arguments passed from \code{\link{plot.openWARPlayers}}}
 }
 \description{
 Display a season's worth of openWAR results
 }
 \details{
-Given an \code{openWARPlayers} object, draw a plot displaying each player's RAA, WAR, and replacement
+Given an \code{\link{openWARPlayers}} object, draw a plot displaying each player's RAA, WAR, and replacement
 level shadow.
 }
 \examples{

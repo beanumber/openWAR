@@ -1,12 +1,12 @@
 #' @title openWARPlayers
 #' 
 #' @description A data.frame of players and their tabulated openWAR values.  The
-#'  function \code{getWAR} returns an object of class \code{openWARPlayers}.
+#'  function \code{\link{getWAR}} returns an object of class \code{\link{openWARPlayers}}.
 #' 
 #' @exportClass openWARPlayers
 #' @examples showClass('openWARPlayers')
 #' 
-#' #' @format An \code{openWARPlayers} object.
+#' #' @format An \code{\link{openWARPlayers}} object.
 #' \describe{
 #'    \item{playerId}{The MLBAM id for the player}
 #'    \item{PA.bat}{The number of plate appearances as a batter for that player}
@@ -63,7 +63,7 @@ setClass("openWARPlayers", contains = "data.frame")
 #' 
 #' @details A summary of players' WAR
 #' 
-#' @param object An object of class \code{'openWARPlayers'}
+#' @param object An object of class \code{\link{openWARPlayers}}
 #' @param n the number of players to display
 #' @param ... currently ignored
 #' 
@@ -98,11 +98,11 @@ summary.openWARPlayers = function(object, n = 25, ...) {
 #' 
 #' @description Display a season's worth of openWAR results
 #' 
-#' @details Given an \code{openWARPlayers} object, draw a plot displaying each player's RAA, WAR, and replacement
+#' @details Given an \code{\link{openWARPlayers}} object, draw a plot displaying each player's RAA, WAR, and replacement
 #' level shadow. 
 #' 
-#' @param x A data.frame object of class \code{'openWARPlayers'}
-#' @param ... arguments passed to \code{xyplot}.
+#' @param x A data.frame object of class \code{\link{openWARPlayers}}
+#' @param ... arguments passed to \code{\link{xyplot}}.
 #' 
 #' @export
 #' 
@@ -140,12 +140,12 @@ plot.openWARPlayers = function(x, ...) {
 #' 
 #' @description Display a season's worth of openWAR results
 #' 
-#' @details Given an \code{openWARPlayers} object, draw a plot displaying each player's RAA, WAR, and replacement
+#' @details Given an \code{\link{openWARPlayers}} object, draw a plot displaying each player's RAA, WAR, and replacement
 #' level shadow. 
 #' 
 #' @param x the x-coordinate
 #' @param y the y-coordinate
-#' @param ... arguments passed from \code{'plot.openWARPlayers'}
+#' @param ... arguments passed from \code{\link{plot.openWARPlayers}}
 #' 
 #' @export panel.war
 #' @import dplyr
@@ -197,7 +197,7 @@ panel.war = function(x, y, ...) {
 #' 
 #' @details Summary of players' WAR
 #' 
-#' @param object An object of class \code{'openWARPlayers'}
+#' @param object An object of class \code{\link{openWARPlayers}}
 #' @param n the number of players to display
 #' @param ... currently ignored
 #' 
