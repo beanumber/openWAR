@@ -9,7 +9,7 @@
    \item{plays}{the original \code{\link{GameDayPlays}} data on which the models were fit. NULL in this case}
    \item{data}{NULL}
    \item{models.used}{a list of model objects used in the computation of \code{\link{makeWAR}}}
-   \item{openWAR}{a data.frame with the resulting processed values, based on the openWAR model}
+   \item{openWAR}{an \code{\link{openWARPlays}} (\code{\link{data.frame}}) with the resulting processed values, based on the openWAR model}
    }}
 \usage{
 MayProcessed

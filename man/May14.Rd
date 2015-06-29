@@ -3,7 +3,7 @@
 \docType{data}
 \name{May14}
 \alias{May14}
-\title{A sample of GameDayPlays data from MLBAM}
+\title{A day-long sample of GameDayPlays data from MLBAM}
 \format{A \code{\link{GameDayPlays}} object, which is also a \code{data.frame} with 1132
 rows.}
 \source{

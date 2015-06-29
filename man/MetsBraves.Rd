@@ -4,7 +4,7 @@
 \name{MetsBraves}
 \alias{MetsBraves}
 \title{A sample of play-by-play data from MLBAM}
-\format{See \code{\link{GameDayPlays}}}
+\format{A \code{\link{gameday}} object.}
 \source{
 \url{http://gd2.mlb.com/components/game/mlb/year_2012/month_08/day_12/gid_2012_08_12_atlmlb_nynmlb_1/}
 }
@@ -13,7 +13,7 @@ MetsBraves
 }
 \description{
 A dataset containing play-by-play data from MLBAM GameDay and processed by
-\code{openWAR} for the August 8th, 2012 game between the New York Mets and Atlanta Braves.
+\code{\link{openWAR}} for the August 8th, 2012 game between the New York Mets and Atlanta Braves.
 }
 \keyword{datasets}
 

@@ -1,15 +1,15 @@
 #' A sample of play-by-play data from MLBAM
 #' 
 #' A dataset containing play-by-play data from MLBAM GameDay and processed by 
-#' \code{openWAR} for the August 8th, 2012 game between the New York Mets and Atlanta Braves. 
+#' \code{\link{openWAR}} for the August 8th, 2012 game between the New York Mets and Atlanta Braves. 
 #' 
-#' @format See \code{\link{GameDayPlays}}
+#' @format A \code{\link{gameday}} object. 
 #' 
 #' @source \url{http://gd2.mlb.com/components/game/mlb/year_2012/month_08/day_12/gid_2012_08_12_atlmlb_nynmlb_1/}
 #' 
 "MetsBraves" 
 
-#' A sample of GameDayPlays data from MLBAM
+#' A day-long sample of GameDayPlays data from MLBAM
 #' 
 #' A dataset containing play-by-play data from MLBAM GameDay and processed by 
 #' \code{openWAR} for all games on May 14, 2013. 
@@ -21,7 +21,7 @@
 #' 
 "May14" 
 
-#' A sample of GameDayPlays data from MLBAM
+#' A month-long sample of GameDayPlays data from MLBAM
 #' 
 #' A dataset containing play-by-play data from MLBAM GameDay and processed by 
 #' \code{openWAR} for all games in May, 2013. 
@@ -40,7 +40,7 @@
 #'    \item{plays}{the original \code{\link{GameDayPlays}} data on which the models were fit. NULL in this case}
 #'    \item{data}{NULL}
 #'    \item{models.used}{a list of model objects used in the computation of \code{\link{makeWAR}}}
-#'    \item{openWAR}{a data.frame with the resulting processed values, based on the openWAR model}
+#'    \item{openWAR}{an \code{\link{openWARPlays}} (\code{\link{data.frame}}) with the resulting processed values, based on the openWAR model}
 #'    }
 #' 
 "MayProcessed" 
@@ -51,10 +51,9 @@
 #' the runs above average for each component of openWAR.    
 #' 
 #' @format An \code{\link{openWARPlayers}} object, which is also a \code{\link{data.frame}} with 
-#' 41 columns. Each row represents a single player. The columns are as follows:
+#' 40 columns. Each row represents a single player. The columns are as follows:
 #' \describe{
 #'    \item{playerId}{the MLBAM id of the player}
-#'    \item{batterId}{the MLBAM id of the batter}
 #'    \item{PA.bat}{Number of plate appearances}
 #'    \item{G}{Games Played}
 #'    \item{HR}{Homeruns}

@@ -7,7 +7,7 @@
 \method{summary}{openWARPlayers}(object, n = 25, ...)
 }
 \arguments{
-\item{object}{An object of class \code{'openWARPlayers'}}
+\item{object}{An object of class \code{\link{openWARPlayers}}}
 
 \item{n}{the number of players to display}
 

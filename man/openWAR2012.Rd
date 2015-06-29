@@ -8,10 +8,9 @@
 \alias{openWAR2015}
 \title{Final openWAR values for 2012.}
 \format{An \code{\link{openWARPlayers}} object, which is also a \code{\link{data.frame}} with
-41 columns. Each row represents a single player. The columns are as follows:
+40 columns. Each row represents a single player. The columns are as follows:
 \describe{
    \item{playerId}{the MLBAM id of the player}
-   \item{batterId}{the MLBAM id of the batter}
    \item{PA.bat}{Number of plate appearances}
    \item{G}{Games Played}
    \item{HR}{Homeruns}
