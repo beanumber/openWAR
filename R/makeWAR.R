@@ -5,12 +5,12 @@
 #' 
 #' @details Within a 'GameDayPlays' object, each row consists of a single plate appearance and contains information about the batter, all of the baserunners,
 #'  the pitcher, and all of the fielders on the field during the plate appearance. The total value of the play as determined by the change in the run expectancy 
-#'  matrix from the beginning of the plate appearence to the end of the plate appearance is partitioned across all players involved in with the play on offense, 
+#'  matrix from the beginning of the plate appearence to the end of the plate appearance is partitioned across all players involved in the play on offense, 
 #'  and that same value (with the opposite sign) is partitioned across the pitcher and all of the fielders.  Thus for every single plate appearance a runs above average (RAA) value is assigned
 #'  to every player involved in the play.  
 #'  If no \code{models} argument is supplied, then all
 #' models necessary for the computation of openWAR will be generated on the data set given. 
-#' The output of this function is then used in the function getWAR to calculate a Wins Above Replacement (WAR) value for each player. 
+#' The output of this function is then used in the function \code{getWAR} to calculate a Wins Above Replacement (WAR) value for each player. 
 #' 
 #' If \code{verbose == TRUE}, then various pieces of information will be displayed during the comuptation.
 #' 
@@ -276,7 +276,7 @@ getFielderRAA = function(data) {
 
 #' @title getFielderResp
 #' 
-#' @description Find the shared responsibility for balls in play
+#' @description Find the shared responsibility models for balls in play
 #' 
 #' @details Fits 9 logistic regression models, each giving the probability of 
 #' a fielder at one of the 9 defensive positions successfully converting the 
@@ -285,7 +285,7 @@ getFielderRAA = function(data) {
 #' @param data An MLBAM data.frame 
 #' @param ... currently ignored
 #' 
-#' @return data.frame with 9 columns, each row representing a ball in play
+#' @return data.frame with 9 columns each representing the probability that a particular fielder will make at least one out; each row represents a ball in play
 #' 
 #' @export
 #' 
@@ -328,7 +328,23 @@ getFielderResp = function(data, ...) {
 }
 
 
-makeWARBaserunning = function(data, mod.bat, verbose = TRUE, ...) {
+#' @title makeWARBaserunning
+#' 
+#' @description Find the shared responsibility models for balls in play
+#' 
+#' @details 
+#' 
+#' @param data An MLBAM data.frame 
+#' @param mod.bat
+#' @param ... currently ignored
+#' 
+#' @return A data.frame with 4 columns: baserunner id, raa for the runner on first base, raa for the runner on second base, and raa for the runner on third base.
+#' 
+#' @export
+#' 
+
+
+makeWARBaserunning = function(data,  ...) {
     message("...Estimating Baserunning Runs Above Average...")
     
     # Figure out what happened to the runner on 3B
