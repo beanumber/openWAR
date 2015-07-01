@@ -10,22 +10,23 @@ getReplacementMeans(data, replIds)
 \method{getReplacementMeans}{openWARPlays}(data, replIds)
 }
 \arguments{
-\item{data}{An openWARPlays data.frame}
+\item{data}{A data.frame of class 'openWARPlays'}
 
-\item{replIds}{MLBAM IDs of specific players that you want to designate as replacement level}
+\item{replIds}{MLBAM IDs of specific players that you want to designate as replacement-level}
 }
 \value{
-a vector of mean contributions per activity for replacement-level players
+A numeric vector of mean contributions per activity for replacement-level players
 }
 \description{
 Compute the mean RAA for replacement-level players
 }
 \details{
-Identifies replacement-level players, and then compute their contribution
+Identifies replacement level players and then computes their mean contribution
 }
 \examples{
-raa <- getRAA(MayProcessed$openWAR)
-replIds = getReplacementPlayers(raa, 30)
-getReplacementMeans(MayProcessed$openWAR, replIds)
+players = getWAR(MayProcessed$openWAR)
+summary(players)
+replIds = getReplacementPlayers(players)
+replMeans = getReplacementMeans(MayProcessed$openWAR, replIds)
 }
 

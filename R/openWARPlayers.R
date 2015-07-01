@@ -1,12 +1,12 @@
 #' @title openWARPlayers
 #' 
 #' @description A data.frame of players and their tabulated openWAR values.  The
-#'  function \code{getWAR} returns an object of class \code{openWARPlayers}.
+#'  function \code{\link{getWAR}} returns an object of class \code{\link{openWARPlayers}}.
 #' 
 #' @exportClass openWARPlayers
 #' @examples showClass('openWARPlayers')
 #' 
-#' #' @format An \code{openWARPlayers} object.
+#' #' @format An \code{\link{openWARPlayers}} object.
 #' \describe{
 #'    \item{playerId}{The MLBAM id for the player}
 #'    \item{PA.bat}{The number of plate appearances as a batter for that player}
@@ -45,7 +45,7 @@
 #'    \item{RAA.field}{Runs above average produced by this player as a fielder. Sum of RAA.P, RAA.C, RAA.1B, RAA.2B, RAA.3B, RAA.SS, RAA.LF, RAA.CF, and RAA.RF}
 #'    \item{RAA}{Total runs above average produced by this player.  Sum of RAA.bat, RAA.br, RAA.field, and RAA.pitch}
 #'    \item{TPA}{Total plate appearances of the player as a batter or pitcher.  Sum of PA.bat and BF}
-#'    \item{repl}{Runs above average produced by a shadow replacement level player with the same profile (i.e. same number of batting, pitching, base running, and fielding opportunities) as the actual player}
+#'    \item{repl}{Runs above average produced by a shadow replacement-level player with the same profile (i.e. same number of batting, pitching, base running, and fielding opportunities) as the actual player}
 #'    \item{WAR}{Wins above replacement for the player.  Calculated as the difference between RAA and repl divided by 10}
 #'    \item{isReplacement}{A boolean indicating if the player was part of the replacement pool for calculating replacement level}
 #'    
@@ -63,7 +63,7 @@ setClass("openWARPlayers", contains = "data.frame")
 #' 
 #' @details A summary of players' WAR
 #' 
-#' @param object An object of class \code{'openWARPlayers'}
+#' @param object An object of class \code{\link{openWARPlayers}}
 #' @param n the number of players to display
 #' @param ... currently ignored
 #' 
@@ -98,11 +98,11 @@ summary.openWARPlayers = function(object, n = 25, ...) {
 #' 
 #' @description Display a season's worth of openWAR results
 #' 
-#' @details Given an \code{openWARPlayers} object, draw a plot displaying each player's RAA, WAR, and replacement
+#' @details Given an \code{\link{openWARPlayers}} object, draw a plot displaying each player's RAA, WAR, and replacement
 #' level shadow. 
 #' 
-#' @param x A data.frame object of class \code{'openWARPlayers'}
-#' @param ... arguments passed to \code{xyplot}.
+#' @param x A data.frame object of class \code{\link{openWARPlayers}}
+#' @param ... arguments passed to \code{\link{xyplot}}.
 #' 
 #' @export
 #' 
@@ -131,7 +131,7 @@ plot.openWARPlayers = function(x, ...) {
                , auto.key = list(columns = 2, corner = c(0.05, 0.95)
                                  , text = c("MLB Player", "Replacement Player"))
                                  , sub = paste("Number of Players =", nrow(data)
-                                               , ", Number of Replacement Level Players =", sum(data$isReplacement))
+                                               , ", Number of Replacement-Level Players =", sum(data$isReplacement))
                , ...)
     print(p)
 }
@@ -140,12 +140,12 @@ plot.openWARPlayers = function(x, ...) {
 #' 
 #' @description Display a season's worth of openWAR results
 #' 
-#' @details Given an \code{openWARPlayers} object, draw a plot displaying each player's RAA, WAR, and replacement
+#' @details Given an \code{\link{openWARPlayers}} object, draw a plot displaying each player's RAA, WAR, and replacement
 #' level shadow. 
 #' 
 #' @param x the x-coordinate
 #' @param y the y-coordinate
-#' @param ... arguments passed from \code{'plot.openWARPlayers'}
+#' @param ... arguments passed from \code{\link{plot.openWARPlayers}}
 #' 
 #' @export panel.war
 #' @import dplyr
@@ -197,7 +197,7 @@ panel.war = function(x, y, ...) {
 #' 
 #' @details Summary of players' WAR
 #' 
-#' @param object An object of class \code{'openWARPlayers'}
+#' @param object An object of class \code{\link{openWARPlayers}}
 #' @param n the number of players to display
 #' @param ... currently ignored
 #' 

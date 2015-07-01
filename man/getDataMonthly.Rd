@@ -9,10 +9,10 @@ getDataMonthly(yyyy = 2013, m = 5)
 \arguments{
 \item{yyyy}{A year}
 
-\item{m}{a numeric value corresponding to a month}
+\item{m}{A numeric value corresponding to a month}
 }
 \value{
-A data.frame of class GameDayPlays consisting of play-by-play data
+A data.frame of class 'GameDayPlays' consisting of play-by-play data
 }
 \description{
 Retrieves MLBAM GameDay files for a single month

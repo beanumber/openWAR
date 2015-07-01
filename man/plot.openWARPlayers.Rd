@@ -7,15 +7,15 @@
 \method{plot}{openWARPlayers}(x, ...)
 }
 \arguments{
-\item{x}{A data.frame object of class \code{'openWARPlayers'}}
+\item{x}{A data.frame object of class \code{\link{openWARPlayers}}}
 
-\item{...}{arguments passed to \code{xyplot}.}
+\item{...}{arguments passed to \code{\link{xyplot}}.}
 }
 \description{
 Display a season's worth of openWAR results
 }
 \details{
-Given an \code{openWARPlayers} object, draw a plot displaying each player's RAA, WAR, and replacement
+Given an \code{\link{openWARPlayers}} object, draw a plot displaying each player's RAA, WAR, and replacement
 level shadow.
 }
 \examples{

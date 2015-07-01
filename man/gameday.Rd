@@ -2,7 +2,6 @@
 % Please edit documentation in R/GameDay.R
 \name{gameday}
 \alias{gameday}
-\alias{gameday.default}
 \title{gameday}
 \usage{
 gameday(gameId = "gid_2012_08_12_atlmlb_nynmlb_1", ...)
@@ -17,7 +16,8 @@ An object of class 'gameday', which consists of a list containing
 \item{gameId}{The ID of the game (e.g. 'gid_2012_08_12_atlmlb_nynmlb_1')}
 \item{base}{The base URL for the game (e.g. 'http://gd2.mlb.com/components/game/mlb/year_2012/month_08/day_12/')}
 \item{url}{A character vector containing the names of the XML files downloaded from the GameDay server}
-\item{ds}{The processed data set for use with openWAR containing all play-by-play information for the game indicated by the gameId}
+\item{ds}{The \code{\link{GameDayPlays}} object for use with openWAR containing all
+play-by-play information for the game indicated by the gameId}
 }
 \description{
 Convenience class for dealing with MLBAM GameDay files
@@ -31,5 +31,6 @@ exampleGameday <- gameday(gameId = 'gid_2012_08_12_atlmlb_nynmlb_1')
 exampleGameday$gameId
 # Summary of the different types fo game events for gameId = 'gid_2012_08_12_atlmlb_nynmlb_1'
 summary(exampleGameday$ds$event)
+plot(exampleGameday$ds)
 }
 

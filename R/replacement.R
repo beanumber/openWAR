@@ -2,10 +2,15 @@
 #' @aliases getReplacementPlayers.RAA
 #' @aliases getReplacementPlayers.openWARPlays
 #' 
-#' @description  This function determines and returns the group of players who are considered to be replacement level players.  
+#' @description  This function determines and returns the group of players who 
+#' are considered to be replacement-level players.  
 #' 
-#' @details In the openWAR framework, we first define a specific number of players to be considered 'true' major league talent.  This function returns the group of players who do not appear in the group of 'true' major league talent.
-#' The performances of the players in this group are used to estimate the value of a replacement level player for use in converting runs above average (RAA) into runs above replacement (RAR) and ultimately wins above replacement (WAR).  
+#' @details In the openWAR framework, we first define a specific number of 
+#' players to be considered 'true' major league talent.  This function returns 
+#' the group of players who do not appear in the group of 'true' major league talent.
+#' The performances of the players in this group are used to estimate the value 
+#' of a replacement-level player for use in converting runs above average (RAA) 
+#' into runs above replacement (RAR) and ultimately wins above replacement (WAR).  
 #' 
 #' @param data An object of class 'openWARPlays'
 #' @param nteams the number of teams used to calculate the number of non-replacement
@@ -49,7 +54,7 @@ getReplacementPlayers.openWARPlayers = function(data, nteams = 30, ...) {
     
     # Their union are the MLB players
     mlb.playerIds = as.numeric(union(mlb.pos.playerIds$playerId, mlb.pitcherIds$playerId))
-    # Everyone else is replacement level
+    # Everyone else is replacement-level
     repl.playerIds = setdiff(playerIds, as.numeric(mlb.playerIds))
     
     return(repl.playerIds)
@@ -66,12 +71,12 @@ getReplacementPlayers.openWARPlays = function(data, nteams = 30, ...) {
 
 #' @title getReplacementActivity
 #' 
-#' @description Isolates the plays involving replacement level players
+#' @description Isolates the plays involving replacement-level players
 #' 
-#' @details Returns only the RAA values involving replacement level players
+#' @details Returns only the RAA values involving replacement-level players
 #' 
 #' @param data A data.frame of class 'openWARPlays'
-#' @param replacementIds A vector of playerIds for replacement level players
+#' @param replacementIds A vector of playerIds for replacement-level players
 #' 
 #' @return A list of RAA values for each type of activity that generates RAA values
 #' 
@@ -117,14 +122,14 @@ getReplacementActivity.openWARPlays = function(data, replacementIds) {
 
 #' @title getReplacementMeans
 #' 
-#' @description Compute the mean RAA for replacement level players
+#' @description Compute the mean RAA for replacement-level players
 #' 
 #' @details Identifies replacement level players and then computes their mean contribution
 #' 
 #' @param data A data.frame of class 'openWARPlays'
-#' @param replIds MLBAM IDs of specific players that you want to designate as replacement level
+#' @param replIds MLBAM IDs of specific players that you want to designate as replacement-level
 #' 
-#' @return A numeric vector of mean contributions per activity for replacement level players
+#' @return A numeric vector of mean contributions per activity for replacement-level players
 #' 
 #' @export getReplacementMeans
 #' @examples

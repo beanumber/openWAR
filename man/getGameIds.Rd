@@ -17,7 +17,7 @@ Retrieves MLBAM gameIds for a specified date
 }
 \details{
 Downloads information for a given day from the MLBAM website and retrieves
-a list of valid gameIds. This function is used internally in the function getData.
+a list of valid gameIds. This function is used internally in the function \code{getData}.
 }
 \examples{
 getGameIds()

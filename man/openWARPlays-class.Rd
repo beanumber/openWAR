@@ -5,7 +5,7 @@
 \alias{openWARPlays-class}
 \title{openWARPlays}
 \description{
-Contains the output from makeWAR() specific to openWAR
+Contains the output from the function \code{makeWAR} specific to openWAR
 }
 \examples{
 showClass('openWARPlays')

@@ -10,18 +10,18 @@ getRAA(data, ...)
 \method{getRAA}{openWARPlays}(data, ...)
 }
 \arguments{
-\item{data}{An openWARPlays data.frame}
+\item{data}{An object of class 'openWARPlays'}
 
 \item{...}{currently ignored}
 }
 \value{
-an RAA object
+A data.frame of class 'openWARPlayers'
 }
 \description{
-Tabulates RAA values per player
+Tabulates runs above average (RAA) values per player
 }
 \details{
-takes an openWARPlays data.frame and consolidates the RAA values by player
+Takes an object of class 'openWARPlays' and consolidates the RAA values by player
 }
 \examples{
 players = getRAA(MayProcessed$openWAR)

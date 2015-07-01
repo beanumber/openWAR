@@ -4,10 +4,81 @@
 \name{GameDayPlays-class}
 \alias{GameDayPlays-class}
 \title{GameDayPlays}
+\format{A \code{\link{GameDayPlays}} object. This is a \code{tbl_df} and
+\code{data.frame} with 62 columns. The columns are as follows:
+     \describe{
+       \item{pitcherId}{The MLBAM id of the pitcher}
+       \item{batterId}{The MLBAM id of the batter}
+        \item{field_teamId}{The MLBAM id of the fielding team}
+        \item{ab_num}{The chronological number of the plate appearance}
+        \item{inning}{The inning number}
+        \item{half}{Indicates which half of the inning (i.e. top or bottom)}
+        \item{balls}{The number of balls at the end of the plate appearance}
+        \item{strikes}{The number of strikes at the end of the plate appearance}
+        \item{endOuts}{The number of outs at the end of the plate appearance}
+        \item{event}{The result of the plate appearance (e.g. Single, Walk, Grounded Into DP)}
+        \item{actionID}{NA}
+        \item{description}{A description of the result of the plate appearance}
+        \item{stand}{The handedness of the batter during the plate appearance}
+        \item{throws}{The handedness of the pitcher}
+        \item{runnerMovement}{A coded description of movement of all base runners during the plate appearance}
+        \item{x}{For balls in play, the MLBAM x-coordinate of where the ball
+        is first touched. Note that 0 is the far left hand edge of the
+        stadium image file. (NA for balls not in play)}
+        \item{y}{For balls in play, the MLBAM y-coordinate of where the ball
+        is first touched. Note that 0 is the top of the stadium image file.
+        (NA for balls not in play)}
+        \item{game_type}{Game type}
+        \item{home_team}{The MLBAM home team abbreviation}
+        \item{home_teamId}{The MLBAM id of the home team}
+        \item{home_lg}{The league of the home team (i.e. AL or NL)}
+        \item{away_team}{The MLBAM away team abbreviation}
+        \item{away_teamId}{The MLBAM id of the away team}
+        \item{away_lg}{The league of the away team (i.e. AL or NL)}
+        \item{venueId}{The MLBAM park id}
+        \item{stadium}{The name of the stadium where the game is being played}
+        \item{timestamp}{The timestamp associated withe the plate appearance}
+        \item{playerId.C}{The MLBAM of the catcher}
+        \item{playerId.1B}{The MLBAM of the first baseman}
+        \item{playerId.2B}{The MLBAM of the second baseman}
+        \item{playerId.3B}{The MLBAM of the third baseman}
+        \item{playerId.SS}{The MLBAM of the shortstop}
+        \item{playerId.LF}{The MLBAM of the left fielder}
+        \item{playerId.CF}{The MLBAM of the center fielder}
+        \item{playerId.RF}{The MLBAM of the right fielder}
+        \item{batterPos}{The defensive postion of the current batter}
+        \item{batterName}{The name of the current batter}
+        \item{pitcherName}{The name of the current pitcher}
+        \item{runsOnPlay}{The number of runs that were scored as a result of the plate appearance}
+        \item{startOuts}{The number of outs at the beginning of the plate appearnace}
+        \item{runsInInning}{The total number of runs scored in the half of an inning}
+        \item{runsITD}{The total number of runs that have been scored in the half of an inning prior to the current plate appearance}
+        \item{runsFuture}{The total number of runs that are scored in the half of an inning that were scored after the current plate appearance}
+        \item{startCode}{Binary representation of the base runner configuration at the start of the plate appearance}
+        \item{endCode}{Binary representation of the base runner configuration at the end of the plate appearance}
+        \item{fielderId}{For a ball in play, the MLBAM id of the fielder who first touches the baseball. (NA for balls not in play) }
+        \item{endCode}{Binary representation of the base runner configuration at the end of the plate appearance}
+        \item{gameId}{The MLBAM id for this game}
+        \item{isPA}{Boolean indicating if the plate appearance was a plate appearance}
+        \item{isAB}{Boolean indicating if the plate appearance was an at bat}
+        \item{isHit}{Boolean indicating if the plate appearance resulted in a hit}
+        \item{isBIP}{Boolean indicating if the plate appearance resulted in a ball in play}
+        \item{our.x}{Horizontal coordinate, in feet, of where the ball landed.
+        Home plate has \code{our.x} of 0.}
+        \item{out.y}{Vertical coordinate, in feet, of where the ball landed.
+        Home plate has \code{our.y} of 0.}
+        \item{r}{radial distance, in feet, of the location of the batted ball.
+        Home plate has \code{r} of 0.}
+        \item{theta}{radial angle, in radians, of the location of the batted ball.
+        Home plate has \code{theta} of 0.}
+     }}
 \description{
-Contains the output from getData()
+Contains the output from \code{\link{getData}}
 }
 \examples{
 showClass('GameDayPlays')
+}
+\seealso{
+\code{\link{GameDayPlays-class}}
 }
 
