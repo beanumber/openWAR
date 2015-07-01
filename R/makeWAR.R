@@ -173,7 +173,7 @@ makeWAR.GameDayPlays = function(data, models = list(), verbose = TRUE, low.memor
 #' @description Compute the Run Expectancy at the beginning and end of every play
 #' in a data frame, as well as their difference (RE24).
 #' 
-#' @param data a \code{GameDayPlays} object
+#' @param data A \code{GameDayPlays} object
 #' @param mod.re an \code{lm} object giving the Run Expectancy Model. If 
 #' NULL (the default), the run expectancy model will be generated from \code{data}
 #' @param ... currently ignored
@@ -213,7 +213,23 @@ makeWARre24 = function(data, mod.re = NULL, ...) {
 }
 
 
-makeWARFielding = function(data, models = list(), verbose = TRUE, ...) {
+#' @title makeWARFielding
+#' 
+#' @description Compute the RAA values for all of the fielders.  Used internally in \code{makeWAR}.
+#' 
+#' @param data A \code{GameDayPlays} object
+#' @param ... currently ignored
+#' 
+#' @return A data.frame with 12 columns: \code{p.hat} contains the probability that any fielder makes an out given the location 
+#' of the ball in play; \code{delta.field} is the total delta assigned to all of the fielders; columns 3 through 11 
+#' contains the delta values for each od the 9 fielders (i.e. these columns sum to \code{delta.field}); \code{venueId} contains information about
+#' the stadium that the plate appearance took place in.  
+#' 
+#' 
+#' 
+
+
+makeWARFielding = function(data, ...) {
     message("...Estimating Fielding Runs Above Average...")
     
     # Compute the collective responsibility of all fielders
@@ -335,7 +351,6 @@ getFielderResp = function(data, ...) {
 #' @details 
 #' 
 #' @param data An MLBAM data.frame 
-#' @param mod.bat
 #' @param ... currently ignored
 #' 
 #' @return A data.frame with 4 columns: baserunner id, raa for the runner on first base, raa for the runner on second base, and raa for the runner on third base.
@@ -344,7 +359,7 @@ getFielderResp = function(data, ...) {
 #' 
 
 
-makeWARBaserunning = function(data,  ...) {
+makeWARBaserunning = function(data, ...) {
     message("...Estimating Baserunning Runs Above Average...")
     
     # Figure out what happened to the runner on 3B
