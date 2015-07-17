@@ -348,7 +348,7 @@ getFielderResp = function(data, ...) {
 #' 
 #' @description Find the shared responsibility models for balls in play
 #' 
-#' @details 
+#' @details blah
 #' 
 #' @param data An MLBAM data.frame 
 #' @param ... currently ignored

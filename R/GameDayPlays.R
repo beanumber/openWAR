@@ -1,3 +1,5 @@
+utils::globalVariables("event")
+
 #' @title GameDayPlays
 #' @aliases GameDayPlays-class
 #' 
@@ -163,7 +165,10 @@ panel.baseball <- function() {
 #' plot(May, batterName = "Tulowitzki", pitcherName = "Kershaw", 
 #'      main = "Clayton Kershaw versus Troy Tulowitzki: May 2013", pch = 16, cex = 3)
 
+
+
 plot.GameDayPlays = function(x, batterName = NULL, pitcherName = NULL, events = NULL, ...) {
+  
     xy.fields = c("our.x", "our.y")
     if (!length(intersect(xy.fields, names(x))) == length(xy.fields)) {
         stop("(x,y) coordinate locations not found.")
@@ -179,9 +184,7 @@ plot.GameDayPlays = function(x, batterName = NULL, pitcherName = NULL, events = 
         x = x[x$event %in% events, ]
     }
     ds <- filter_(x, ~!is.na(our.y) & !is.na(our.x))
-    # bug in mutate_?
-    # ds <- mutate_(ds, event = ~factor(event))
-    ds$event = factor(ds$event)
+    ds <- droplevels(ds)
     nkeycols = min(5, nlevels(ds$event))
     plot = xyplot(our.y ~ our.x
                   , groups = event
@@ -219,7 +222,7 @@ summary.GameDayPlays = function(object, ...) {
     gIds = sort(unique(object$gameId))
     message(paste("...Contains data from", length(gIds), "games"))
     message(paste("...from", gIds[1], "to", gIds[length(gIds)]))
-    summary.data.frame(object)
+    NextMethod()
 }
 
 #' @title tabulate

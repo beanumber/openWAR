@@ -38,12 +38,12 @@ Computes runs above average (RAA) for each player involved in each play of the '
 \details{
 Within a 'GameDayPlays' object, each row consists of a single plate appearance and contains information about the batter, all of the baserunners,
  the pitcher, and all of the fielders on the field during the plate appearance. The total value of the play as determined by the change in the run expectancy
- matrix from the beginning of the plate appearence to the end of the plate appearance is partitioned across all players involved in with the play on offense,
+ matrix from the beginning of the plate appearence to the end of the plate appearance is partitioned across all players involved in the play on offense,
  and that same value (with the opposite sign) is partitioned across the pitcher and all of the fielders.  Thus for every single plate appearance a runs above average (RAA) value is assigned
  to every player involved in the play.
  If no \code{models} argument is supplied, then all
 models necessary for the computation of openWAR will be generated on the data set given.
-The output of this function is then used in the function getWAR to calculate a Wins Above Replacement (WAR) value for each player.
+The output of this function is then used in the function \code{getWAR} to calculate a Wins Above Replacement (WAR) value for each player.
 
 If \code{verbose == TRUE}, then various pieces of information will be displayed during the comuptation.
 
