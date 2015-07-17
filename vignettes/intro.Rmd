@@ -17,7 +17,7 @@ We have developed an R package to compute our implementation of WAR. The first s
 
 Using our `openWAR` package, a single game's worth of play-by-play data can be retrieved from the GameDay servers and processed into a data frame. The R class `gameday` contains an object that includes the relevant URLs and XML files, as well as the processed data. The XML files and processed data are cached locally for faster retrieval. Note that since the MLBAM data is not legally transferrable, all data must be downloaded by the user at least once. 
 
-```{r}
+```{r, message=FALSE}
 library(openWAR)
 ```
 
@@ -97,7 +97,7 @@ May14 %>%
 
 One nice features of the MLBAM data is that it contains an $(x,y)$-coordinate indicating the location of each batted ball hit into play. We can visualize this using the generic `plot()` function on our `GameDayPlays` object. 
 
-```{r plot, fig.width=6, fig.height=6}
+```{r plot, fig.width=7, fig.height=7}
 data(May14)
 plot(x = May14)
 ```

@@ -34,7 +34,8 @@ resample a data.frame to obtain variance estimates for WAR
 
 }
 \details{
-Resamples the rows of an MLBAM data set
+Resamples the rows of an MLBAM data set and calculates WAR values on the re-sampled data set.
+This process is repeated many times to yield variance estimates of WAR.
 }
 \examples{
 \dontrun{
