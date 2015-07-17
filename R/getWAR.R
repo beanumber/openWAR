@@ -30,12 +30,12 @@ getWAR = function(data, dataRepl = NULL, nteams = 30, verbose = TRUE, ...) UseMe
 #' 
 #' @examples 
 #' \dontrun{
-#' war = getWAR(May)  
+#' war = getWAR(May)
 #' }
 
 getWAR.GameDayPlays = function(data, dataRepl = NULL, nteams = 30, verbose = TRUE, ...) {
   madeWAR <- makeWAR(data)
-  return(getWAR.list(madeWAR$openWAR, dataRepl, nteams, verbose, ...))
+  return(getWAR(madeWAR$openWAR, dataRepl, nteams, verbose, ...))
 }
 
 #' @rdname getWAR
@@ -50,7 +50,7 @@ getWAR.GameDayPlays = function(data, dataRepl = NULL, nteams = 30, verbose = TRU
 #' war = getWAR(MayProcessed)  
 
 getWAR.list = function(data, dataRepl = NULL, nteams = 30, verbose = TRUE, ...) {
-  return(getWAR.openWARPlays(data$openWAR, dataRepl, nteams, verbose, ...))
+  return(getWAR(data$openWAR, dataRepl, nteams, verbose, ...))
 }
 
 #' @rdname getWAR

@@ -5,7 +5,7 @@
 #' @details Resamples the rows of an MLBAM data set and calculates WAR values on the re-sampled data set.  
 #' This process is repeated many times to yield variance estimates of WAR.
 #' 
-#' @param data An MLBAM data.frame 
+#' @param data An object that contains \code{\link{GameDayPlays}} data or data that has already been processed by \code{\link{makeWAR}}.  
 #' @param N the number of resamples (default 10)
 #' @param resample An element of \code{c('plays', 'models', 'both')}. Currently only \code{plays}
 #' and \code{both} are implemented. Only works with \code{shakeWAR.GameDayPlays} method.
@@ -41,7 +41,7 @@ shakeWAR.list <- function(data, N = 10, resample = "plays", ...) {
   if (!"openWAR" %in% names(data)) {
     stop("the 'data' list does not contain processed openWAR!")
   }
-  return(shakeWAR.openWARPlays(data$openWAR, N, resample, ...))
+  return(shakeWAR(data$openWAR, N, resample, ...))
 }
 
 #' @rdname shakeWAR
@@ -88,6 +88,6 @@ shakeWAR.GameDayPlays <- function(data, N = 10, resample = "plays", ...) {
   } else {
     # resample = 'plays'
     ext = makeWAR(data, verbose = FALSE, low.memory = TRUE)
-    return(shakeWAR.openWARPlays(ext$openWAR, N, resample = "plays", ...))
+    return(shakeWAR(ext$openWAR, N, resample = "plays", ...))
   }
 } 

@@ -16,7 +16,7 @@ shakeWAR(data, N = 10, resample = "plays", ...)
 \method{shakeWAR}{GameDayPlays}(data, N = 10, resample = "plays", ...)
 }
 \arguments{
-\item{data}{An MLBAM data.frame}
+\item{data}{An object that contains \code{\link{GameDayPlays}} data or data that has already been processed by \code{\link{makeWAR}}.}
 
 \item{N}{the number of resamples (default 10)}
 
