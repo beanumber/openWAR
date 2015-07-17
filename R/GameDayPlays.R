@@ -140,11 +140,11 @@ panel.baseball <- function() {
 #' 
 #' @description Visualize Balls in Play
 #' 
-#' @details Plots the balls in play from an object of class 'GameDayPlays'. This function will plot (x,y)-coordinates
+#' @details Plots the balls in play from an object of class \code{\link{GameDayPlays}}. This function will plot (x,y)-coordinates
 #' with a generic baseball field plotted in the background. Other lattice options can be passed
-#' to xyplot().
+#' to \code{\link{xyplot}}.
 #' 
-#' @param x A an object of class 'GameDayPlays'
+#' @param x An object of class \code{\link{GameDayPlays}}
 #' @param batterName A character string containing the last name of a batter
 #' @param pitcherName A character string containing the last name of a pitcher 
 #' @param events A vector of MLBAM event types for which to filter. (e.g. 'Home Run')

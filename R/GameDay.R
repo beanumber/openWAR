@@ -226,6 +226,7 @@ readData.gameday = function(gd) {
       warning("Game data is no bueno -- most likely a rainout")
       out = NULL
     }
+    out <- ungroup(out)
     class(out) <- c("GameDayPlays", class(out))
     return(out)
 }
@@ -529,3 +530,11 @@ recenter = function(dat, ...) {
     dat = dplyr::mutate_(dat, our.y = ~r * sin(theta))
     return(dat)
 }
+
+#' @rdname plot.GameDayPlays
+#' @export
+#' @method plot gameday
+
+
+plot.gameday = function(x, ...) { plot(x$ds, ...) }
+    
