@@ -12,10 +12,10 @@ getFielderResp(data, ...)
 \item{...}{currently ignored}
 }
 \value{
-data.frame with 9 columns, each row representing a ball in play
+data.frame with 9 columns each representing the probability that a particular fielder will make at least one out; each row represents a ball in play
 }
 \description{
-Find the shared responsibility for balls in play
+Find the shared responsibility models for balls in play
 }
 \details{
 Fits 9 logistic regression models, each giving the probability of

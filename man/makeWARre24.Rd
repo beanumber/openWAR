@@ -7,7 +7,7 @@
 makeWARre24(data, mod.re = NULL, ...)
 }
 \arguments{
-\item{data}{a \code{GameDayPlays} object}
+\item{data}{A \code{GameDayPlays} object}
 
 \item{mod.re}{an \code{lm} object giving the Run Expectancy Model. If
 NULL (the default), the run expectancy model will be generated from \code{data}}
