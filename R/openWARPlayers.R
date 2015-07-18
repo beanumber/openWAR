@@ -149,9 +149,7 @@ plot.openWARPlayers = function(x, ...) {
 #' 
 #' @export panel.war
 #' @import dplyr
-#' @importFrom lattice panel.abline
-#' @importFrom lattice panel.arrows
-#' @importFrom lattice panel.text
+#' @import lattice
 #' 
 #' @examples
 #' 
@@ -242,8 +240,7 @@ summary.do.openWARPlayers = function(object, n = 25, ...) {
 #' 
 #' @return a faceted densityplot
 #' 
-#' @importFrom lattice densityplot
-#' @importFrom lattice panel.densityplot
+#' @import lattice
 #' @export
 #' @examples
 #' 

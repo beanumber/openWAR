@@ -93,10 +93,7 @@ setClass("GameDayPlays", contains = "data.frame")
 #' 
 #' @return NULL
 #' 
-#' @importFrom lattice panel.segments
-#' @importFrom lattice panel.polygon
-#' @importFrom lattice panel.curve
-#' @importFrom lattice panel.rect
+#' @import lattice
 #' 
 #' @export
 #' @rdname plot.GameDayPlays
@@ -152,8 +149,7 @@ panel.baseball <- function() {
 #' 
 #' @return an xyplot() 
 #' 
-#' @importFrom lattice xyplot
-#' @importFrom lattice panel.xyplot
+#' @import lattice
 #' 
 #' @export
 #' @examples

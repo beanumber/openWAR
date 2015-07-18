@@ -19,7 +19,7 @@
 #'  to a file
 #' @param ... arguments passed to \code{\link{panel.contourplot}}
 #' 
-#' @importFrom lattice contourplot
+#' @import lattice
 #' @importFrom RColorBrewer brewer.pal
 #' @importFrom mosaic lhs
 #' 
@@ -88,7 +88,6 @@ fieldingplot.default = function(x, y, z, label = "label", write.pdf = FALSE, ...
 }
 
 #' @rdname fieldingplot
-#' @importFrom lattice panel.contourplot
 
 panel.fielding = function(x, y, z, ...) {
   panel.baseball()
