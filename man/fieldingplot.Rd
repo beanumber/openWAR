@@ -28,7 +28,7 @@ panel.fielding(x, y, z, ...)
 supported. For the default method this is an x-coordinate to be passed to
 \code{\link{contourplot}}.}
 
-\item{data}{a GameDayPlays dataset}
+\item{data}{a \code{\link{GameDayPlays}} dataset}
 
 \item{...}{arguments passed to \code{\link{panel.contourplot}}}
 

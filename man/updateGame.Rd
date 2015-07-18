@@ -14,7 +14,7 @@ updateGame(gameIds, data, ...)
 \item{...}{currently ignored}
 }
 \value{
-A data.frame of class 'GameDayPlays' consisting of play-by-play data
+A data.frame of class \code{\link{GameDayPlays}} consisting of play-by-play data
 }
 \description{
 Replaces data from a single game

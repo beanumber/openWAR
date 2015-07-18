@@ -5,7 +5,7 @@
 \alias{GameDayPlaysExt-class}
 \title{GameDayPlaysExt}
 \description{
-Contains the output from makeWAR()
+Contains the output from \code{\link{makeWAR}}
 }
 \examples{
 showClass('GameDayPlaysExt')

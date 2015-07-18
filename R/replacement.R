@@ -12,7 +12,7 @@
 #' of a replacement-level player for use in converting runs above average (RAA) 
 #' into runs above replacement (RAR) and ultimately wins above replacement (WAR).  
 #' 
-#' @param data An object of class 'openWARPlays'
+#' @param data An object of class \code{\link{openWARPlays}}
 #' @param nteams the number of teams used to calculate the number of non-replacement
 #' players. The default is 30 since that is the number of MLB teams. (Note: Using 27.5
 #' seems to result in a total WAR that is close to 1000.)
@@ -75,7 +75,7 @@ getReplacementPlayers.openWARPlays = function(data, nteams = 30, ...) {
 #' 
 #' @details Returns only the RAA values involving replacement-level players
 #' 
-#' @param data A data.frame of class 'openWARPlays'
+#' @param data A data.frame of class \code{\link{openWARPlays}}
 #' @param replacementIds A vector of playerIds for replacement-level players
 #' 
 #' @return A list of RAA values for each type of activity that generates RAA values
@@ -126,7 +126,7 @@ getReplacementActivity.openWARPlays = function(data, replacementIds) {
 #' 
 #' @details Identifies replacement level players and then computes their mean contribution
 #' 
-#' @param data A data.frame of class 'openWARPlays'
+#' @param data A data.frame of class \code{\link{openWARPlays}}
 #' @param replIds MLBAM IDs of specific players that you want to designate as replacement-level
 #' 
 #' @return A numeric vector of mean contributions per activity for replacement-level players

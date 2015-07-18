@@ -14,7 +14,7 @@ getReplacementPlayers(data, nteams = 30, ...)
 \method{getReplacementPlayers}{openWARPlays}(data, nteams = 30, ...)
 }
 \arguments{
-\item{data}{An object of class 'openWARPlays'}
+\item{data}{An object of class \code{\link{openWARPlays}}}
 
 \item{nteams}{the number of teams used to calculate the number of non-replacement
 players. The default is 30 since that is the number of MLB teams. (Note: Using 27.5

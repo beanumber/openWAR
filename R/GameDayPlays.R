@@ -3,10 +3,10 @@ utils::globalVariables("event")
 #' @title GameDayPlays
 #' @aliases GameDayPlays-class
 #' 
-#' @description Contains the output from \code{\link{getData}}
+#' @description A data set that contains play-by-play information returned by \code{\link{getData}}
 #' 
-#' @format A \code{\link{GameDayPlays}} object. This is a \code{tbl_df} and 
-#' \code{data.frame} with 62 columns. The columns are as follows:
+#' @format A \code{\link{GameDayPlays}} object. This is a \code{\link{tbl_df}} and 
+#' \code{\link{data.frame}} with 62 columns. The columns are as follows:
 #'      \describe{
 #'        \item{pitcherId}{The MLBAM id of the pitcher}
 #'        \item{batterId}{The MLBAM id of the batter}
@@ -202,9 +202,9 @@ plot.GameDayPlays = function(x, batterName = NULL, pitcherName = NULL, events = 
 #' 
 #' @description Summarize MLBAM data
 #' 
-#' @details Prints information about the contents of an object of class 'GameDayPlays' 
+#' @details Prints information about the contents of an object of class \code{\link{GameDayPlays}} 
 #' 
-#' @param object A 'GameDayPlays' data set
+#' @param object A \code{\link{GameDayPlays}} data set
 #' @param ... currently ignored
 #' 
 #' @return NULL
@@ -225,9 +225,9 @@ summary.GameDayPlays = function(object, ...) {
 #' 
 #' @description Summarize MLBAM data
 #' 
-#' @details Tabulates Lahman-style statistics by team for the contents of a 'GameDayPlays' data set.
+#' @details Tabulates Lahman-style statistics by team for the contents of a \code{\link{GameDayPlays}} data set.
 #' 
-#' @param data An object of class 'GameDayPlays'
+#' @param data An object of class \code{\link{GameDayPlays}}
 #' 
 #' @return A data.frame of seasonal totals for each team
 #' 

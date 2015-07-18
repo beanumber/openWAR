@@ -2,12 +2,12 @@
 #' 
 #' @description Convenience class for dealing with MLBAM GameDay files 
 #' 
-#' @details Each gameId corresponds to one object of class 'gameday'
+#' @details Each gameId corresponds to one object of class \code{\link{gameday}}
 #' 
 #' @param gameId A valid MLBAM gameId
 #' @param ... currently ignored
 #' 
-#' @return An object of class 'gameday', which consists of a list containing
+#' @return An object of class \code{\link{gameday}}, which consists of a list containing
 #' \item{gameId}{The ID of the game (e.g. 'gid_2012_08_12_atlmlb_nynmlb_1')}
 #' \item{base}{The base URL for the game (e.g. 'http://gd2.mlb.com/components/game/mlb/year_2012/month_08/day_12/')}
 #' \item{url}{A character vector containing the names of the XML files downloaded from the GameDay server}

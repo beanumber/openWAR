@@ -10,7 +10,7 @@ tabulate(data)
 \method{tabulate}{GameDayPlays}(data)
 }
 \arguments{
-\item{data}{An object of class 'GameDayPlays'}
+\item{data}{An object of class \code{\link{GameDayPlays}}}
 }
 \value{
 A data.frame of seasonal totals for each team
@@ -19,7 +19,7 @@ A data.frame of seasonal totals for each team
 Summarize MLBAM data
 }
 \details{
-Tabulates Lahman-style statistics by team for the contents of a 'GameDayPlays' data set.
+Tabulates Lahman-style statistics by team for the contents of a \code{\link{GameDayPlays}} data set.
 }
 \note{
 Sean Lahman database <http://www.seanlahman.com/baseball-archive/statistics/>

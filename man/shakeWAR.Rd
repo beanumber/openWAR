@@ -21,25 +21,41 @@ shakeWAR(data, N = 10, resample = "plays", ...)
 \item{N}{the number of resamples (default 10)}
 
 \item{resample}{An element of \code{c('plays', 'models', 'both')}. Currently only \code{plays}
-and \code{both} are implemented. Only works with \code{shakeWAR.GameDayPlays} method.}
+and \code{both} are implemented. Only works with \code{\link{shakeWAR.GameDayPlays}} method.}
 
-\item{...}{additional arguments passed to \code{shakeWAR} methods}
+\item{...}{additional arguments passed to \code{\link{shakeWAR}} methods}
 }
 \value{
-a data.frame with RAA values
+a \code{do.\link{openWARPlayers}} data frame with RAA values
 }
 \description{
-resample a data.frame to obtain variance estimates for WAR
+Resample to obtain variance estimates for WAR
 
 
 }
 \details{
-Resamples the rows of an MLBAM data set and calculates WAR values on the re-sampled data set.
-This process is repeated many times to yield variance estimates of WAR.
+The general idea is to use resampling techniques to compute
+variance estimates for openWAR. The \code{resample} argument controls
+how that resampling is done.
+
+For \code{resample = 'plays'}, \code{\link{makeWAR}} is run on the actual
+plays passed in the \code{data} argument, if it hasn't been computed already.
+The resulting RAA values (for each play) are an estimate of what actually happened.
+These RAA values are resampled \code{N} times.
+
+\code{resample = 'models'} is not currently implemented, but in future versions,
+this option would allow you to resample the rows of the original data, run
+\code{\link{makeWAR}} on each resampled data set, collect all of the models
+generated during that process, and then evaluate the original data using each
+of the resampled models. This would allow you isolate the modeling error.
+
+For \code{resample = 'both'}, the plays are resampled, and \code{\link{makeWAR}}
+is computed on each resampled data set. Note that this is both computationally
+and memory intensive.
 }
 \examples{
 \dontrun{
-res = shakeWAR(May, resample='plays', N=5)
+res <- shakeWAR(May, resample='plays', N=5)
 summary(res)
 }
 \dontrun{

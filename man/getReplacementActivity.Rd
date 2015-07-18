@@ -10,7 +10,7 @@ getReplacementActivity(data, replacementIds)
 \method{getReplacementActivity}{openWARPlays}(data, replacementIds)
 }
 \arguments{
-\item{data}{A data.frame of class 'openWARPlays'}
+\item{data}{A data.frame of class \code{\link{openWARPlays}}}
 
 \item{replacementIds}{A vector of playerIds for replacement-level players}
 }

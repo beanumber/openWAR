@@ -10,7 +10,7 @@ getReplacementMeans(data, replIds)
 \method{getReplacementMeans}{openWARPlays}(data, replIds)
 }
 \arguments{
-\item{data}{A data.frame of class 'openWARPlays'}
+\item{data}{A data.frame of class \code{\link{openWARPlays}}}
 
 \item{replIds}{MLBAM IDs of specific players that you want to designate as replacement-level}
 }

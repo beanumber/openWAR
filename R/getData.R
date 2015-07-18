@@ -1,17 +1,18 @@
 #' @title getData
 #' 
-#' @description Retrieves MLBAM GameDay files for a specified time interval using multiple calls of the gameday function.  
+#' @description Retrieves MLBAM GameDay files for a specified time interval using
+#'  multiple calls of the \code{\link{gameday}} function.  
 #' 
-#' @details Given a beginning and end date, this function will retrieve all data from the MLABM
-#' GameDay server in the specified interval and process them into a single data.frame. 
+#' @details Given a beginning and end date, this function will retrieve all data from the MLBAM
+#' GameDay server in the specified interval and process them into a single data frame. 
 #' 
-#' @param start A valid date in yyyy-mm-dd format (default is \code{Sys.Date() - 1} (i.e. yesterday))
+#' @param start A valid date in yyyy-mm-dd format (default is \code{\link{Sys.Date}() - 1} (i.e. yesterday))
 #' @param end A valid date in yyyy-mm-dd format (default is \code{NULL}, which then uses the same value as \code{start} (i.e. yesterday))
 #' @param gameIds a vector of specific gameIds that you want to retrieve. If 
 #' NULL (the default), then the dates are used to fetch the relevant gameIds
 #' @param drop.suspended Logical indicating whether games with fewer than 5 innings should be excluded.  Default is \code{TRUE}.
 #' 
-#' @return A data.frame of class 'GameDayPlays' consisting of play-by-play data 
+#' @return A \code{\link{tbl_df}} of class \code{\link{GameDayPlays}} consisting of play-by-play data 
 #' 
 #' @import dplyr
 #'
@@ -61,23 +62,13 @@ getData <- function(start = Sys.Date() - 1, end = NULL, gameIds = NULL, drop.sus
 }
 
 
-#' @title getDataMonthly
-#' 
-#' @description Retrieves MLBAM GameDay files for a single month 
-#' 
-#' @details Given a year and month, this function will retrieve data from the 
-#' GameDay server from the specified month and process them into a single data.frame.
-#' 
+#' @rdname getData
 #' @param yyyy A year
 #' @param m A numeric value corresponding to a month
-#' 
-#' @return A data.frame of class 'GameDayPlays' consisting of play-by-play data 
-#' 
 #' @export
-#' @export getDataMonthly
 #' @examples
 #' 
-#' #Retrieve all of the MLBAM data from May 2013
+#' # Retrieve all of the MLBAM data from May 2013
 #' \dontrun{
 #' # ds = getDataMonthly(2013, 5)
 #' }
@@ -88,22 +79,11 @@ getDataMonthly <- function(yyyy = 2013, m = 5) {
     return(getData(start, end))
 }
 
-#' @title getDataWeekly
-#' 
-#' @description Retrieves MLBAM GameDay files for a single week
-#' 
-#' @details Given a date, this function will retrieve data from the week starting on the specified date from the 
-#' GameDay server and process them into a single data.frame.
-#' 
-#' @param start A valid date in yyyy-mm-dd format (default Sys.Date()-8)
-#' 
-#' @return A data.frame of class 'GameDayPlays' consisting of play-by-play data 
-#' 
+#' @rdname getData
 #' @export
-#' @export getDataWeekly
 #' @examples
 #' 
-#' #Retrieve all the data from the first week of the 2013 season
+#' # Retrieve all the data from the first week of the 2013 season
 #' \dontrun{
 #' ds = getDataWeekly('2013-03-31')
 #' }
@@ -160,7 +140,7 @@ getGameIds <- function(date = Sys.Date()) {
 #' @param data a data.frame returned by \code{\link{getData}}
 #' @param ... currently ignored
 #'  
-#' @return A data.frame of class 'GameDayPlays' consisting of play-by-play data 
+#' @return A data.frame of class \code{\link{GameDayPlays}} consisting of play-by-play data 
 #' 
 #' @export
 #' @examples

@@ -11,12 +11,12 @@ setClass("openWARPlays", contains = "data.frame")
 #' 
 #' @description Tabulates runs above average (RAA) values per player
 #' 
-#' @details Takes an object of class 'openWARPlays' and consolidates the RAA values by player
+#' @details Takes an object of class \code{\link{openWARPlays}} and consolidates the RAA values by player
 #' 
-#' @param data An object of class 'openWARPlays' 
+#' @param data An object of class \code{\link{openWARPlays}} 
 #' @param ... currently ignored
 #' 
-#' @return A data.frame of class 'openWARPlayers'
+#' @return A data.frame of class \code{\link{openWARPlayers}}
 #' 
 #' @import dplyr
 #' 

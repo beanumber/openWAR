@@ -2,13 +2,19 @@
 % Please edit documentation in R/getData.R
 \name{getData}
 \alias{getData}
+\alias{getDataMonthly}
+\alias{getDataWeekly}
 \title{getData}
 \usage{
 getData(start = Sys.Date() - 1, end = NULL, gameIds = NULL,
   drop.suspended = TRUE)
+
+getDataMonthly(yyyy = 2013, m = 5)
+
+getDataWeekly(start = Sys.Date() - 8)
 }
 \arguments{
-\item{start}{A valid date in yyyy-mm-dd format (default is \code{Sys.Date() - 1} (i.e. yesterday))}
+\item{start}{A valid date in yyyy-mm-dd format (default is \code{\link{Sys.Date}() - 1} (i.e. yesterday))}
 
 \item{end}{A valid date in yyyy-mm-dd format (default is \code{NULL}, which then uses the same value as \code{start} (i.e. yesterday))}
 
@@ -16,16 +22,21 @@ getData(start = Sys.Date() - 1, end = NULL, gameIds = NULL,
 NULL (the default), then the dates are used to fetch the relevant gameIds}
 
 \item{drop.suspended}{Logical indicating whether games with fewer than 5 innings should be excluded.  Default is \code{TRUE}.}
+
+\item{yyyy}{A year}
+
+\item{m}{A numeric value corresponding to a month}
 }
 \value{
-A data.frame of class 'GameDayPlays' consisting of play-by-play data
+A \code{\link{tbl_df}} of class \code{\link{GameDayPlays}} consisting of play-by-play data
 }
 \description{
-Retrieves MLBAM GameDay files for a specified time interval using multiple calls of the gameday function.
+Retrieves MLBAM GameDay files for a specified time interval using
+ multiple calls of the \code{\link{gameday}} function.
 }
 \details{
-Given a beginning and end date, this function will retrieve all data from the MLABM
-GameDay server in the specified interval and process them into a single data.frame.
+Given a beginning and end date, this function will retrieve all data from the MLBAM
+GameDay server in the specified interval and process them into a single data frame.
 }
 \examples{
 # Get data from one day
@@ -37,6 +48,14 @@ ds = getData(start = '2013-03-31', end = '2013-04-02')
 # Get data for entire 2013 season
 \dontrun{
 ds = getData(start = '2013-03-31', end = '2013-09-30')
+}
+# Retrieve all of the MLBAM data from May 2013
+\dontrun{
+# ds = getDataMonthly(2013, 5)
+}
+# Retrieve all the data from the first week of the 2013 season
+\dontrun{
+ds = getDataWeekly('2013-03-31')
 }
 }
 

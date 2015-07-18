@@ -13,7 +13,7 @@
 #'  \code{\link{contourplot}}.
 #' @param y y-coordinate for default method passed to \code{\link{contourplot}}.
 #' @param z z-coordinate for default method passed to \code{\link{contourplot}}.
-#' @param data a GameDayPlays dataset
+#' @param data a \code{\link{GameDayPlays}} dataset
 #' @param label a string to be used in the resulting filename
 #' @param write.pdf a \code{logical} indicating whether to write the contourplot
 #'  to a file

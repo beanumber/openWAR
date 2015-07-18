@@ -11,7 +11,7 @@ makeWAR(data, models = list(), verbose = TRUE, low.memory = TRUE, ...)
   low.memory = TRUE, ...)
 }
 \arguments{
-\item{data}{An object of class 'GameDayPlays'}
+\item{data}{An object of class \code{\link{GameDayPlays}}}
 
 \item{models}{A named list of models, each with a predict() method. See Details.}
 
@@ -24,19 +24,19 @@ not storing the model objects.}
 \item{...}{currently ignored}
 }
 \value{
-An object of class 'openWARPlays' which is a list of length 4 containing the following:
+An object of class \code{\link{openWARPlays}} which is a list of length 4 containing the following:
 \itemize{
-\item{plays}{A data.frame of class 'GameDayPlays' that is the same as the input to the function.}
-\item{data}{A data.frame of class 'GameDayPlaysExt' containing the original data along with appended rows containing the RAA values for each player involved in a plate appearance}
+\item{plays}{A data.frame of class \code{\link{GameDayPlays}} that is the same as the input to the function.}
+\item{data}{A data.frame of class \code{\link{GameDayPlaysExt}} containing the original data along with appended rows containing the RAA values for each player involved in a plate appearance}
  \item{models.used}{A list containing all of the model information for each of the models used in computing RAA.}
-  \item{openWAR}{A data.frame of class 'openWARPlays' containing only the columns necessry for input into the getWAR function.  }
+  \item{openWAR}{A data.frame of class \code{\link{openWARPlays}} containing only the columns necessry for input into the getWAR function.  }
 }
 }
 \description{
-Computes runs above average (RAA) for each player involved in each play of the 'GameDayPlays' object.
+Computes runs above average (RAA) for each player involved in each play of the \code{\link{GameDayPlays}} object.
 }
 \details{
-Within a 'GameDayPlays' object, each row consists of a single plate appearance and contains information about the batter, all of the baserunners,
+Within a \code{\link{GameDayPlays}} object, each row consists of a single plate appearance and contains information about the batter, all of the baserunners,
  the pitcher, and all of the fielders on the field during the plate appearance. The total value of the play as determined by the change in the run expectancy
  matrix from the beginning of the plate appearence to the end of the plate appearance is partitioned across all players involved in the play on offense,
  and that same value (with the opposite sign) is partitioned across the pitcher and all of the fielders.  Thus for every single plate appearance a runs above average (RAA) value is assigned

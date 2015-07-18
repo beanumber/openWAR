@@ -4,8 +4,8 @@
 \name{GameDayPlays-class}
 \alias{GameDayPlays-class}
 \title{GameDayPlays}
-\format{A \code{\link{GameDayPlays}} object. This is a \code{tbl_df} and
-\code{data.frame} with 62 columns. The columns are as follows:
+\format{A \code{\link{GameDayPlays}} object. This is a \code{\link{tbl_df}} and
+\code{\link{data.frame}} with 62 columns. The columns are as follows:
      \describe{
        \item{pitcherId}{The MLBAM id of the pitcher}
        \item{batterId}{The MLBAM id of the batter}
@@ -73,7 +73,7 @@
         Home plate has \code{theta} of 0.}
      }}
 \description{
-Contains the output from \code{\link{getData}}
+A data set that contains play-by-play information returned by \code{\link{getData}}
 }
 \examples{
 showClass('GameDayPlays')
