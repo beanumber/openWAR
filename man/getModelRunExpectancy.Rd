@@ -16,7 +16,7 @@ getModelRunExpectancy(data, mod.re = NULL, verbose = TRUE,
   verbose = TRUE, drop.incomplete = TRUE, ...)
 }
 \arguments{
-\item{data}{a GameDayPlays dataset}
+\item{data}{a \code{\link{GameDayPlays}} dataset}
 
 \item{mod.re}{an existing Run Expectancy Model}
 
@@ -34,7 +34,7 @@ An \code{\link{lm}} object
 Build the Run Expectancy Model
 }
 \details{
-This function will build the Run Expectancy Model used in \code{openWAR}.
+This function will build the Run Expectancy Model used in \code{\link{openWAR}}.
 }
 \examples{
 data(May)

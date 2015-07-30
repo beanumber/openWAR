@@ -10,15 +10,15 @@ getModels(data, ...)
 \method{getModels}{GameDayPlays}(data, ...)
 }
 \arguments{
-\item{data}{a GameDayPlays dataset}
+\item{data}{a \code{\link{GameDayPlays}} dataset}
 
 \item{...}{currently ignored}
 }
 \value{
-A list of model objects
+A \code{\link{list}} of model objects
 }
 \description{
-Retrieve various models trained on GameDayPlays data
+Retrieve various models trained on \code{\link{GameDayPlays}} data
 }
 \details{
 This function will retrieve various models based on the MLBAM data

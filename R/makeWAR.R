@@ -233,7 +233,9 @@ makeWARFielding = function(data, ...) {
     message("...Estimating Fielding Runs Above Average...")
     
     # Compute the collective responsibility of all fielders
-    p.hat = getModelFieldingCollective(data[, c("fielderId", "our.x", "our.y")])
+    fmod = getModelFieldingCollective(data[, c("fielderId", "our.x", "our.y")])
+    message("....Applying the collective fielding model...")
+    p.hat <- predict(fmod, newdata = select_(data, ~our.x, ~our.y))
     # Step 2a: Define \delta.field for the defense, collectively
     delta.field = data$delta * p.hat
     

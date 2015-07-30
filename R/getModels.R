@@ -1,17 +1,16 @@
 #' @title getModels
-#' @aliases getModels.GameDayPlays
 #' 
-#' @description Retrieve various models trained on GameDayPlays data
+#' @description Retrieve various models trained on \code{\link{GameDayPlays}} data
 #' 
 #' @details This function will retrieve various models based on the MLBAM data 
 #' set and the openWAR framework. Currently this only returns the Run Expectancy Model.
 #' 
-#' @param data a GameDayPlays dataset
+#' @param data a \code{\link{GameDayPlays}} dataset
 #' @param ... currently ignored
 #' 
-#' @return A list of model objects
+#' @return A \code{\link{list}} of model objects
 #' 
-#' @export getModels
+#' @export
 #' @examples
 #' 
 #' data(May)
@@ -35,13 +34,12 @@ getModels.GameDayPlays = function(data, ...) {
 }
 
 #' @title getModelRunExpectancy
-#' @aliases getModelRunExpectancy
 #' 
 #' @description Build the Run Expectancy Model
 #' 
-#' @details This function will build the Run Expectancy Model used in \code{openWAR}.
+#' @details This function will build the Run Expectancy Model used in \code{\link{openWAR}}.
 #' 
-#' @param data a GameDayPlays dataset
+#' @param data a \code{\link{GameDayPlays}} dataset
 #' @param mod.re an existing Run Expectancy Model
 #' @param verbose print messages to screen during operation?
 #' @param drop.incomplete a LOGICAL indicating whether incomplete innings (e.g. walk-off innings)
@@ -197,7 +195,7 @@ getModelFieldingRF = function(data) {
 #' @details Computes a 2D kernel smoothed estimate of the probability that *any* of the 9 fielders
 #' will make a play on a ball in play
 #' 
-#' @param data An MLBAM data.frame 
+#' @param data A \code{\link{GameDayPlays}} object
 #' 
 #' @return a vector representing the probability that each ball in play will be fielded
 #' 
@@ -206,9 +204,27 @@ getModelFieldingRF = function(data) {
 #' @importFrom KernSmooth bkde2D
 #' @importFrom Hmisc whichClosest
 #' 
+#' @examples 
+#' 
+#' fmod <- getModelFieldingCollective(May)
+#' plotFielding(fmod)
 #' 
 
-getModelFieldingCollective = function(data) {
+getModelFieldingCollective = function(data) { UseMethod("getModelFieldingCollective"); }
+
+#' @export
+#' @rdname getModelFieldingCollective
+#' @method getModelFieldingCollective GameDayPlays
+
+getModelFieldingCollective.GameDayPlays = function(data) {
+  getModelFieldingCollective(filter_(data, ~isBIP == TRUE))
+}
+
+#' @export
+#' @rdname getModelFieldingCollective
+#' @method getModelFieldingCollective default
+#' 
+getModelFieldingCollective.default = function(data) {
     message("....Computing the collective fielding model...")
     data = dplyr::mutate_(data, wasFielded = ~!is.na(fielderId))
     outs = dplyr::select_(dplyr::filter_(data, ~wasFielded == TRUE), ~our.x, ~our.y)
@@ -216,26 +232,28 @@ getModelFieldingCollective = function(data) {
     # Find 2D kernel density estimates for hits and outs Make sure to specify the range, so that they over estimated over the
     # same grid
     grid = list(range(data$our.x, na.rm = TRUE), range(data$our.y, na.rm = TRUE))
-    fit.out <- KernSmooth::bkde2D(outs, bandwidth = c(10, 10), range.x = grid)
-    fit.hit <- KernSmooth::bkde2D(hits, bandwidth = c(10, 10), range.x = grid)
+    fit.out <- KernSmooth::bkde2D(as.matrix(outs), bandwidth = c(10, 10), range.x = grid)
+    fit.hit <- KernSmooth::bkde2D(as.matrix(hits), bandwidth = c(10, 10), range.x = grid)
+    class(fit.out) <- union("bkde2D", class(fit.out))
+    class(fit.hit) <- union("bkde2D", class(fit.hit))
     
-    field.smooth = data.frame(cbind(expand.grid(fit.out$x1, fit.out$x2), isOut = as.vector(fit.out$fhat)), isHit = as.vector(fit.hit$fhat))
-    names(field.smooth)[1:2] = c("x", "y")
-    # Plot the surfaces wireframe(isOut ~ x + y, data=field.smooth, scales = list(arrows = FALSE), drape = TRUE, colorkey =
-    # TRUE) wireframe(isHit ~ x + y, data=field.smooth, scales = list(arrows = FALSE), drape = TRUE, colorkey = TRUE)
-    
-    # Make sure to add a small amount to avoid division by zero
-    field.smooth = dplyr::mutate_(field.smooth, wasFielded = ~(isOut/(isOut + isHit + 1e-08)))
-    # summary(field.smooth) fieldingplot(wasFielded ~ x + y, data=field.smooth, label = 'cum_resp', write.pdf=TRUE)
-    
-    fit.all = function(x, y) {
-        x.idx = Hmisc::whichClosest(field.smooth$x, x)
-        y.idx = Hmisc::whichClosest(field.smooth$y, y)
-        match = dplyr::filter_(field.smooth, ~x == field.smooth$x[x.idx] & y == field.smooth$y[y.idx])
-        return(match$wasFielded)
-    }
-    
-    message("....Applying the collective fielding model...")
-    resp.field = mapply(fit.all, data$our.x, data$our.y)
-    return(resp.field)
-} 
+    fmod <- fit.out
+    fmod$fhat <- fit.out$fhat / (fit.out$fhat + fit.hit$fhat + 1e-08)
+    return(fmod)
+}
+
+#' @export
+
+predict.bkde2D <- function(object, ...) {
+  dots <- list(...)
+  newdata <- dots$newdata
+  if (ncol(newdata) < 2) {
+    stop("newdata must have at least two columns")
+  }
+  # find the indices that match closest
+  x.idx = Hmisc::whichClosest(object$x1, as.numeric(as.data.frame(newdata)[,1]))
+  y.idx = Hmisc::whichClosest(object$x2, as.numeric(as.data.frame(newdata)[,2]))
+  zHat <- apply(data.frame(x.idx, y.idx), MARGIN = 1, function(x) { object$fhat[x[1], x[2]]; })
+  return(zHat)
+}
+

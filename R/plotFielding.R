@@ -1,4 +1,4 @@
-#' @title fieldingplot
+#' @title plotFielding
 #' 
 #' @description Creates a plot of the fielding model for an individual player
 #' 
@@ -8,7 +8,8 @@
 #' paper. However, this function is not exported, since it is not really accessible
 #' to end users. We hope to add this functionality in a future release. 
 #' 
-#' @param x a model object, currently \code{\link{lm}} and \code{\link{glm}} are
+#' @param x a model object, currently \code{\link{lm}}, \code{\link{glm}}, and
+#' \code{\link{bkde2D}} are
 #'  supported. For the default method this is an x-coordinate to be passed to
 #'  \code{\link{contourplot}}.
 #' @param y y-coordinate for default method passed to \code{\link{contourplot}}.
@@ -23,6 +24,7 @@
 #' @importFrom RColorBrewer brewer.pal
 #' @importFrom mosaic lhs
 #' 
+#' @export
 #' @return A contourplot object
 #' 
 #' @examples
@@ -31,21 +33,23 @@
 #' library(dplyr)
 #' BIP <- filter(Mayplus, isBIP == TRUE)
 #' \dontrun{
-#' fielding = makeWARFielding(BIP)
+#' fielding <- makeWARFielding(BIP)
 #' }
 #' 
 
-fieldingplot = function(x, data, ...) UseMethod("fieldingplot")
+plotFielding = function(x, ...) UseMethod("plotFielding")
 
-#' @rdname fieldingplot
+#' @export
+#' @rdname plotFielding
 
-fieldingplot.glm = function(x, data, ...) {
-    fieldingplot.lm(x, data, ...)
+plotFielding.glm = function(x, ...) {
+    NextMethod()
 }
 
-#' @rdname fieldingplot
+#' @export
+#' @rdname plotFielding
 
-fieldingplot.lm = function(x, data, ...) {
+plotFielding.lm = function(x, ...) {
     model = x
     # make sure that the model object passed has a predict() method
     if (sum(paste("predict.", class(model), sep = "") %in% methods(predict)) == 0) {
@@ -59,12 +63,13 @@ fieldingplot.lm = function(x, data, ...) {
     
     label = gsub("[^A-Z]", "", paste(lhs(terms(model)), collapse = ""))
     
-    fieldingplot.formula(z.hat ~ our.x + our.y, data = my.grid, label = label, ...)
+    plotFielding.formula(z.hat ~ our.x + our.y, data = my.grid, label = label, ...)
 }
 
-#' @rdname fieldingplot
+#' @export
+#' @rdname plotFielding
 
-fieldingplot.formula = function(x, data, label = "label", write.pdf = FALSE, ...) {
+plotFielding.formula = function(x, label = "label", write.pdf = FALSE, ...) {
     
     if (write.pdf) {
         filename = paste("fielding_", label, ".pdf", sep = "")
@@ -81,13 +86,38 @@ fieldingplot.formula = function(x, data, label = "label", write.pdf = FALSE, ...
     }
 }
 
-#' @rdname fieldingplot
+#' @export
+#' @rdname plotFielding
 
-fieldingplot.default = function(x, y, z, label = "label", write.pdf = FALSE, ...) {
+plotFielding.default = function(x, y, z, label = "label", write.pdf = FALSE, ...) {
     stop("No available methods")
 }
 
-#' @rdname fieldingplot
+
+#' @export
+#' @rdname plotFielding
+#' @method plotFielding bkde2D
+#' 
+#' @examples 
+#' fmod <- getModelFieldingCollective(May)
+#' plotFielding(fmod)
+#' 
+
+plotFielding.bkde2D <- function(x, ...) {
+  contourplot(x = x$fhat, row.values = x$x1, column.values = x$x2,
+              panel = panel.fielding, region = TRUE, alpha.regions = 0.5, 
+              col.regions = colorRampPalette(RColorBrewer::brewer.pal(9, "Blues"))(100), 
+              cuts = 10, contour = TRUE,
+              #        , xlim = c(-350, 350), ylim = c(0, 550)
+              xlab = "Horizontal Distance from Home Plate (ft.)", 
+              ylab = "Vertical Distance from Home Plate (ft.)", 
+              ...
+              )
+}
+
+
+#' @rdname plotFielding
+#' @export
 
 panel.fielding = function(x, y, z, ...) {
   panel.baseball()
