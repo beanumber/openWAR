@@ -1,7 +1,7 @@
 #' 
-#' @title Compute each players openWAR.
+#' @title Compute each player's openWAR.
 #' 
-#' @description Tabulates each players value of openWAR given either an object of class \code{GameDayPlays} 
+#' @description Tabulates each player's value of openWAR given either an object of class \code{GameDayPlays} 
 #' or a list containing a data frame of class \code{openWARPlays}.
 #' 
 #' @details If an object of \code{GameDayPlays} is input to the function \code{getWAR}, the function \code{makeWAR} is called internally to first process 
