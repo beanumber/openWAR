@@ -1,8 +1,11 @@
-#' @title gameday
+#' @title Convenience class for dealing with MLBAM GameDay files 
 #' 
-#' @description Convenience class for dealing with MLBAM GameDay files 
+#' @description Each gameId corresponds to one object of class \code{\link{gameday}}
 #' 
-#' @details Each gameId corresponds to one object of class \code{\link{gameday}}
+#' @details A \code{\link{gameday}} object is a list containing 4 elements: \code{gameId}, \code{base}, \code{url}, and \code{ds}.  \code{gameId} is the 
+#' unique identifier for a game, \code{base} contains the base URL corresponding the the \code{gameId}, \code{url} contains the sub urls pointing to different 
+#' data sets that are combined together to create an object of class \code{\link{GameDayPlays}} containing play-by-play data.  The \code{ds} slot of the list 
+#' contains the \code{\link{GameDayPlays}} object of play-by-play data.  
 #' 
 #' @param gameId A valid MLBAM gameId
 #' @param ... currently ignored

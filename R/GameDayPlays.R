@@ -1,6 +1,6 @@
 utils::globalVariables("event")
 
-#' @title GameDayPlays
+#' @title An object containing play-by-play data
 #' @aliases GameDayPlays-class
 #' 
 #' @description A data set that contains play-by-play information returned by \code{\link{getData}}

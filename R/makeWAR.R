@@ -1,4 +1,4 @@
-#' @title makeWAR
+#' @title Compute the runs above average (RAA)  for each play.
 #' 
 #' @description Computes runs above average (RAA) for each player involved in each play of the \code{\link{GameDayPlays}} object. 
 #' 

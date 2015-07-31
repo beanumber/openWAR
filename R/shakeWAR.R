@@ -1,6 +1,6 @@
-#' @title shakeWAR
+#' @title Estimates the variance of openWAR.
 #' 
-#' @description Resample to obtain variance estimates for WAR
+#' @description Resample to obtain variance estimates for WAR.
 #' 
 #' @details The general idea is to use resampling techniques to compute
 #' variance estimates for openWAR. The \code{resample} argument controls 
