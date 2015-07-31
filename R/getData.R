@@ -94,9 +94,9 @@ getDataWeekly <- function(start = Sys.Date() - 8) {
 }
 
 
-#' @title getGameIds
+#' @title Retrives gameIds.
 #' 
-#' @description Retrieves MLBAM gameIds for a specified date
+#' @description Retrieves MLBAM gameIds for a specified date.
 #' 
 #' @details Downloads information for a given day from the MLBAM website and retrieves
 #' a list of valid gameIds. This function is used internally in the function \code{getData}.
@@ -130,11 +130,11 @@ getGameIds <- function(date = Sys.Date()) {
     return(games)
 }
 
-#' @title updateGame
+#' @title Updates data.
 #' 
-#' @description Replaces data from a single game
+#' @description Replaces data from a single game.
 #' 
-#' @details Deletes and then appends fresh information from a particular game to the original data
+#' @details Deletes and then appends fresh information from a particular game to the original data.
 #' 
 #' @param gameIds A character vector of valid MLBAM gameIds
 #' @param data a data.frame returned by \code{\link{getData}}
