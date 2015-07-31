@@ -291,7 +291,7 @@ makeWAR.GameDayPlays_Batters = function(x, models = list(), verbose = TRUE, low.
 }
 
 
-#' @title makeWARre24
+#' @title Compute RE24 before and after each PA.
 #' 
 #' @description Compute the Run Expectancy at the beginning and end of every play
 #' in a data frame, as well as their difference (RE24).
@@ -336,7 +336,7 @@ makeWARre24 = function(data, mod.re = NULL, ...) {
 }
 
 
-#' @title makeWARFielding
+#' @title Compute RAA for fielders.
 #' 
 #' @description Compute the RAA values for all of the fielders.  Used internally in \code{makeWAR}.
 #' 
@@ -377,9 +377,9 @@ makeWARFielding = function(data, ...) {
 
 
 #' 
-#' @title getFielderRAA
+#' @title Tabulate RAA for fielders.
 #' 
-#' @description Determine the Runs Above Average (RAA) of the fielders
+#' @description Determine the Runs Above Average (RAA) of the fielders.
 #' 
 #' @details RAA is the residuals from a simple fielding model.  Used in the function \code{makeWARFielding}
 #' 
@@ -415,9 +415,9 @@ getFielderRAA = function(data) {
 
 
 
-#' @title getFielderResp
+#' @title Compute total fielder responsibility.
 #' 
-#' @description Find the shared responsibility models for balls in play
+#' @description Find the shared responsibility models for balls in play.
 #' 
 #' @details Fits 9 logistic regression models, each giving the probability of 
 #' a fielder at one of the 9 defensive positions successfully converting the 
@@ -469,11 +469,16 @@ getFielderResp = function(data, ...) {
 }
 
 
-#' @title makeWARBaserunning
+#' @title Computes RAA for each baserunner.
 #' 
-#' @description Find the shared responsibility models for balls in play
+#' @description Calculates the runs above average (RAA) created by each baserunner.  
 #' 
-#' @details blah
+#' @details These RAA values are calculated by first computing the expected number of bases 
+#' advanced given a starting position (e.g. runner on second) and an event (e.g. Single).  
+#' Runners are attributed RAA based on how much they exceeded or underperformed 
+#' relative to the expected number of bases advanced given an event.  For example, a baserunner who 
+#' advances exactly the expected number of bases given an event would not be attributed any 
+#' RAA for that play.  
 #' 
 #' @param data An MLBAM data.frame 
 #' @param ... currently ignored
