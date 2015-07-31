@@ -4,7 +4,7 @@
 #' @description Tabulates each players value of openWAR given either an object of class \code{GameDayPlays} 
 #' or a list containing a data frame of class \code{openWARPlays}.
 #' 
-#' @deatils If an object of \code{GameDayPlays} is input to the function \code{getWAR}, the function \code{makeWAR} is called internally to first process 
+#' @details If an object of \code{GameDayPlays} is input to the function \code{getWAR}, the function \code{makeWAR} is called internally to first process 
 #' the data, then \code{getWAR} tabulates the final values of openWAR for each player.  Alternatively, the function 
 #' \code{makeWAR} can be run separately and the output from this function can be passed to \code{getWAR}, which will complete the tabulation of openWAR.  
 #' By default, the data set used to compute the replacement level is the same as the input data set.  Using the \code{dataRepl} option
