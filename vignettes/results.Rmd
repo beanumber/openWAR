@@ -94,7 +94,7 @@ We have our point estimates, but now let's put some variance estimates on those.
 
 ```{r, eval=FALSE}
 sims <- shakeWAR(May)
-plot(openWAR2012, playerIds = 431151)
+plot(sims, playerIds = 431151)
 ```
 
 Of course, comparing the openWAR components among players, along with their variance estimates, is most helpful.

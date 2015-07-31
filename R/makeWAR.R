@@ -1,5 +1,4 @@
 #' @title makeWAR
-#' @aliases makeWAR.GameDayPlays
 #' 
 #' @description Computes runs above average (RAA) for each player involved in each play of the \code{\link{GameDayPlays}} object. 
 #' 
@@ -10,38 +9,53 @@
 #'  to every player involved in the play.  
 #'  If no \code{models} argument is supplied, then all
 #' models necessary for the computation of openWAR will be generated on the data set given. 
-#' The output of this function is then used in the function \code{getWAR} to calculate a Wins Above Replacement (WAR) value for each player. 
+#' The output of this function is then used in the function \code{\link{getWAR}} to calculate a Wins Above Replacement (WAR) value for each player. 
 #' 
-#' If \code{verbose == TRUE}, then various pieces of information will be displayed during the comuptation.
+#' If \code{verbose == TRUE}, then various pieces of information will be displayed during the computation.
+#' 
+#' The \code{\link{makeWAR}} algorithm consists of seven steps, each of which appends columns to the original data frame.
+#' \itemize{
+#'  \item Compute the change in run expectancy (\eqn{\delta}) on each plate appearance
+#'  \item Partition \eqn{-\delta} among the fielders using \code{\link{makeWARFielding}}
+#'  \item Partition the remaining \eqn{\delta} for the pitcher using \code{getModelPitching}
+#'  \item Adjust \eqn{\delta} for cicumstance, and attribute it to the offense using \code{getModelOffense}
+#'  \item Partition some of \eqn{\delta} for the baserunners, using \code{getModelBaserunning}
+#'  \item Attribute the rest of \eqn{\delta} to the batter, and adjust using \code{getModelBatting}
+#'  \item Parition the baserunning \eqn{\delta} to the various baserunners, using \code{\link{makeWARBaserunning}}
+#' }
 #' 
 #' Elements of \code{models}:
 #' \itemize{
 #' \item{run-expectancy}{: a model for assigning a run expectancy value to any of the 24 (base,out) states. Variables
-#' must be 'startCode' [0-7] and 'startOuts' [0-2]}
+#' must be \code{startCode} [0-7] and \code{startOuts} [0-2]}
 #' \item{pitching}{: a model for the expected outcome of a plate appearance attributable to the pitcher. Variables
-#' must be 'venueId', 'throws' [L/R], and 'stands' [L/R]}
+#' must be \code{venueId}, \code{throws} [L/R], and \code{stands} [L/R]}
 #' \item{offense}{: a model for the expected outcome of a plate appearance attributable to the offense. Variables
-#' must be 'venueId', 'throws' [L/R], and 'stands' [L/R]}
+#' must be \code{venueId}, \code{throws} [L/R], and \code{stands} [L/R]}
 #' \item{baserunning}{: a model for the expected contribution of the baserunners to a plate appearance. Variables
-#' must be 'event' (the type of batting event), 'startCode' [0-7], and 'startOuts' [0-2]}
+#' must be \code{event} (the type of batting event), \code{startCode} [0-7], and \code{startOuts} [0-2]}
 #' \item{batting}{: a model for the expected contribution of the batter to a plate appearance. Variables
-#' must be 'batterPos' (the defensive position of the batter)}
+#' must be \code{batterPos} (the defensive position of the batter)}
 #' }
 #' 
-#' @param data An object of class \code{\link{GameDayPlays}}
-#' @param models A named list of models, each with a predict() method. See Details.
+#' @param x An object of class \code{\link{GameDayPlays}}_*, where * can be the output of 
+#' and of the seven steps listed below.
+#' @param models A named list of models, each with a \code{\link{predict}} method. See Details.
 #' @param verbose A \code{logical} indicating whether you want various messages 
 #' and information to be displayed during the computation
 #' @param low.memory A \code{logical} indicating whether to conserve memory by 
 #' not storing the model objects. 
+#' @param step A \code{logical} indicating whether the function should stop after one of the seven steps.
 #' @param ... currently ignored
 #' 
-#' @return An object of class \code{\link{openWARPlays}} which is a list of length 4 containing the following: 
+#' @return An object of class \code{\link{openWARPlays}} which is a list containing the following: 
 #' \itemize{
-#' \item{plays}{A data.frame of class \code{\link{GameDayPlays}} that is the same as the input to the function.}
-#' \item{data}{A data.frame of class \code{\link{GameDayPlaysExt}} containing the original data along with appended rows containing the RAA values for each player involved in a plate appearance}
-#'  \item{models.used}{A list containing all of the model information for each of the models used in computing RAA.}
-#'   \item{openWAR}{A data.frame of class \code{\link{openWARPlays}} containing only the columns necessry for input into the getWAR function.  }
+#'  \item{data}{A data.frame containing the original data along with appended 
+#'  rows containing the RAA values for each player involved in a plate appearance.
+#'  NULL if \code{low.memory} is TRUE.}
+#'  \item{models.used}{A list containing all of the model information for each 
+#'  of the models used in computing RAA. NULL if \code{low.memory} is TRUE.}
+#'  \item{openWARPlays}{A data.frame of class \code{\link{openWARPlays}} containing only the columns necessry for input into the getWAR function.  }
 #' }
 #' 
 #' @import dplyr
@@ -50,121 +64,290 @@
 #' @examples
 #' 
 #' \dontrun{
-#' res = makeWAR(May)
+#' res <- makeWAR(May)
 #' summary(getWAR(res))
+#' 
+#' print(object.size(res), units = "Mb")
+#' res <- makeWAR(May, low.memory = FALSE)
+#' print(object.size(res), units = "Mb"
+#' names(res$models.used)
 #' }
 
-makeWAR = function(data, models = list(), verbose = TRUE, low.memory = TRUE, ...) UseMethod("makeWAR")
+makeWAR = function(x, models = list(), verbose = TRUE, low.memory = TRUE, step = FALSE, ...) UseMethod("makeWAR")
 
 #' @export
 #' @rdname makeWAR
 #' @method makeWAR GameDayPlays
+#' @examples 
+#' res <- makeWAR(May, step = TRUE)
+#' print(object.size(res), units = "Mb")
 
-makeWAR.GameDayPlays = function(data, models = list(), verbose = TRUE, low.memory = TRUE, ...) {
-    orig = data
-    data$idx = 1:nrow(data)
-    ############################################################################
-    ############### Step 1: Define \delta, the change in expected runs
-    mod.re = getModelRunExpectancy(select_(data, "outsInInning", "runsFuture", "startCode", "startOuts"), 
-                                   models[["run-expectancy"]], verbose)
-    models.used = list(`run-expectancy` = mod.re)
-    deltas = makeWARre24(select_(data, "startCode", "startOuts", "endCode", "endOuts", "runsOnPlay"), 
-                         mod.re, verbose)
-    data = cbind(data, deltas)
+makeWAR.GameDayPlays = function(x, models = list(), verbose = TRUE, low.memory = TRUE, step = FALSE, ...) {
+  x$idx <- 1:nrow(x)
+  # Step 1: Define \delta, the change in expected runs
+  mod.re = getModelRunExpectancy(select_(x, "outsInInning", "runsFuture", "startCode", "startOuts"), 
+                                 models[["run-expectancy"]], verbose)
+  models.used <- list(`run-expectancy` = mod.re)
+  deltas = makeWARre24(select_(x, "startCode", "startOuts", "endCode", "endOuts", "runsOnPlay"), 
+                       mod.re, verbose)
+  data <- bind_cols(x, deltas)
+  
+  # Add the new class
+  out <- list(data = data, models.used = models.used)
+  class(out) = c("GameDayPlays_Runs", class(out))
+  if (step) {
+    return(out)
+  } else {
+    makeWAR(out, models, verbose, low.memory, step, ...)
+  }
+}
+
+
+#' @export
+#' @rdname makeWAR
+#' @method makeWAR GameDayPlays_Runs
+#' @examples 
+#' res <- makeWAR(May, step = TRUE)
+#' print(object.size(res), units = "Mb")
+#' 
+#' res2 <- makeWAR(res, step = TRUE)
+#' print(object.size(res2), units = "Mb")
+#' 
+
     
-    ############################################################################
+makeWAR.GameDayPlays_Runs = function(x, models = list(), verbose = TRUE, low.memory = TRUE, step = FALSE, ...) {
     ############### Step 2: Define RAA for the defense Work only with the subset
     ############### of data for which the ball is in play and keep track of the 
     ############### indices 
-    ############################################################################
-    bip.idx = which(data$isBIP == TRUE)
-    ds.field = data[bip.idx, ]
-    fielding = makeWARFielding(ds.field, models, verbose)
+  bip.idx <- which(x$data$isBIP == TRUE)
+  ds.field <- x$data[bip.idx, ]
+  fielding <- makeWARFielding(ds.field, models, verbose)
+  
+  for (col.name in names(fielding)) {
+      x$data[bip.idx, col.name] <- fielding[, col.name]
+  }
+  # Add the new class
+  class(x) = c("GameDayPlays_Fielding", class(x))
+  if (step) {
+    return(x)
+  } else {
+    makeWAR(x, models, verbose, low.memory, step, ...)
+  }
+}
+
+
+
+#' @export
+#' @rdname makeWAR
+#' @method makeWAR GameDayPlays_Fielding
+#' @examples 
+#' res <- makeWAR(May, step = TRUE)
+#' print(object.size(res), units = "Mb")
+#' 
+#' res2 <- makeWAR(res, step = TRUE)
+#' print(object.size(res2), units = "Mb")
+#' 
+#' res3 <- makeWAR(res2, step = TRUE)
+#' print(object.size(res3), units = "Mb")
+
+
+makeWAR.GameDayPlays_Fielding = function(x, models = list(), verbose = TRUE, low.memory = TRUE, step = FALSE, ...) {
+  # Step 3: Define RAA for the pitcher
+  x$data <- mutate_(x$data, delta.pitch = ~ifelse(is.na(delta.field), delta, delta - delta.field))
+  message("...Estimating Pitching Runs Above Average...")
+  mod.pitch <- getModelPitching(select_(x$data, "delta.pitch", "venueId", "throws", "stand"), 
+                               models[["pitching"]], verbose)
+  if (verbose) {
+    message("....Pitching Model....")
+    print(sort(coef(mod.pitch)))
+  }
+  
+  # append the model used to the list of models
+  x$models.used[["pitching"]] <- mod.pitch
+  # Note the pitcher RAA's are the negative residuals!
+  x$data <- mutate_(x$data, raa.pitch = ~predict(mod.pitch, newdata = x$data[, c("venueId", "throws", "stand")]) - delta.pitch)  
+  # Add the new class
+  class(x) = c("GameDayPlays_Pitching", class(x))
+  if (step) {
+    return(x)
+  } else {
+    makeWAR(x, models, verbose, low.memory, step, ...)
+  }
+}
+
+#' @export
+#' @rdname makeWAR
+#' @method makeWAR GameDayPlays_Pitching
+#' @examples 
+#' res <- makeWAR(May, step = TRUE)
+#' print(object.size(res), units = "Mb")
+#' 
+#' res2 <- makeWAR(res, step = TRUE)
+#' print(object.size(res2), units = "Mb")
+#' 
+#' res3 <- makeWAR(res2, step = TRUE)
+#' print(object.size(res3), units = "Mb")
+#' 
+#' res4 <- makeWAR(res3, step = TRUE)
+#' print(object.size(res4), units = "Mb")
     
-    for (col.name in names(fielding)) {
-        data[bip.idx, col.name] = fielding[, col.name]
-    }
     
-    ############################################################################
-    ############### Step 3: Define RAA for the pitcher
-    data <- mutate_(data, delta.pitch = ~ifelse(is.na(delta.field), delta, delta - delta.field))
-    message("...Estimating Pitching Runs Above Average...")
-    mod.pitch = getModelPitching(select_(data, "delta.pitch", "venueId", "throws", "stand"), 
-                                 models[["pitching"]], verbose)
-    if (verbose) {
-        message("....Pitching Model....")
-        print(sort(coef(mod.pitch)))
-    }
+makeWAR.GameDayPlays_Pitching = function(x, models = list(), verbose = TRUE, low.memory = TRUE, step = FALSE, ...) {    
+  # Step 4: Define RAA for the batter
+  message("...Building model for offense...")
+  mod.off <- getModelOffense(select_(x$data, "delta", "venueId", "throws", "stand"), 
+                            models[["offense"]], verbose)
+  if (verbose) {
+    message("....Offense Model....")
+    print(sort(coef(mod.off)))
+  }
+  x$models.used[["offense"]] <- mod.off
+  # delta.off is the contribution above average of the batter AND all of the runners
+  x$data <- mutate_(x$data, delta.off = ~delta - predict(mod.off, newdata = x$data[, c("venueId", "throws", "stand")]))
+  # Add the new class
+  class(x) = c("GameDayPlays_Offense", class(x))
+  if (step) {
+    return(x)
+  } else {
+    makeWAR(x, models, verbose, low.memory, step, ...)
+  }
+}    
+
+#' @export
+#' @rdname makeWAR
+#' @method makeWAR GameDayPlays_Offense
+#' @examples 
+#' res <- makeWAR(May, step = TRUE)
+#' print(object.size(res), units = "Mb")
+#' 
+#' res2 <- makeWAR(res, step = TRUE)
+#' print(object.size(res2), units = "Mb")
+#' 
+#' res3 <- makeWAR(res2, step = TRUE)
+#' print(object.size(res3), units = "Mb")
+#' 
+#' res4 <- makeWAR(res3, step = TRUE)
+#' print(object.size(res4), units = "Mb")
+#' 
+#' res5 <- makeWAR(res4, step = TRUE)
+#' print(object.size(res5), units = "Mb")
     
-    models.used[["pitching"]] = mod.pitch
-    # Note the pitcher RAA's are the negative residuals!
-    data <- mutate_(data, raa.pitch = ~predict(mod.pitch, newdata = data[, c("venueId", "throws", "stand")]) - delta.pitch)
-    
-    ############################################################################
-    ############### Step 4: Define RAA for the batter
-    message("...Building model for offense...")
-    mod.off = getModelOffense(select_(data, "delta", "venueId", "throws", "stand"), 
-                              models[["offense"]], verbose)
-    if (verbose) {
-        message("....Offense Model....")
-        print(sort(coef(mod.off)))
-    }
-    models.used[["offense"]] = mod.off
-    # delta.off is the contribution above average of the batter AND all of the runners
-    data <- mutate_(data, delta.off = ~delta - predict(mod.off, newdata = data[, c("venueId", "throws", "stand")]))
-    
-    # If runners are on base, partition delta between the batter and baserunners
-    br.idx = which(data$startCode > 0)
-    message("...Partitioning Offense into Batting and Baserunning...")
-    mod.br = getModelBaserunning(data[br.idx, c("delta.off", "event", "startCode", "startOuts")], 
-                                 models[["baserunning"]], verbose)
-    if (verbose) {
-        message("....Baserunning Model....")
-        message(paste("....", length(coef(mod.br)), "coefficients -- suppressing output..."))
-        # print(sort(coef(mod.br)))
-    }
-    models.used[["baserunning"]] = mod.br
-    # delta.br is the contribution of the baserunners beyond the event type
-    data[br.idx, "delta.br"] = data[br.idx, "delta.off"] - predict(mod.br, newdata = data[br.idx, c("event", "startCode", "startOuts")])
-    
-    # Whatever is left over goes to the batter -- just control for defensive position
-    data <- mutate_(data, delta.bat = ~ifelse(is.na(delta.br), delta, delta - delta.br))
-    message("...Estimating Batting Runs Above Average...")
-    mod.bat = getModelBatting(select_(data, "delta.bat", "batterPos"), 
-                              models[["batting"]], verbose)
-    if (verbose) {
-        message("....Batting Model....")
-        print(sort(coef(mod.bat)))
-    }
-    models.used[["batting"]] = mod.bat
-    # Control for batter position Note that including 'idx' is not necessary -- it just ensure that the argument passed is a
-    # data.frame
-    data <- mutate_(data, raa.bat = ~delta.bat - predict(mod.bat, newdata = data[, c("batterPos", "idx")]))
-    
-    
-    ############################################################################
-    ############### Step 5: Define RAA for the baserunners
-    br.fields = c("idx", "delta.br", "start1B", "start2B", "start3B", "end1B", "end2B", "end3B", "runnerMovement", "event", 
-        "startCode", "startOuts")
-    raa.br = makeWARBaserunning(data[br.idx, br.fields], models[["baserunning"]], verbose)
-    data = merge(x = data, y = raa.br, by = "idx", all.x = TRUE)
-    
-    ############################################################################
-    ############### Add the new class
-    class(data) = c("GameDayPlaysExt", "GameDayPlays", class(data))
-    # include the computations as a separate data.frame
-    id.fields = c("batterId", "start1B", "start2B", "start3B", "pitcherId", "playerId.C", "playerId.1B", "playerId.2B", "playerId.3B", 
-        "playerId.SS", "playerId.LF", "playerId.CF", "playerId.RF", "batterName", "pitcherName", "gameId", "event", "isPA")
-    delta.fields = c("delta", "delta.field", "delta.pitch", "delta.br", "delta.bat")
-    raa.fields = c("raa.bat", "raa.br1", "raa.br2", "raa.br3", "raa.pitch", "raa.P", "raa.C", "raa.1B", "raa.2B", "raa.3B", 
-        "raa.SS", "raa.LF", "raa.CF", "raa.RF")
-    openWARPlays = data[, c(id.fields, delta.fields, raa.fields)]
-    class(openWARPlays) = c("openWARPlays", class(openWARPlays))
-    if (low.memory) {
-        return(list(plays = NULL, data = NULL, models.used = NULL, openWAR = openWARPlays))
-    } else {
-        return(list(plays = orig, data = data, models.used = models.used, openWAR = openWARPlays))
-    }
+makeWAR.GameDayPlays_Offense = function(x, models = list(), verbose = TRUE, low.memory = TRUE, step = FALSE, ...) {    
+  # If runners are on base, partition delta between the batter and baserunners
+  br.idx <- which(x$data$startCode > 0)
+  message("...Partitioning Offense into Batting and Baserunning...")
+  mod.br <- getModelBaserunning(x$data[br.idx, c("delta.off", "event", "startCode", "startOuts")], 
+                               models[["baserunning"]], verbose)
+  if (verbose) {
+    message("....Baserunning Model....")
+    message(paste("....", length(coef(mod.br)), "coefficients -- suppressing output..."))
+    # print(sort(coef(mod.br)))
+  }
+  x$models.used[["baserunning"]] <- mod.br
+  # delta.br is the contribution of the baserunners beyond the event type
+  x$data[br.idx, "delta.br"] <- x$data[br.idx, "delta.off"] - predict(mod.br, newdata = x$data[br.idx, c("event", "startCode", "startOuts")])
+  # Add the new class
+  class(x) = c("GameDayPlays_Baserunning", class(x))
+  if (step) {
+    return(x)
+  } else {
+    makeWAR(x, models, verbose, low.memory, step, ...)
+  }
+}    
+
+#' @export
+#' @rdname makeWAR
+#' @method makeWAR GameDayPlays_Baserunning
+#' @examples 
+#' res <- makeWAR(May, step = TRUE)
+#' print(object.size(res), units = "Mb")
+#' 
+#' res2 <- makeWAR(res, step = TRUE)
+#' print(object.size(res2), units = "Mb")
+#' 
+#' res3 <- makeWAR(res2, step = TRUE)
+#' print(object.size(res3), units = "Mb")
+#' 
+#' res4 <- makeWAR(res3, step = TRUE)
+#' print(object.size(res4), units = "Mb")
+#' 
+#' res5 <- makeWAR(res4, step = TRUE)
+#' print(object.size(res5), units = "Mb")
+#' 
+#' res6 <- makeWAR(res5, step = TRUE)
+#' print(object.size(res6), units = "Mb")
+
+makeWAR.GameDayPlays_Baserunning = function(x, models = list(), verbose = TRUE, low.memory = TRUE, step = FALSE, ...) {
+  # Whatever is left over goes to the batter -- just control for defensive position
+  x$data <- mutate_(x$data, delta.bat = ~ifelse(is.na(delta.br), delta, delta - delta.br))
+  message("...Estimating Batting Runs Above Average...")
+  mod.bat <- getModelBatting(select_(x$data, "delta.bat", "batterPos"), 
+                            models[["batting"]], verbose)
+  if (verbose) {
+    message("....Batting Model....")
+    print(sort(coef(mod.bat)))
+  }
+  x$models.used[["batting"]] <- mod.bat
+  # Control for batter position Note that including 'idx' is not necessary -- it just ensures that the argument passed is a
+  # data.frame
+  x$data <- mutate_(x$data, raa.bat = ~delta.bat - predict(mod.bat, newdata = x$data[, c("batterPos", "idx")]))
+  # Add the new class
+  class(x) = c("GameDayPlays_Batters", class(x))
+  if (step) {
+    return(x)
+  } else {
+    makeWAR(x, models, verbose, low.memory, step, ...)
+  }
+}
+
+#' @export
+#' @rdname makeWAR
+#' @method makeWAR GameDayPlays_Batters
+#' @examples 
+#' res <- makeWAR(May, step = TRUE)
+#' print(object.size(res), units = "Mb")
+#' 
+#' res2 <- makeWAR(res, step = TRUE)
+#' print(object.size(res2), units = "Mb")
+#' 
+#' res3 <- makeWAR(res2, step = TRUE)
+#' print(object.size(res3), units = "Mb")
+#' 
+#' res4 <- makeWAR(res3, step = TRUE)
+#' print(object.size(res4), units = "Mb")
+#' 
+#' res5 <- makeWAR(res4, step = TRUE)
+#' print(object.size(res5), units = "Mb")
+#' 
+#' res6 <- makeWAR(res5, step = TRUE)
+#' print(object.size(res6), units = "Mb")
+#' 
+#' res7 <- makeWAR(res6, step = TRUE)
+#' print(object.size(res7), units = "Mb")
+  
+makeWAR.GameDayPlays_Batters = function(x, models = list(), verbose = TRUE, low.memory = TRUE, step = FALSE, ...) {
+  ############### Step 5: Define RAA for the baserunners
+  br.idx <- which(x$data$startCode > 0)
+  br.fields <- c("idx", "delta.br", "start1B", "start2B", "start3B", "end1B", "end2B", "end3B", "runnerMovement", "event", 
+                "startCode", "startOuts")
+  raa.br <- makeWARBaserunning(x$data[br.idx, br.fields], models[["baserunning"]], verbose)
+  x$data <- merge(x = x$data, y = raa.br, by = "idx", all.x = TRUE)
+
+  # include the computations as a separate data.frame
+  id.fields <- c("batterId", "start1B", "start2B", "start3B", "pitcherId", "playerId.C", "playerId.1B", "playerId.2B", "playerId.3B", 
+                "playerId.SS", "playerId.LF", "playerId.CF", "playerId.RF", "batterName", "pitcherName", "gameId", "event", "isPA")
+  delta.fields <- c("delta", "delta.field", "delta.pitch", "delta.br", "delta.bat")
+  raa.fields <- c("raa.bat", "raa.br1", "raa.br2", "raa.br3", "raa.pitch", "raa.P", "raa.C", "raa.1B", "raa.2B", "raa.3B", 
+                 "raa.SS", "raa.LF", "raa.CF", "raa.RF")
+  x$openWARPlays <- x$data[, c(id.fields, delta.fields, raa.fields)]
+  class(x$openWARPlays) = c("openWARPlays", class(x$openWARPlays))  
+  # Add the new class
+  class(x) <- "list"
+  if (low.memory) {
+    x$models.used <- NULL
+    x$data <- NULL
+  }
+  return(x)
 }
 
 

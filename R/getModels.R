@@ -65,7 +65,7 @@ getModelRunExpectancy = function(data, mod.re = NULL, verbose = TRUE, drop.incom
 #' @method getModelRunExpectancy default
 
 getModelRunExpectancy.default = function(data, mod.re = NULL, verbose = TRUE, drop.incomplete = TRUE, ...) {
-  return(getModelRunExpectancy.GameDayPlays(data, mod.re, verbose, drop.incomplete, ...))
+  return(getModelRunExpectancy(data, mod.re, verbose, drop.incomplete, ...))
 }
 
 
@@ -95,6 +95,7 @@ getModelRunExpectancy.GameDayPlays = function(data, mod.re = NULL, verbose = TRU
     }
     return(mod.re)
 }
+
 
 getModelPitching = function(data, mod.pitch = NULL, verbose = TRUE) {
     if (!paste("predict", class(mod.pitch), sep = ".") %in% methods(predict)) {
