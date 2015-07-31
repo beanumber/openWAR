@@ -54,7 +54,7 @@ shakeWAR <- function(data, N = 10, resample = "plays", ...) UseMethod("shakeWAR"
 #' }
 
 shakeWAR.list <- function(data, N = 10, resample = "plays", ...) {
-  if (!"openWAR" %in% names(data)) {
+  if (!"openWARPlays" %in% names(data)) {
     stop("the 'data' list does not contain processed openWAR!")
   }
   return(shakeWAR(data$openWAR, N, resample, ...))

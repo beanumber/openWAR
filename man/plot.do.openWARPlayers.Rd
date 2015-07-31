@@ -2,7 +2,7 @@
 % Please edit documentation in R/openWARPlayers.R
 \name{plot.do.openWARPlayers}
 \alias{plot.do.openWARPlayers}
-\title{plot.do.openWARPlayers}
+\title{Visualize resampled openWAR}
 \usage{
 \method{plot}{do.openWARPlayers}(x, playerIds = c(431151, 285079), ...)
 }
@@ -11,16 +11,16 @@
 
 \item{playerIds}{A vector of valid MLBAM player IDs present in the data argument}
 
-\item{...}{currently ignored}
+\item{...}{arguments passed to \code{\link{densityplot}}}
 }
 \value{
 a faceted densityplot
 }
 \description{
-Visualize WAR
+Visualize resampled openWAR
 }
 \details{
-Density Plot for WAR estimates
+Density Plots for openWAR estimates
 }
 \examples{
 \dontrun{

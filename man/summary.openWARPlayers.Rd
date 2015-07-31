@@ -2,19 +2,17 @@
 % Please edit documentation in R/openWARPlayers.R
 \name{summary.openWARPlayers}
 \alias{summary.openWARPlayers}
-\title{summary.openWARPlayers}
+\title{Summarize openWAR across players}
 \usage{
-\method{summary}{openWARPlayers}(object, n = 25, ...)
+\method{summary}{openWARPlayers}(object, ...)
 }
 \arguments{
 \item{object}{An object of class \code{\link{openWARPlayers}}}
 
-\item{n}{the number of players to display}
-
 \item{...}{currently ignored}
 }
 \description{
-Summarize WAR among players
+Summarize openWAR across players
 }
 \details{
 A summary of players' WAR
@@ -25,5 +23,7 @@ MayProcessed = makeWAR(May)
 }
 war <- getWAR(MayProcessed$openWAR)
 summary(war)
+summary(openWAR2012)
+summary(openWAR2013)
 }
 

@@ -2,3 +2,4 @@
 \.Rproj$
 ^\.gitignore$
 ^data-raw$
+^\.travis\.yml$

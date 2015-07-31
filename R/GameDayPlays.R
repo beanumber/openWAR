@@ -198,75 +198,44 @@ plot.GameDayPlays = function(x, batterName = NULL, pitcherName = NULL, events = 
     return(plot)
 }
 
-#' @title summary.GameDayPlays
+#' @title Summarize a GameDayPlays data set
 #' 
 #' @description Summarize MLBAM data
 #' 
-#' @details Prints information about the contents of an object of class \code{\link{GameDayPlays}} 
+#' @details Tabulates cumulative statistics by team for the contents of a \code{\link{GameDayPlays}} data set.
 #' 
-#' @param object A \code{\link{GameDayPlays}} data set
+#' @param object An object of class \code{\link{GameDayPlays}}
 #' @param ... currently ignored
 #' 
-#' @return NULL
-#' 
-#' @export
-#' @examples
-#' 
-#' summary(May)
-
-summary.GameDayPlays = function(object, ...) {
-    gIds = sort(unique(object$gameId))
-    message(paste("...Contains data from", length(gIds), "games"))
-    message(paste("...from", gIds[1], "to", gIds[length(gIds)]))
-    NextMethod()
-}
-
-#' @title tabulate
-#' 
-#' @description Summarize MLBAM data
-#' 
-#' @details Tabulates Lahman-style statistics by team for the contents of a \code{\link{GameDayPlays}} data set.
-#' 
-#' @param data An object of class \code{\link{GameDayPlays}}
-#' 
-#' @return A data.frame of seasonal totals for each team
-#' 
-#' @note Sean Lahman database <http://www.seanlahman.com/baseball-archive/statistics/>
+#' @return A \code{\link{tbl_df}} of totals for each team
 #' 
 #' @export 
 #' @examples
 #' 
-#' library(openWAR)
-#' tabulate(May)
+#' summary(May)
 #' 
 
-tabulate <- function(data) UseMethod("tabulate")
-
-#' @rdname tabulate
-#' @export
-#' @method tabulate GameDayPlays
-
-tabulate.GameDayPlays <- function(data) {
-    # data$bat_team = with(data, ifelse(half == 'top', as.character(away_team), as.character(home_team)))
-    
-    # data <- mutate(data, yearId = as.numeric(substr(gameId, start=5, stop=8))) teams = plyr::ddply(data, ~ yearId + bat_team,
-    # summarise, G = length(unique(gameId)) , PA = sum(isPA), AB = sum(isAB), R = sum(runsOnPlay), H = sum(isHit) , HR =
-    # sum(event == 'Home Run') , BB = sum(event %in% c('Walk', 'Intent Walk')) , K = sum(event %in% c('Strikeout', 'Strikeout -
-    # DP')) , BA = sum(isHit) / sum(isAB) , OBP = sum(isHit | event %in% c('Walk', 'Intent Walk', 'Hit By Pitch')) / sum(isPA &
-    # !event %in% c('Sac Bunt', 'Sacrifice Bunt DP')) , SLG = (sum(event == 'Single') + 2*sum(event == 'Double') + 3*sum(event
-    # == 'Triple') + 4*sum(event == 'Home Run') ) / sum(isAB) )
-    
-    data %>% 
-      mutate_(bat_team = ~factor(ifelse(half == "top", as.character(away_team), as.character(home_team)))) %>% 
-      mutate_(yearId = ~as.numeric(substr(gameId, start = 5, stop = 8))) %>% 
-      group_by_(~yearId, ~bat_team) %>% 
-      summarise_(G = ~length(unique(gameId)), PA = ~sum(isPA), AB = ~sum(isAB), 
-        R = ~sum(runsOnPlay), H = ~sum(isHit), 
-        HR = ~sum(event == "Home Run"), 
-        BB = ~sum(event %in% c("Walk", "Intent Walk")), 
-        K = ~sum(event %in% c("Strikeout", "Strikeout - DP")), 
-        BA = ~sum(isHit)/sum(isAB), 
-        OBP = ~sum(isHit | event %in% c("Walk", "Intent Walk", "Hit By Pitch"))/sum(isPA & !event %in% c("Sac Bunt", "Sacrifice Bunt DP")), 
-        SLG = ~(sum(event == "Single") + 2 * sum(event == "Double") + 3 * sum(event == "Triple") + 4 * sum(event == "Home Run"))/sum(isAB)
-        )
+summary.GameDayPlays = function(object, ...) {
+  
+  gIds = sort(unique(object$gameId))
+  message(paste("...Contains data from", length(gIds), "unique games"))
+  message(paste("...from", first(gIds), "to", last(gIds)))
+  
+  object %>% 
+    mutate_(bat_team = ~factor(ifelse(half == "top", as.character(away_team), as.character(home_team)))) %>% 
+    mutate_(yearId = ~as.numeric(substr(gameId, start = 5, stop = 8))) %>% 
+    group_by_(~yearId, ~bat_team) %>% 
+    summarise_(G = ~length(unique(gameId)), PA = ~sum(isPA), AB = ~sum(isAB), 
+               R = ~sum(runsOnPlay), 
+               H = ~sum(isHit), 
+               X2B = ~sum(event == "Double"), 
+               X3B = ~sum(event == "Triple"), 
+               HR = ~sum(event == "Home Run"), 
+               BB = ~sum(event %in% c("Walk", "Intent Walk")), 
+               K = ~sum(event %in% c("Strikeout", "Strikeout - DP")), 
+               BAvg = ~sum(isHit)/sum(isAB), 
+               OBP = ~sum(isHit | event %in% c("Walk", "Intent Walk", "Hit By Pitch"))/sum(isPA & !event %in% c("Sac Bunt", "Sacrifice Bunt DP")), 
+               SLG = ~(sum(event == "Single") + 2 * sum(event == "Double") + 3 * sum(event == "Triple") + 4 * sum(event == "Home Run"))/sum(isAB)
+    ) %>%
+    mutate_(OPS = ~OBP + SLG)
 }

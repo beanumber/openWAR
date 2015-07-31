@@ -2,7 +2,7 @@
 % Please edit documentation in R/openWARPlayers.R
 \name{plot.openWARPlayers}
 \alias{plot.openWARPlayers}
-\title{plot.openWARPlayers}
+\title{Display a season's worth of openWAR results}
 \usage{
 \method{plot}{openWARPlayers}(x, ...)
 }

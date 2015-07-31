@@ -13,12 +13,9 @@ test_that("getRunEx is a function", {
   expect_is(getRunEx(May14), "function")
 })
 
-test_that("tabulate works as expected", {
-  expect_is(tabulate(May), "grouped_df")
-})
-
-test_that("summary.openWARPlayers works", {
-  expect_is(summary(openWAR2012), "data.frame")
+test_that("summary works as expected", {
+  expect_is(summary(May), "grouped_df")
+  expect_is(summary(openWAR2012), "tbl_df")
 })
 
 test_that("getWAR works on objects of multiple classes", {

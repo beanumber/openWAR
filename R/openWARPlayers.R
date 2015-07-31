@@ -1,6 +1,6 @@
 #' @title openWARPlayers
 #' 
-#' @description A data.frame of players and their tabulated openWAR values.  The
+#' @description A \code{\link{data.frame}} of players and their tabulated openWAR values.  The
 #'  function \code{\link{getWAR}} returns an object of class \code{\link{openWARPlayers}}.
 #' 
 #' @exportClass openWARPlayers
@@ -57,14 +57,13 @@
 
 setClass("openWARPlayers", contains = "data.frame")
 
-#' @title summary.openWARPlayers
+#' @title Summarize openWAR across players
 #' 
-#' @description Summarize WAR among players
+#' @description Summarize openWAR across players
 #' 
 #' @details A summary of players' WAR
 #' 
 #' @param object An object of class \code{\link{openWARPlayers}}
-#' @param n the number of players to display
 #' @param ... currently ignored
 #' 
 #' @import dplyr
@@ -76,25 +75,23 @@ setClass("openWARPlayers", contains = "data.frame")
 #' }
 #' war <- getWAR(MayProcessed$openWAR)
 #' summary(war)
+#' summary(openWAR2012)
+#' summary(openWAR2013)
 
-summary.openWARPlayers = function(object, n = 25, ...) {
-    cat(paste("Displaying information for", nrow(object), "players, of whom", 
-              nrow(dplyr::filter_(object, ~RAA.pitch != 0)), "have pitched\n"))
-    
-    # classic syntax head(data[order(data$WAR, decreasing=TRUE), c('Name', 'TPA', 'WAR', 'RAA', 'repl', 'RAA.bat', 'RAA.br',
-    # 'RAA.field', 'RAA.pitch')], n)
-    
-    # dplyr syntax
-    object %>% 
-      dplyr::select_(~playerId, ~Name, ~TPA, ~WAR, ~RAA, ~repl, ~RAA.bat, ~RAA.br, ~RAA.field, ~RAA.pitch) %>%
-      arrange_(~desc(WAR)) %>% 
-      head(n)
+summary.openWARPlayers = function(object, ...) {
+  message(paste("Displaying information for", nrow(object), "players, of whom", 
+            nrow(dplyr::filter_(object, ~RAA.pitch != 0)), "have pitched"))
+  
+  object %>% 
+    select_(~playerId, ~Name, ~TPA, ~WAR, ~RAA, ~repl, ~RAA.bat, ~RAA.br, ~RAA.field, ~RAA.pitch) %>%
+    arrange_(~desc(WAR)) %>%
+    tbl_df()
 }
 
 
 
 
-#' @title plot.openWARPlayers
+#' @title Display a season's worth of openWAR results
 #' 
 #' @description Display a season's worth of openWAR results
 #' 
@@ -136,9 +133,9 @@ plot.openWARPlayers = function(x, ...) {
     print(p)
 }
 
-#' @title panel.war
+#' @title panel function for displaying openWAR
 #' 
-#' @description Display a season's worth of openWAR results
+#' @description panel function for displaying openWAR
 #' 
 #' @details Given an \code{\link{openWARPlayers}} object, draw a plot displaying each player's RAA, WAR, and replacement
 #' level shadow. 
@@ -189,14 +186,13 @@ panel.war = function(x, y, ...) {
 ############################################################## Generic functions for bootstrapped results
 
 
-#' @title summary.do.openWARPlayers
+#' @title Summarize resampled openWAR
 #' 
-#' @description Summarize WAR
+#' @description Summarize resampled openWAR
 #' 
 #' @details Summary of players' WAR
 #' 
 #' @param object An object of class \code{\link{openWARPlayers}}
-#' @param n the number of players to display
 #' @param ... currently ignored
 #' 
 #' @import dplyr
@@ -210,33 +206,32 @@ panel.war = function(x, y, ...) {
 #' summary(sim)
 #' }
 
-summary.do.openWARPlayers = function(object, n = 25, ...) {
-
-    object %>% dplyr::select_(~playerId, ~Name, ~WAR) %>% 
-      group_by_(~playerId) %>% 
-      summarise_(Name = ~Name[1], N = ~n(), q0 = ~min(WAR), 
-                 q2.5 = ~quantile(WAR, 0.025), 
-                 q25 = ~quantile(WAR, 0.25), 
-                 q50 = ~mean(WAR), 
-                 q75 = ~quantile(WAR, 0.75), 
-                 q97.5 = ~quantile(WAR, 0.975), 
-                 q100 = ~max(WAR)) %>%
-      arrange_(~desc(q50)) %>% 
-      head(n)
+summary.do.openWARPlayers = function(object, ...) {
+  object %>% dplyr::select_(~playerId, ~Name, ~WAR) %>% 
+    group_by_(~playerId) %>% 
+    summarise_(Name = ~Name[1], N = ~n(), q0 = ~min(WAR), 
+               q2.5 = ~quantile(WAR, 0.025), 
+               q25 = ~quantile(WAR, 0.25), 
+               q50 = ~mean(WAR), 
+               q75 = ~quantile(WAR, 0.75), 
+               q97.5 = ~quantile(WAR, 0.975), 
+               q100 = ~max(WAR)) %>%
+    arrange_(~desc(q50)) %>% 
+    tbl_df()
 }
 
 
 
 
-#' @title plot.do.openWARPlayers
+#' @title Visualize resampled openWAR
 #' 
-#' @description Visualize WAR
+#' @description Visualize resampled openWAR
 #' 
-#' @details Density Plot for WAR estimates
+#' @details Density Plots for openWAR estimates
 #' 
-#' @param playerIds A vector of valid MLBAM player IDs present in the data argument
 #' @param x A data.frame resulting from shakeWAR() of class \code{do.openWARPlayers}
-#' @param ... currently ignored
+#' @param playerIds A vector of valid MLBAM player IDs present in the data argument
+#' @param ... arguments passed to \code{\link{densityplot}}
 #' 
 #' @return a faceted densityplot
 #' 
@@ -251,26 +246,26 @@ summary.do.openWARPlayers = function(object, n = 25, ...) {
 #' }
 
 plot.do.openWARPlayers = function(x, playerIds = c(431151, 285079), ...) {
-    playerIds = sort(playerIds)
-    # is it worth the trouble to filter the rows?
-    rows = filter_(x, ~playerId %in% playerIds)
-    # Remove unused factor levels
-    rows$Name = factor(rows$Name)
-    
-    lkup = unique(rows[, c("playerId", "Name")])
-#    labels = as.character(lkup[order(lkup$batterId), ]$Name)
-    labels = as.character(arrange_(lkup, ~playerId)$Name)
-    
-    sims.long = reshape(rows[, c("playerId", "Name", "RAA", "RAA.bat", "RAA.br", "RAA.field", "RAA.pitch")], varying = 3:7, 
-        timevar = "component", direction = "long")
-    
-    plot = densityplot(~RAA | component, groups = ~playerId, data = sims.long
-                       , panel = function(x, y, ...) { 
-                         panel.densityplot(x, plot.points = FALSE, lwd = 3, ...)
-                         }
-                       , auto.key = list(columns = min(4, length(playerIds)), text = labels)
-                       , ylim = c(-0.01, 0.2), xlab = "Runs Above Average (RAA)"
-                       )
-    return(plot)
+  playerIds = sort(playerIds)
+  # is it worth the trouble to filter the rows?
+  rows = filter_(x, ~playerId %in% playerIds)
+  # Remove unused factor levels
+  rows$Name = factor(rows$Name)
+  
+  lkup = unique(rows[, c("playerId", "Name")])
+  #    labels = as.character(lkup[order(lkup$batterId), ]$Name)
+  labels = as.character(arrange_(lkup, ~playerId)$Name)
+  
+  sims.long = reshape(rows[, c("playerId", "Name", "RAA", "RAA.bat", "RAA.br", "RAA.field", "RAA.pitch")], varying = 3:7, 
+                      timevar = "component", direction = "long")
+  
+  plot = densityplot(~RAA | component, groups = ~playerId, data = sims.long
+                     , panel = function(x, y, ...) { 
+                       panel.densityplot(x, plot.points = FALSE, lwd = 3, ...)
+                     }
+                     , auto.key = list(columns = min(4, length(playerIds)), text = labels)
+                     , ylim = c(-0.01, 0.2), xlab = "Runs Above Average (RAA)"
+  )
+  return(plot)
 }
 

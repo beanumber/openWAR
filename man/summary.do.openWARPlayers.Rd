@@ -2,19 +2,17 @@
 % Please edit documentation in R/openWARPlayers.R
 \name{summary.do.openWARPlayers}
 \alias{summary.do.openWARPlayers}
-\title{summary.do.openWARPlayers}
+\title{Summarize resampled openWAR}
 \usage{
-\method{summary}{do.openWARPlayers}(object, n = 25, ...)
+\method{summary}{do.openWARPlayers}(object, ...)
 }
 \arguments{
 \item{object}{An object of class \code{\link{openWARPlayers}}}
 
-\item{n}{the number of players to display}
-
 \item{...}{currently ignored}
 }
 \description{
-Summarize WAR
+Summarize resampled openWAR
 }
 \details{
 Summary of players' WAR

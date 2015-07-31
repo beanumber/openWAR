@@ -3,17 +3,43 @@
 \name{makeWAR}
 \alias{makeWAR}
 \alias{makeWAR.GameDayPlays}
+\alias{makeWAR.GameDayPlays_Baserunning}
+\alias{makeWAR.GameDayPlays_Batters}
+\alias{makeWAR.GameDayPlays_Fielding}
+\alias{makeWAR.GameDayPlays_Offense}
+\alias{makeWAR.GameDayPlays_Pitching}
+\alias{makeWAR.GameDayPlays_Runs}
 \title{makeWAR}
 \usage{
-makeWAR(data, models = list(), verbose = TRUE, low.memory = TRUE, ...)
+makeWAR(x, models = list(), verbose = TRUE, low.memory = TRUE,
+  step = FALSE, ...)
 
-\method{makeWAR}{GameDayPlays}(data, models = list(), verbose = TRUE,
-  low.memory = TRUE, ...)
+\method{makeWAR}{GameDayPlays}(x, models = list(), verbose = TRUE,
+  low.memory = TRUE, step = FALSE, ...)
+
+\method{makeWAR}{GameDayPlays_Runs}(x, models = list(), verbose = TRUE,
+  low.memory = TRUE, step = FALSE, ...)
+
+\method{makeWAR}{GameDayPlays_Fielding}(x, models = list(), verbose = TRUE,
+  low.memory = TRUE, step = FALSE, ...)
+
+\method{makeWAR}{GameDayPlays_Pitching}(x, models = list(), verbose = TRUE,
+  low.memory = TRUE, step = FALSE, ...)
+
+\method{makeWAR}{GameDayPlays_Offense}(x, models = list(), verbose = TRUE,
+  low.memory = TRUE, step = FALSE, ...)
+
+\method{makeWAR}{GameDayPlays_Baserunning}(x, models = list(),
+  verbose = TRUE, low.memory = TRUE, step = FALSE, ...)
+
+\method{makeWAR}{GameDayPlays_Batters}(x, models = list(), verbose = TRUE,
+  low.memory = TRUE, step = FALSE, ...)
 }
 \arguments{
-\item{data}{An object of class \code{\link{GameDayPlays}}}
+\item{x}{An object of class \code{\link{GameDayPlays}}_*, where * can be the output of
+and of the seven steps listed below.}
 
-\item{models}{A named list of models, each with a predict() method. See Details.}
+\item{models}{A named list of models, each with a \code{\link{predict}} method. See Details.}
 
 \item{verbose}{A \code{logical} indicating whether you want various messages
 and information to be displayed during the computation}
@@ -21,15 +47,19 @@ and information to be displayed during the computation}
 \item{low.memory}{A \code{logical} indicating whether to conserve memory by
 not storing the model objects.}
 
+\item{step}{A \code{logical} indicating whether the function should stop after one of the seven steps.}
+
 \item{...}{currently ignored}
 }
 \value{
-An object of class \code{\link{openWARPlays}} which is a list of length 4 containing the following:
+An object of class \code{\link{openWARPlays}} which is a list containing the following:
 \itemize{
-\item{plays}{A data.frame of class \code{\link{GameDayPlays}} that is the same as the input to the function.}
-\item{data}{A data.frame of class \code{\link{GameDayPlaysExt}} containing the original data along with appended rows containing the RAA values for each player involved in a plate appearance}
- \item{models.used}{A list containing all of the model information for each of the models used in computing RAA.}
-  \item{openWAR}{A data.frame of class \code{\link{openWARPlays}} containing only the columns necessry for input into the getWAR function.  }
+ \item{data}{A data.frame containing the original data along with appended
+ rows containing the RAA values for each player involved in a plate appearance.
+ NULL if \code{low.memory} is TRUE.}
+ \item{models.used}{A list containing all of the model information for each
+ of the models used in computing RAA. NULL if \code{low.memory} is TRUE.}
+ \item{openWARPlays}{A data.frame of class \code{\link{openWARPlays}} containing only the columns necessry for input into the getWAR function.  }
 }
 }
 \description{
@@ -43,28 +73,68 @@ Within a \code{\link{GameDayPlays}} object, each row consists of a single plate 
  to every player involved in the play.
  If no \code{models} argument is supplied, then all
 models necessary for the computation of openWAR will be generated on the data set given.
-The output of this function is then used in the function \code{getWAR} to calculate a Wins Above Replacement (WAR) value for each player.
+The output of this function is then used in the function \code{\link{getWAR}} to calculate a Wins Above Replacement (WAR) value for each player.
 
-If \code{verbose == TRUE}, then various pieces of information will be displayed during the comuptation.
+If \code{verbose == TRUE}, then various pieces of information will be displayed during the computation.
+
+The \code{\link{makeWAR}} algorithm consists of seven steps, each of which appends columns to the original data frame.
+\itemize{
+ \item Compute the change in run expectancy (\eqn{\delta}) on each plate appearance
+ \item Partition \eqn{-\delta} among the fielders using \code{\link{makeWARFielding}}
+ \item Partition the remaining \eqn{\delta} for the pitcher using \code{getModelPitching}
+ \item Adjust \eqn{\delta} for cicumstance, and attribute it to the offense using \code{getModelOffense}
+ \item Partition some of \eqn{\delta} for the baserunners, using \code{getModelBaserunning}
+ \item Attribute the rest of \eqn{\delta} to the batter, and adjust using \code{getModelBatting}
+ \item Parition the baserunning \eqn{\delta} to the various baserunners, using \code{\link{makeWARBaserunning}}
+}
 
 Elements of \code{models}:
 \itemize{
 \item{run-expectancy}{: a model for assigning a run expectancy value to any of the 24 (base,out) states. Variables
-must be 'startCode' [0-7] and 'startOuts' [0-2]}
+must be \code{startCode} [0-7] and \code{startOuts} [0-2]}
 \item{pitching}{: a model for the expected outcome of a plate appearance attributable to the pitcher. Variables
-must be 'venueId', 'throws' [L/R], and 'stands' [L/R]}
+must be \code{venueId}, \code{throws} [L/R], and \code{stands} [L/R]}
 \item{offense}{: a model for the expected outcome of a plate appearance attributable to the offense. Variables
-must be 'venueId', 'throws' [L/R], and 'stands' [L/R]}
+must be \code{venueId}, \code{throws} [L/R], and \code{stands} [L/R]}
 \item{baserunning}{: a model for the expected contribution of the baserunners to a plate appearance. Variables
-must be 'event' (the type of batting event), 'startCode' [0-7], and 'startOuts' [0-2]}
+must be \code{event} (the type of batting event), \code{startCode} [0-7], and \code{startOuts} [0-2]}
 \item{batting}{: a model for the expected contribution of the batter to a plate appearance. Variables
-must be 'batterPos' (the defensive position of the batter)}
+must be \code{batterPos} (the defensive position of the batter)}
 }
 }
 \examples{
 \dontrun{
-res = makeWAR(May)
+res <- makeWAR(May)
 summary(getWAR(res))
+
+print(object.size(res), units = "Mb")
+res <- makeWAR(May, low.memory = FALSE)
+print(object.size(res), units = "Mb"
+names(res$models.used)
+}
+res <- makeWAR(May, step = TRUE)
+print(object.size(res), units = "Mb")
+\dontrun{
+res <- makeWAR(May, step = TRUE)
+print(object.size(res), units = "Mb")
+
+res2 <- makeWAR(res, step = TRUE)
+print(object.size(res2), units = "Mb")
+
+res3 <- makeWAR(res2, step = TRUE)
+print(object.size(res3), units = "Mb")
+
+res4 <- makeWAR(res3, step = TRUE)
+print(object.size(res4), units = "Mb")
+
+res5 <- makeWAR(res4, step = TRUE)
+print(object.size(res5), units = "Mb")
+
+res6 <- makeWAR(res5, step = TRUE)
+print(object.size(res6), units = "Mb")
+
+res7 <- makeWAR(res6, step = TRUE)
+print(object.size(res7), units = "Mb")
 }
 }
 
