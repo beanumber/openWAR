@@ -12,13 +12,15 @@ The **Sxslt** package is required in order to download new game data from MLBAM.
 ```{r}
 install.packages("Sxslt", repos = "http://www.omegahat.org/R", type = "source")
 ```
-should do the trick. 
+should do the trick. If it doesn't, try:
 
+```{r}
+devtools::install_github("cboettig/Sxslt")
+```
 Next, installing **openWAR** is best accomplished through the *install_github()* function in the **devtools** package. 
 
 ```{r}
-require(devtools)
-install_github("beanumber/openWAR")
+devtools::install_github("beanumber/openWAR")
 ```
 
 #### Data Source
