@@ -2,20 +2,23 @@
 % Please edit documentation in R/GameDayPlays.R
 \name{summary.GameDayPlays}
 \alias{summary.GameDayPlays}
-\title{summary.GameDayPlays}
+\title{Summarize a GameDayPlays data set}
 \usage{
 \method{summary}{GameDayPlays}(object, ...)
 }
 \arguments{
-\item{object}{A \code{\link{GameDayPlays}} data set}
+\item{object}{An object of class \code{\link{GameDayPlays}}}
 
 \item{...}{currently ignored}
+}
+\value{
+A \code{\link{tbl_df}} of totals for each team
 }
 \description{
 Summarize MLBAM data
 }
 \details{
-Prints information about the contents of an object of class \code{\link{GameDayPlays}}
+Tabulates cumulative statistics by team for the contents of a \code{\link{GameDayPlays}} data set.
 }
 \examples{
 summary(May)

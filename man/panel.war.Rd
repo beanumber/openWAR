@@ -2,7 +2,7 @@
 % Please edit documentation in R/openWARPlayers.R
 \name{panel.war}
 \alias{panel.war}
-\title{panel.war}
+\title{panel function for displaying openWAR}
 \usage{
 panel.war(x, y, ...)
 }
@@ -14,7 +14,7 @@ panel.war(x, y, ...)
 \item{...}{arguments passed from \code{\link{plot.openWARPlayers}}}
 }
 \description{
-Display a season's worth of openWAR results
+panel function for displaying openWAR
 }
 \details{
 Given an \code{\link{openWARPlayers}} object, draw a plot displaying each player's RAA, WAR, and replacement
