@@ -1,6 +1,6 @@
 #' @title openWARPlays
 #' 
-#' @description Contains the output from the function \code{makeWAR} specific to openWAR
+#' @description Contains the output from the function \code{makeWAR} specific to openWAR.
 #' 
 #' @exportClass openWARPlays
 #' @examples showClass('openWARPlays')

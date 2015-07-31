@@ -1,4 +1,4 @@
-#' @title getData
+#' @title Retrieves MLBAM GameDay files
 #' 
 #' @description Retrieves MLBAM GameDay files for a specified time interval using
 #'  multiple calls of the \code{\link{gameday}} function.  
