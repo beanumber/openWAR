@@ -1,8 +1,10 @@
-#' @title getWAR
+
 #' 
-#' @description Tabulates WAR
+#' Tabulates WAR
 #' 
-#' @details Compute each player's WAR, given their RAA values
+#' Compute each player's WAR, given their RAA values
+#' 
+#' Detail test
 #' 
 #' @param data An object of class \code{'openWARPlays'}
 #' @param dataRepl An object of class \code{'openWARPlays'} that will be used to calculate the replacement level.  
