@@ -106,13 +106,6 @@ makeWAR.GameDayPlays = function(x, models = list(), verbose = TRUE, low.memory =
 #' @export
 #' @rdname makeWAR
 #' @method makeWAR GameDayPlays_Runs
-#' @examples 
-#' res <- makeWAR(May, step = TRUE)
-#' print(object.size(res), units = "Mb")
-#' 
-#' res2 <- makeWAR(res, step = TRUE)
-#' print(object.size(res2), units = "Mb")
-#' 
 
     
 makeWAR.GameDayPlays_Runs = function(x, models = list(), verbose = TRUE, low.memory = TRUE, step = FALSE, ...) {
@@ -140,15 +133,6 @@ makeWAR.GameDayPlays_Runs = function(x, models = list(), verbose = TRUE, low.mem
 #' @export
 #' @rdname makeWAR
 #' @method makeWAR GameDayPlays_Fielding
-#' @examples 
-#' res <- makeWAR(May, step = TRUE)
-#' print(object.size(res), units = "Mb")
-#' 
-#' res2 <- makeWAR(res, step = TRUE)
-#' print(object.size(res2), units = "Mb")
-#' 
-#' res3 <- makeWAR(res2, step = TRUE)
-#' print(object.size(res3), units = "Mb")
 
 
 makeWAR.GameDayPlays_Fielding = function(x, models = list(), verbose = TRUE, low.memory = TRUE, step = FALSE, ...) {
@@ -178,19 +162,6 @@ makeWAR.GameDayPlays_Fielding = function(x, models = list(), verbose = TRUE, low
 #' @export
 #' @rdname makeWAR
 #' @method makeWAR GameDayPlays_Pitching
-#' @examples 
-#' res <- makeWAR(May, step = TRUE)
-#' print(object.size(res), units = "Mb")
-#' 
-#' res2 <- makeWAR(res, step = TRUE)
-#' print(object.size(res2), units = "Mb")
-#' 
-#' res3 <- makeWAR(res2, step = TRUE)
-#' print(object.size(res3), units = "Mb")
-#' 
-#' res4 <- makeWAR(res3, step = TRUE)
-#' print(object.size(res4), units = "Mb")
-    
     
 makeWAR.GameDayPlays_Pitching = function(x, models = list(), verbose = TRUE, low.memory = TRUE, step = FALSE, ...) {    
   # Step 4: Define RAA for the batter
@@ -216,21 +187,6 @@ makeWAR.GameDayPlays_Pitching = function(x, models = list(), verbose = TRUE, low
 #' @export
 #' @rdname makeWAR
 #' @method makeWAR GameDayPlays_Offense
-#' @examples 
-#' res <- makeWAR(May, step = TRUE)
-#' print(object.size(res), units = "Mb")
-#' 
-#' res2 <- makeWAR(res, step = TRUE)
-#' print(object.size(res2), units = "Mb")
-#' 
-#' res3 <- makeWAR(res2, step = TRUE)
-#' print(object.size(res3), units = "Mb")
-#' 
-#' res4 <- makeWAR(res3, step = TRUE)
-#' print(object.size(res4), units = "Mb")
-#' 
-#' res5 <- makeWAR(res4, step = TRUE)
-#' print(object.size(res5), units = "Mb")
     
 makeWAR.GameDayPlays_Offense = function(x, models = list(), verbose = TRUE, low.memory = TRUE, step = FALSE, ...) {    
   # If runners are on base, partition delta between the batter and baserunners
@@ -258,24 +214,6 @@ makeWAR.GameDayPlays_Offense = function(x, models = list(), verbose = TRUE, low.
 #' @export
 #' @rdname makeWAR
 #' @method makeWAR GameDayPlays_Baserunning
-#' @examples 
-#' res <- makeWAR(May, step = TRUE)
-#' print(object.size(res), units = "Mb")
-#' 
-#' res2 <- makeWAR(res, step = TRUE)
-#' print(object.size(res2), units = "Mb")
-#' 
-#' res3 <- makeWAR(res2, step = TRUE)
-#' print(object.size(res3), units = "Mb")
-#' 
-#' res4 <- makeWAR(res3, step = TRUE)
-#' print(object.size(res4), units = "Mb")
-#' 
-#' res5 <- makeWAR(res4, step = TRUE)
-#' print(object.size(res5), units = "Mb")
-#' 
-#' res6 <- makeWAR(res5, step = TRUE)
-#' print(object.size(res6), units = "Mb")
 
 makeWAR.GameDayPlays_Baserunning = function(x, models = list(), verbose = TRUE, low.memory = TRUE, step = FALSE, ...) {
   # Whatever is left over goes to the batter -- just control for defensive position
@@ -304,6 +242,7 @@ makeWAR.GameDayPlays_Baserunning = function(x, models = list(), verbose = TRUE, 
 #' @rdname makeWAR
 #' @method makeWAR GameDayPlays_Batters
 #' @examples 
+#' \dontrun{
 #' res <- makeWAR(May, step = TRUE)
 #' print(object.size(res), units = "Mb")
 #' 
@@ -324,6 +263,7 @@ makeWAR.GameDayPlays_Baserunning = function(x, models = list(), verbose = TRUE, 
 #' 
 #' res7 <- makeWAR(res6, step = TRUE)
 #' print(object.size(res7), units = "Mb")
+#' }
   
 makeWAR.GameDayPlays_Batters = function(x, models = list(), verbose = TRUE, low.memory = TRUE, step = FALSE, ...) {
   ############### Step 5: Define RAA for the baserunners

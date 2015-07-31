@@ -14,10 +14,6 @@
 #'  \code{\link{contourplot}}.
 #' @param y y-coordinate for default method passed to \code{\link{contourplot}}.
 #' @param z z-coordinate for default method passed to \code{\link{contourplot}}.
-#' @param data a \code{\link{GameDayPlays}} dataset
-#' @param label a string to be used in the resulting filename
-#' @param write.pdf a \code{logical} indicating whether to write the contourplot
-#'  to a file
 #' @param ... arguments passed to \code{\link{panel.contourplot}}
 #' 
 #' @import lattice
@@ -26,15 +22,6 @@
 #' 
 #' @export
 #' @return A contourplot object
-#' 
-#' @examples
-#' deltas <- makeWARre24(May)
-#' Mayplus = cbind(May, deltas)
-#' library(dplyr)
-#' BIP <- filter(Mayplus, isBIP == TRUE)
-#' \dontrun{
-#' fielding <- makeWARFielding(BIP)
-#' }
 #' 
 
 plotFielding = function(x, ...) UseMethod("plotFielding")
@@ -69,27 +56,19 @@ plotFielding.lm = function(x, ...) {
 #' @export
 #' @rdname plotFielding
 
-plotFielding.formula = function(x, label = "label", write.pdf = FALSE, ...) {
-    
-    if (write.pdf) {
-        filename = paste("fielding_", label, ".pdf", sep = "")
-        pdf(file = filename, width = 10, height = 8)
-    }
+plotFielding.formula = function(x, ...) {
     print(contourplot(x, data = data, region = TRUE, ..., alpha.regions = 0.5, 
                       col.regions = colorRampPalette(RColorBrewer::brewer.pal(9, "Blues"))(100)
                       , cuts = 10, contour = TRUE, panel = panel.fielding
 #        , xlim = c(-350, 350), ylim = c(0, 550)
         , xlab = "Horizontal Distance from Home Plate (ft.)", 
         ylab = "Vertical Distance from Home Plate (ft.)"))
-    if (write.pdf) {
-        dev.off()
-    }
 }
 
 #' @export
 #' @rdname plotFielding
 
-plotFielding.default = function(x, y, z, label = "label", write.pdf = FALSE, ...) {
+plotFielding.default = function(x, ...) {
     stop("No available methods")
 }
 

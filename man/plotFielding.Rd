@@ -16,10 +16,9 @@ plotFielding(x, ...)
 
 \method{plotFielding}{lm}(x, ...)
 
-\method{plotFielding}{formula}(x, label = "label", write.pdf = FALSE, ...)
+\method{plotFielding}{formula}(x, ...)
 
-\method{plotFielding}{default}(x, y, z, label = "label", write.pdf = FALSE,
-  ...)
+\method{plotFielding}{default}(x, ...)
 
 \method{plotFielding}{bkde2D}(x, ...)
 
@@ -33,16 +32,9 @@ panel.fielding(x, y, z, ...)
 
 \item{...}{arguments passed to \code{\link{panel.contourplot}}}
 
-\item{label}{a string to be used in the resulting filename}
-
-\item{write.pdf}{a \code{logical} indicating whether to write the contourplot
-to a file}
-
 \item{y}{y-coordinate for default method passed to \code{\link{contourplot}}.}
 
 \item{z}{z-coordinate for default method passed to \code{\link{contourplot}}.}
-
-\item{data}{a \code{\link{GameDayPlays}} dataset}
 }
 \value{
 A contourplot object
@@ -58,13 +50,6 @@ paper. However, this function is not exported, since it is not really accessible
 to end users. We hope to add this functionality in a future release.
 }
 \examples{
-deltas <- makeWARre24(May)
-Mayplus = cbind(May, deltas)
-library(dplyr)
-BIP <- filter(Mayplus, isBIP == TRUE)
-\dontrun{
-fielding <- makeWARFielding(BIP)
-}
 fmod <- getModelFieldingCollective(May)
 plotFielding(fmod)
 }

@@ -114,61 +114,7 @@ names(res$models.used)
 }
 res <- makeWAR(May, step = TRUE)
 print(object.size(res), units = "Mb")
-res <- makeWAR(May, step = TRUE)
-print(object.size(res), units = "Mb")
-
-res2 <- makeWAR(res, step = TRUE)
-print(object.size(res2), units = "Mb")
-res <- makeWAR(May, step = TRUE)
-print(object.size(res), units = "Mb")
-
-res2 <- makeWAR(res, step = TRUE)
-print(object.size(res2), units = "Mb")
-
-res3 <- makeWAR(res2, step = TRUE)
-print(object.size(res3), units = "Mb")
-res <- makeWAR(May, step = TRUE)
-print(object.size(res), units = "Mb")
-
-res2 <- makeWAR(res, step = TRUE)
-print(object.size(res2), units = "Mb")
-
-res3 <- makeWAR(res2, step = TRUE)
-print(object.size(res3), units = "Mb")
-
-res4 <- makeWAR(res3, step = TRUE)
-print(object.size(res4), units = "Mb")
-res <- makeWAR(May, step = TRUE)
-print(object.size(res), units = "Mb")
-
-res2 <- makeWAR(res, step = TRUE)
-print(object.size(res2), units = "Mb")
-
-res3 <- makeWAR(res2, step = TRUE)
-print(object.size(res3), units = "Mb")
-
-res4 <- makeWAR(res3, step = TRUE)
-print(object.size(res4), units = "Mb")
-
-res5 <- makeWAR(res4, step = TRUE)
-print(object.size(res5), units = "Mb")
-res <- makeWAR(May, step = TRUE)
-print(object.size(res), units = "Mb")
-
-res2 <- makeWAR(res, step = TRUE)
-print(object.size(res2), units = "Mb")
-
-res3 <- makeWAR(res2, step = TRUE)
-print(object.size(res3), units = "Mb")
-
-res4 <- makeWAR(res3, step = TRUE)
-print(object.size(res4), units = "Mb")
-
-res5 <- makeWAR(res4, step = TRUE)
-print(object.size(res5), units = "Mb")
-
-res6 <- makeWAR(res5, step = TRUE)
-print(object.size(res6), units = "Mb")
+\dontrun{
 res <- makeWAR(May, step = TRUE)
 print(object.size(res), units = "Mb")
 
@@ -189,5 +135,6 @@ print(object.size(res6), units = "Mb")
 
 res7 <- makeWAR(res6, step = TRUE)
 print(object.size(res7), units = "Mb")
+}
 }
 
