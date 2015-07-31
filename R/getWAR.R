@@ -22,6 +22,8 @@
 #' }
 #' #openWAR and replacement level calculated with the same data set
 #' war = getWAR(May)
+#' #openWAR and replacement level calculated with the same data set
+#' #Replacement level calculated as if there were only 27.5 major league teams
 #' war = getWAR(May, nteams = 27.5)
 
 getWAR = function(data, dataRepl = NULL, nteams = 30, verbose = TRUE, ...) UseMethod("getWAR")
