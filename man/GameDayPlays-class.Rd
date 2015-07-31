@@ -3,7 +3,7 @@
 \docType{class}
 \name{GameDayPlays-class}
 \alias{GameDayPlays-class}
-\title{GameDayPlays}
+\title{An object containing play-by-play data}
 \format{A \code{\link{GameDayPlays}} object. This is a \code{\link{tbl_df}} and
 \code{\link{data.frame}} with 62 columns. The columns are as follows:
      \describe{

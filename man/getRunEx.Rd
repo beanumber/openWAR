@@ -2,7 +2,7 @@
 % Please edit documentation in R/getRunEx.R
 \name{getRunEx}
 \alias{getRunEx}
-\title{getRunEx}
+\title{Computes run expectancy.}
 \usage{
 getRunEx(data, drop.incomplete = TRUE, ...)
 }
@@ -18,7 +18,7 @@ should be excluded from the run expectancy model.  Default is TRUE.}
 A function that takes two arguments: baseCode and outs, and returns a run value
 }
 \description{
-Find the Run Expectancy for a given state
+Find the Run Expectancy for a given state.
 }
 \details{
 Given a data set, returns a function giving the run expectancy for any base/out state

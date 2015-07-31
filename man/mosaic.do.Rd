@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{mosaic.do}
 \alias{mosaic.do}
-\title{mosaic.do}
+\title{Used internally in \code{shakeWAR}}
 \usage{
 mosaic.do(...)
 }

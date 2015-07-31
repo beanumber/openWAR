@@ -3,7 +3,7 @@
 \name{getModels}
 \alias{getModels}
 \alias{getModels.GameDayPlays}
-\title{getModels}
+\title{Retrieves prior estimated models.}
 \usage{
 getModels(data, ...)
 
@@ -18,7 +18,7 @@ getModels(data, ...)
 A \code{\link{list}} of model objects
 }
 \description{
-Retrieve various models trained on \code{\link{GameDayPlays}} data
+Retrieve various models trained on \code{\link{GameDayPlays}} data.
 }
 \details{
 This function will retrieve various models based on the MLBAM data

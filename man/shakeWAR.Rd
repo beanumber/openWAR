@@ -5,7 +5,7 @@
 \alias{shakeWAR.GameDayPlays}
 \alias{shakeWAR.list}
 \alias{shakeWAR.openWARPlays}
-\title{shakeWAR}
+\title{Estimates the variance of openWAR.}
 \usage{
 shakeWAR(data, N = 10, resample = "plays", ...)
 
@@ -29,7 +29,7 @@ and \code{both} are implemented. Only works with \code{\link{shakeWAR.GameDayPla
 a \code{do.\link{openWARPlayers}} data frame with RAA values
 }
 \description{
-Resample to obtain variance estimates for WAR
+Resample to obtain variance estimates for WAR.
 
 
 }

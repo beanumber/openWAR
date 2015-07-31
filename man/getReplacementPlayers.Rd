@@ -5,7 +5,7 @@
 \alias{getReplacementPlayers.RAA}
 \alias{getReplacementPlayers.openWARPlayers}
 \alias{getReplacementPlayers.openWARPlays}
-\title{getReplacementPlayers}
+\title{Determines the replacement players.}
 \usage{
 getReplacementPlayers(data, nteams = 30, ...)
 

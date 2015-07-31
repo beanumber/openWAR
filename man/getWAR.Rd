@@ -5,7 +5,7 @@
 \alias{getWAR.GameDayPlays}
 \alias{getWAR.list}
 \alias{getWAR.openWARPlays}
-\title{getWAR}
+\title{Compute each player's openWAR.}
 \usage{
 getWAR(data, dataRepl = NULL, nteams = 30, verbose = TRUE, ...)
 
@@ -33,28 +33,45 @@ getWAR(data, dataRepl = NULL, nteams = 30, verbose = TRUE, ...)
 An data.frame of class \code{openWARPlayers}
 }
 \description{
-Tabulates WAR
+Tabulates each player's value of openWAR given either an object of class \code{GameDayPlays}
+or a list containing a data frame of class \code{openWARPlays}.
 }
 \details{
-Compute each player's WAR, given their RAA values
+
+
+If an object of \code{GameDayPlays} is input to the function \code{getWAR}, the function \code{makeWAR} is called internally to first process
+the data, then \code{getWAR} tabulates the final values of openWAR for each player.  Alternatively, the function
+\code{makeWAR} can be run separately and the output from this function can be passed to \code{getWAR}, which will complete the tabulation of openWAR.
+By default, the data set used to compute the replacement level is the same as the input data set.  Using the \code{dataRepl} option
+a user can specify a separate data set of used solely to calculate the replacement level.  This data set should be based on a full season of data
+and not a partial season.  For in season, calculations, for instance, the data from the current year can be used to calculate openWAR, whereas
+the data from the previous full season can be used to compute the replacement level.
 }
 \examples{
 \dontrun{
 MayProcessed = makeWAR(May)
-}
 war = getWAR(MayProcessed)
-war = getWAR(MayProcessed, nteams = 27.5)
+}
+#openWAR and replacement level calculated with the same data set
+war = getWAR(May)
+#openWAR and replacement level calculated with the same data set
+#Replacement level calculated as if there were only 27.5 major league teams
+war = getWAR(May, nteams = 27.5)
 \dontrun{
+#openWAR and replacement level calculated with the same data set
 war = getWAR(May)
 }
 \dontrun{
 MayProcessed = makeWAR(May)
 }
+#openWAR and replacement level calculated with the same data set
 war = getWAR(MayProcessed)
 \dontrun{
 MayProcessed = makeWAR(May)
 }
+#openWAR and replacement level calculated with the same data set
 war <- getWAR(MayProcessed$openWAR)
+#Use different data for calculating openWAR and replacement level
 war <- getWAR(MayProcessed$openWAR, dataRepl = head(MayProcessed$openWAR, 10000))
 }
 

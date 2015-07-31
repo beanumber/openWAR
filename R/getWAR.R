@@ -31,10 +31,10 @@
 #' war = getWAR(MayProcessed)
 #' }
 #' #openWAR and replacement level calculated with the same data set
-#' war = getWAR(May)
+#' war = getWAR(MayProcessed)
 #' #openWAR and replacement level calculated with the same data set
 #' #Replacement level calculated as if there were only 27.5 major league teams
-#' war = getWAR(May, nteams = 27.5)
+#' war = getWAR(MayProcessed, nteams = 27.5)
 
 getWAR = function(data, dataRepl = NULL, nteams = 30, verbose = TRUE, ...) UseMethod("getWAR")
 
@@ -45,7 +45,7 @@ getWAR = function(data, dataRepl = NULL, nteams = 30, verbose = TRUE, ...) UseMe
 #' @examples 
 #' \dontrun{
 #' #openWAR and replacement level calculated with the same data set
-#' war = getWAR(May)
+#' war = getWAR(MayProcessed)
 #' }
 
 getWAR.GameDayPlays = function(data, dataRepl = NULL, nteams = 30, verbose = TRUE, ...) {

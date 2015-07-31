@@ -8,7 +8,7 @@
 \alias{plotFielding.formula}
 \alias{plotFielding.glm}
 \alias{plotFielding.lm}
-\title{plotFielding}
+\title{Plot fielding model for a player.}
 \usage{
 plotFielding(x, ...)
 
@@ -40,7 +40,7 @@ panel.fielding(x, y, z, ...)
 A contourplot object
 }
 \description{
-Creates a plot of the fielding model for an individual player
+Creates a plot of the fielding model for an individual player.
 }
 \details{
 This is a convenience function for visually checking the fielding models.

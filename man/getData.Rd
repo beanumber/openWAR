@@ -4,7 +4,7 @@
 \alias{getData}
 \alias{getDataMonthly}
 \alias{getDataWeekly}
-\title{getData}
+\title{Retrieves MLBAM GameDay files}
 \usage{
 getData(start = Sys.Date() - 1, end = NULL, gameIds = NULL,
   drop.suspended = TRUE)

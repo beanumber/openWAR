@@ -4,9 +4,9 @@
 \name{openWAR}
 \alias{openWAR}
 \alias{openWAR-package}
-\title{openWAR}
+\title{Contains functions for computing openWAR.}
 \description{
-This package allows a user to explore \code{\link{openWAR}}
+This package allows a user to explore \code{\link{openWAR}}.
 }
 \details{
 A fully open-source implementation of WAR. Please see our paper on

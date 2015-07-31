@@ -3,7 +3,7 @@
 \docType{class}
 \name{openWARPlayers-class}
 \alias{openWARPlayers-class}
-\title{openWARPlayers}
+\title{Players' openWAR values}
 \format{An \code{\link{openWARPlayers}} object.
 \describe{
    \item{playerId}{The MLBAM id for the player}
@@ -51,7 +51,7 @@
 
      }}
 \description{
-A data.frame of players and their tabulated openWAR values.  The
+A \code{\link{data.frame}} of players and their tabulated openWAR values.  The
  function \code{\link{getWAR}} returns an object of class \code{\link{openWARPlayers}}.
 }
 \examples{

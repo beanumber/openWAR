@@ -9,7 +9,7 @@
 \alias{makeWAR.GameDayPlays_Offense}
 \alias{makeWAR.GameDayPlays_Pitching}
 \alias{makeWAR.GameDayPlays_Runs}
-\title{makeWAR}
+\title{Compute the runs above average (RAA)  for each play.}
 \usage{
 makeWAR(x, models = list(), verbose = TRUE, low.memory = TRUE,
   step = FALSE, ...)

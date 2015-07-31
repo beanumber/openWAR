@@ -2,7 +2,7 @@
 % Please edit documentation in R/GameDay.R
 \name{gameday}
 \alias{gameday}
-\title{gameday}
+\title{Convenience class for dealing with MLBAM GameDay files}
 \usage{
 gameday(gameId = "gid_2012_08_12_atlmlb_nynmlb_1", ...)
 }
@@ -20,10 +20,13 @@ An object of class \code{\link{gameday}}, which consists of a list containing
 play-by-play information for the game indicated by the gameId}
 }
 \description{
-Convenience class for dealing with MLBAM GameDay files
+Each gameId corresponds to one object of class \code{\link{gameday}}
 }
 \details{
-Each gameId corresponds to one object of class \code{\link{gameday}}
+A \code{\link{gameday}} object is a list containing 4 elements: \code{gameId}, \code{base}, \code{url}, and \code{ds}.  \code{gameId} is the
+unique identifier for a game, \code{base} contains the base URL corresponding the the \code{gameId}, \code{url} contains the sub urls pointing to different
+data sets that are combined together to create an object of class \code{\link{GameDayPlays}} containing play-by-play data.  The \code{ds} slot of the list
+contains the \code{\link{GameDayPlays}} object of play-by-play data.
 }
 \examples{
 exampleGameday <- gameday(gameId = 'gid_2012_08_12_atlmlb_nynmlb_1')
