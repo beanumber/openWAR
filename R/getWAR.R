@@ -1,10 +1,18 @@
-
 #' 
-#' Tabulates WAR
+#' @title Compute each players openWAR.
 #' 
-#' Compute each player's WAR, given their RAA values
+#' @description Tabulates each players value of openWAR given either an object of class \code{GameDayPlays} 
+#' or a list containing a data frame of class \code{openWARPlays}.
 #' 
-#' Detail test
+#' @deatils If an object of \code{GameDayPlays} is input to the function \code{getWAR}, the function \code{makeWAR} is called internally to first process 
+#' the data, then \code{getWAR} tabulates the final values of openWAR for each player.  Alternatively, the function 
+#' \code{makeWAR} can be run separately and the output from this function can be passed to \code{getWAR}, which will complete the tabulation of openWAR.  
+#' By default, the data set used to compute the replacement level is the same as the input data set.  Using the \code{dataRepl} option
+#' a user can specify a separate data set of used solely to calculate the replacement level.  This data set should be based on a full season of data 
+#' and not a partial season.  For in season, calculations, for instance, the data from the current year can be used to calculate openWAR, whereas 
+#' the data from the previous full season can be used to compute the replacement level.  
+#' 
+#' 
 #' 
 #' @param data An object of class \code{'openWARPlays'}
 #' @param dataRepl An object of class \code{'openWARPlays'} that will be used to calculate the replacement level.  
