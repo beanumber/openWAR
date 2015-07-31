@@ -1,6 +1,6 @@
-#' @title getRunEx
+#' @title Computes run expectancy.
 #' 
-#' @description Find the Run Expectancy for a given state
+#' @description Find the Run Expectancy for a given state.
 #' 
 #' @details Given a data set, returns a function giving the run expectancy for any base/out state
 #' 

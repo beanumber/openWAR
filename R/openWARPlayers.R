@@ -1,4 +1,4 @@
-#' @title openWARPlayers
+#' @title Players' openWAR values
 #' 
 #' @description A \code{\link{data.frame}} of players and their tabulated openWAR values.  The
 #'  function \code{\link{getWAR}} returns an object of class \code{\link{openWARPlayers}}.

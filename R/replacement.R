@@ -1,4 +1,4 @@
-#' @title getReplacementPlayers
+#' @title Determines the replacement players.
 #' @aliases getReplacementPlayers.RAA
 #' @aliases getReplacementPlayers.openWARPlays
 #' 

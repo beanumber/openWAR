@@ -1,6 +1,6 @@
-#' @title getModels
+#' @title Retrieves prior estimated models.
 #' 
-#' @description Retrieve various models trained on \code{\link{GameDayPlays}} data
+#' @description Retrieve various models trained on \code{\link{GameDayPlays}} data.
 #' 
 #' @details This function will retrieve various models based on the MLBAM data 
 #' set and the openWAR framework. Currently this only returns the Run Expectancy Model.

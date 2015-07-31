@@ -1,6 +1,6 @@
-#' @title plotFielding
+#' @title Plot fielding model for a player.
 #' 
-#' @description Creates a plot of the fielding model for an individual player
+#' @description Creates a plot of the fielding model for an individual player.
 #' 
 #' @details This is a convenience function for visually checking the fielding models. 
 #' It provides a way to inspect the quality of the fielding models for individual
