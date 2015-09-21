@@ -2,7 +2,7 @@
 % Please edit documentation in R/getData.R
 \name{updateGame}
 \alias{updateGame}
-\title{updateGame}
+\title{Updates data.}
 \usage{
 updateGame(gameIds, data, ...)
 }
@@ -17,10 +17,10 @@ updateGame(gameIds, data, ...)
 A data.frame of class \code{\link{GameDayPlays}} consisting of play-by-play data
 }
 \description{
-Replaces data from a single game
+Replaces data from a single game.
 }
 \details{
-Deletes and then appends fresh information from a particular game to the original data
+Deletes and then appends fresh information from a particular game to the original data.
 }
 \examples{
 data(May)

@@ -2,7 +2,7 @@
 % Please edit documentation in R/makeWAR.R
 \name{getFielderResp}
 \alias{getFielderResp}
-\title{getFielderResp}
+\title{Compute total fielder responsibility.}
 \usage{
 getFielderResp(data, ...)
 }
@@ -15,7 +15,7 @@ getFielderResp(data, ...)
 data.frame with 9 columns each representing the probability that a particular fielder will make at least one out; each row represents a ball in play
 }
 \description{
-Find the shared responsibility models for balls in play
+Find the shared responsibility models for balls in play.
 }
 \details{
 Fits 9 logistic regression models, each giving the probability of

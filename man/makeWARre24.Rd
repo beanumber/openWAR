@@ -2,7 +2,7 @@
 % Please edit documentation in R/makeWAR.R
 \name{makeWARre24}
 \alias{makeWARre24}
-\title{makeWARre24}
+\title{Compute RE24 before and after each PA.}
 \usage{
 makeWARre24(data, mod.re = NULL, ...)
 }

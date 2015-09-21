@@ -2,7 +2,7 @@
 % Please edit documentation in R/makeWAR.R
 \name{makeWARFielding}
 \alias{makeWARFielding}
-\title{makeWARFielding}
+\title{Compute RAA for fielders.}
 \usage{
 makeWARFielding(data, ...)
 }

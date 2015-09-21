@@ -2,7 +2,7 @@
 % Please edit documentation in R/makeWAR.R
 \name{getFielderRAA}
 \alias{getFielderRAA}
-\title{getFielderRAA}
+\title{Tabulate RAA for fielders.}
 \usage{
 getFielderRAA(data)
 }
@@ -13,7 +13,7 @@ getFielderRAA(data)
 A data.frame containing fielding RAA values for all plate appearances with a ball in play
 }
 \description{
-Determine the Runs Above Average (RAA) of the fielders
+Determine the Runs Above Average (RAA) of the fielders.
 }
 \details{
 

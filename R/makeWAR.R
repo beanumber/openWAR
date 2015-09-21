@@ -112,7 +112,7 @@ makeWAR.GameDayPlays_Runs = function(x, models = list(), verbose = TRUE, low.mem
     ############### Step 2: Define RAA for the defense Work only with the subset
     ############### of data for which the ball is in play and keep track of the 
     ############### indices 
-  bip.idx <- which(x$data$isBIP == TRUE)
+  bip.idx <- which(x$data$isBIP == TRUE & !is.na(x$data$our.x))
   ds.field <- x$data[bip.idx, ]
   fielding <- makeWARFielding(ds.field, models, verbose)
   

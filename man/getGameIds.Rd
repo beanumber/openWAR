@@ -2,7 +2,7 @@
 % Please edit documentation in R/getData.R
 \name{getGameIds}
 \alias{getGameIds}
-\title{getGameIds}
+\title{Retrives gameIds.}
 \usage{
 getGameIds(date = Sys.Date())
 }
@@ -13,7 +13,7 @@ getGameIds(date = Sys.Date())
 A vector of gameIds
 }
 \description{
-Retrieves MLBAM gameIds for a specified date
+Retrieves MLBAM gameIds for a specified date.
 }
 \details{
 Downloads information for a given day from the MLBAM website and retrieves

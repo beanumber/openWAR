@@ -227,9 +227,15 @@ getModelFieldingCollective.GameDayPlays = function(data) {
 #' 
 getModelFieldingCollective.default = function(data) {
     message("....Computing the collective fielding model...")
-    data = dplyr::mutate_(data, wasFielded = ~!is.na(fielderId))
-    outs = dplyr::select_(dplyr::filter_(data, ~wasFielded == TRUE), ~our.x, ~our.y)
-    hits = dplyr::select_(dplyr::filter_(data, ~wasFielded == FALSE), ~our.x, ~our.y)
+    data <- dplyr::mutate_(data, wasFielded = ~!is.na(fielderId))
+    outs <- data %>%
+      dplyr::filter_(~wasFielded == TRUE) %>%
+#      dplyr::filter_(~!is.na(our.x)) %>%
+      dplyr::select_(~our.x, ~our.y)
+    hits <- data %>%
+      dplyr::filter_(~wasFielded == FALSE) %>%
+#      dplyr::filter_(~!is.na(our.x)) %>%
+      dplyr::select_(~our.x, ~our.y)
     # Find 2D kernel density estimates for hits and outs Make sure to specify the range, so that they over estimated over the
     # same grid
     grid = list(range(data$our.x, na.rm = TRUE), range(data$our.y, na.rm = TRUE))
