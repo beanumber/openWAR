@@ -1,13 +1,13 @@
 Package: openWAR
 Type: Package
-Title: Machinery for analyzing baseball data and computing WAR
+Title: Machinery for Analyzing Baseball Data and Computing WAR
 Version: 0.2.2.9004
 Date: 2013-07-31
 Authors@R: c(
     person("Ben", "Baumer", email = "ben.baumer@gmail.com", role = c("aut", "cre")), 
     person("Gregory", "Matthews", email = "gjm112@gmail.com", role = c("aut")))
 Maintainer: Ben Baumer <ben.baumer@gmail.com>
-Description: This package serves two primary purposes: 1) it facilitates the
+Description: There are two primary purposes this package serves: 1) it facilitates the
     computation of openWAR, a fully open-source implementation of Wins Above
     Replacement (WAR) that could serve as a reference implementation for the
     sabermetric community; and 2) it downloads raw XML files from the MLBAM
