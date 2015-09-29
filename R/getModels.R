@@ -85,15 +85,32 @@ getModelRunExpectancy.GameDayPlays = function(data, mod.re = NULL, verbose = TRU
             ds <- data
         }
         # use model=FALSE option to decrease memory footprint Note that qr=TRUE is necessary to use predict() later
-        mod.re = lm(runsFuture ~ as.factor(startCode) * as.factor(startOuts), data = ds, model = FALSE)
+        mod.re <- lm(runsFuture ~ as.factor(startCode) * as.factor(startOuts), data = ds, model = FALSE)
     }
     
     if (verbose) {
-        message("....Run Expectancy Model....")
-        states = expand.grid(startCode = 0:7, startOuts = 0:2)
-        print(matrix(predict(mod.re, newdata = states), ncol = 3))
+        print(getMatrixRunExpectancy(mod.re))
     }
     return(mod.re)
+}
+
+#' getMatrixRunExpectancy
+#' @description a untility function for retrieving a run expectancy
+#' model in matrix form.
+#' @export
+#' @param x a run expectancy model
+#' @param ... currently ignored
+#' @return a matrix in the familiar 8x3 form
+#' @examples 
+#' 
+#' ERM <- getMatrixRunExpectancy(getModelRunExpectancy(May, verbose = FALSE))
+#' dim(ERM)
+#' ERM
+
+getMatrixRunExpectancy <- function(x, ...) {
+  message("....Run Expectancy Model....")
+  states = expand.grid(startCode = 0:7, startOuts = 0:2)
+  return(matrix(predict(x, newdata = states), ncol = 3))
 }
 
 
