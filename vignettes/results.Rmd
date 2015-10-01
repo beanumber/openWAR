@@ -55,6 +55,34 @@ sum(RAA ~ isReplacement, data=openWAR2013)
 sum(RAA ~ isReplacement, data=openWAR2014)
 ```
 
+Furthermore, the sum of the `RAA` values across each of the 14 different roles is also 0. 
+
+```{r}
+ds <- openWAR2013 %>%
+  mutate(playerId = as.numeric(playerId)) %>%
+  select(playerId, isReplacement) %>%
+  inner_join(MayProcessed$openWARPlays, by = c("playerId" = "batterId")) %>%
+  bind_cols(select(May, batterPos))
+ds %>%
+  select(contains("raa.")) %>%
+  colSums(na.rm = TRUE)
+```
+
+```{r}
+favstats(raa.bat ~ batterPos, data = ds)
+bwplot(raa.bat ~ batterPos, data = ds)
+```
+
+```{r}
+favstats(raa.bat ~ batterPos + isReplacement, data = ds)
+bwplot(raa.bat ~ batterPos | isReplacement, data = ds)
+```
+
+```{r}
+favstats(raa.SS ~ isReplacement, data = ds)
+bwplot(raa.SS ~ factor(isReplacement), data = ds)
+```
+
 [Jose Molina](http://en.wikipedia.org/wiki/Jos%C3%A9_Molina_(baseball))'s had the lowest `WAR` in 2014. Currently, openWAR does not measure the value of catcher framing, an attribute at which [Molina excels](http://grantland.com/features/studying-art-pitch-framing-catchers-such-francisco-cervelli-chris-stewart-jose-molina-others/). 
 
 The fielding `RAA` values in openWAR are separated by position, so that, for example, you can isolate all players who saved at least one run above average at both second base and shortstop. 
@@ -78,7 +106,6 @@ openWAR2012 %>%
 ```
 
 ### Analysis
-
 
 #### The Leaders
 
