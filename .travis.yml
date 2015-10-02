@@ -6,7 +6,9 @@ sudo: required
 
 env:
  global:
-   - CRAN: http://cran.rstudio.com
+   - CRAN=http://cran.rstudio.com
+   - NOT_CRAN=true
+   - _R_CHECK_CRAN_INCOMING_=false
 
 notifications:
   email:
