@@ -28,6 +28,10 @@ setClass("openWARPlays", contains = "data.frame")
 
 getRAA = function(data, ...) UseMethod("getRAA")
 
+getRAA2 <- function(data, ...) {
+  x <- select(data, )
+}
+
 #' @export
 #' @rdname getRAA
 #' @method getRAA openWARPlays

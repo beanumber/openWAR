@@ -7,21 +7,21 @@ Authors@R: c(
     person("Ben", "Baumer", email = "ben.baumer@gmail.com", role = c("aut", "cre")), 
     person("Gregory", "Matthews", email = "gjm112@gmail.com", role = c("aut")))
 Maintainer: Ben Baumer <ben.baumer@gmail.com>
-Description: There are two primary purposes this package serves: 1) it facilitates the
-    computation of openWAR, a fully open-source implementation of Wins Above
-    Replacement (WAR) that could serve as a reference implementation for the
-    sabermetric community; and 2) it downloads raw XML files from the MLBAM
-    GameDay web application and processes them into play-by-play data in a
-    tabular format. This play-by-play information is similar in spirit, though
-    not in syntax, to play-by-play data made available by Retrosheet. Those
-    interested in the modeling choices that we have made in our computation of
-    openWAR should consult our JQAS or arXiv paper on that subject. This
-    implementation of openWAR includes functions for constructing interval
-    estimates of WAR for each player, as well as comparing openWAR point
-    estimates to those of Baseball-Reference.com's rWAR.
-Depends: 
+Description: There are two primary purposes this package serves: 1) it
+    facilitates the computation of openWAR, a fully open-source implementation of
+    Wins Above Replacement (WAR) that could serve as a reference implementation
+    for the sabermetric community; and 2) it downloads raw XML files from the
+    MLBAM GameDay web application and processes them into play-by-play data in a
+    tabular format. This play-by-play information is similar in spirit, though not
+    in syntax, to play-by-play data made available by Retrosheet. Those interested
+    in the modeling choices that we have made in our computation of openWAR
+    should consult our JQAS or arXiv paper on that subject. This implementation
+    of openWAR includes functions for constructing interval estimates of WAR for
+    each player, as well as comparing openWAR point estimates to those of Baseball-
+    Reference.com's rWAR.
+Depends:
     R (>= 3.0.0)
-Imports: 
+Imports:
     mosaic,
     XML,
     RCurl,
@@ -33,7 +33,7 @@ Imports:
     KernSmooth,
     RColorBrewer,
     lattice
-Suggests: 
+Suggests:
     openWARData,
     Lahman,
     testthat,
@@ -43,3 +43,4 @@ URL: https://github.com/beanumber/openWAR
 BugReports: https://github.com/beanumber/openWAR/issues
 VignetteBuilder: knitr
 LazyData: true
+RoxygenNote: 5.0.1

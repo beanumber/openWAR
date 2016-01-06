@@ -300,7 +300,10 @@ updateHalfInning <- function(dat) {
     return(dat)
 }
 
-#' @title getRunnerMovement
+#' getRunnerMovement
+#' 
+#' @description Condense the GameDay descriptions of runner movement into
+#' a character vector. 
 #' 
 #' @param x a character vector of runner movements
 #' 

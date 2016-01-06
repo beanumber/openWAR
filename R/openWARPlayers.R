@@ -4,9 +4,11 @@
 #'  function \code{\link{getWAR}} returns an object of class \code{\link{openWARPlayers}}.
 #' 
 #' @exportClass openWARPlayers
-#' @examples showClass('openWARPlayers')
+#' @examples 
 #' 
-#' #' @format An \code{\link{openWARPlayers}} object.
+#' showClass('openWARPlayers')
+#' 
+#' @format An \code{\link{openWARPlayers}} object.
 #' \describe{
 #'    \item{playerId}{The MLBAM id for the player}
 #'    \item{PA.bat}{The number of plate appearances as a batter for that player}
@@ -48,10 +50,7 @@
 #'    \item{repl}{Runs above average produced by a shadow replacement-level player with the same profile (i.e. same number of batting, pitching, base running, and fielding opportunities) as the actual player}
 #'    \item{WAR}{Wins above replacement for the player.  Calculated as the difference between RAA and repl divided by 10}
 #'    \item{isReplacement}{A boolean indicating if the player was part of the replacement pool for calculating replacement level}
-#'    
-#'    
-#'         
-#'      }
+#'    }
 
 
 

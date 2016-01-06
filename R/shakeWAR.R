@@ -1,4 +1,4 @@
-#' @title Estimates the variance of openWAR.
+#' Estimates the variance of openWAR
 #' 
 #' @description Resample to obtain variance estimates for WAR.
 #' 
@@ -28,11 +28,8 @@
 #' @param ... additional arguments passed to \code{\link{shakeWAR}} methods
 #' 
 #' @return a \code{do.\link{openWARPlayers}} data frame with RAA values 
-#' 
 #' @export 
-#' 
 #' @importFrom mosaic resample
-#' 
 #' @examples
 #' 
 #' \dontrun{
@@ -79,7 +76,6 @@ shakeWAR.openWARPlays <- function(data, N = 10, resample = "plays", ...) {
   return(bstrap)
 }
 
-#' 
 #' @rdname shakeWAR
 #' @export
 #' @method shakeWAR GameDayPlays

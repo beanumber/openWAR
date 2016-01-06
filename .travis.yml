@@ -30,4 +30,5 @@ r_binary_packages:
 # up a not-yet-released bugfix)
 r_github_packages:
  - cboettig/Sxslt
+ - beanumber/openWARData
  
