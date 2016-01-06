@@ -2,7 +2,7 @@
 % Please edit documentation in R/getData.R
 \name{updateGame}
 \alias{updateGame}
-\title{Updates data.}
+\title{Update data for a single game from GameDay}
 \usage{
 updateGame(gameIds, data, ...)
 }

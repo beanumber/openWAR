@@ -2,18 +2,33 @@
 % Please edit documentation in R/data.R
 \docType{data}
 \name{MetsBraves}
+\alias{May}
+\alias{May14}
 \alias{MetsBraves}
-\title{A sample of play-by-play data from MLBAM}
-\format{A \code{\link{gameday}} object.}
+\title{Samples of play-by-play data from MLBAM}
+\format{For \code{MetsBraves}, a \code{\link{gameday}} object. For 
+\code{\link{May14}} and \code{\link{May}}, a \code{\link{GameDayPlays}}
+data frame.}
 \source{
 \url{http://gd2.mlb.com/components/game/mlb/year_2012/month_08/day_12/gid_2012_08_12_atlmlb_nynmlb_1/}
+
+\url{http://gd2.mlb.com/components/game/mlb/year_2012/month_05/day_14/}
+
+\url{http://gd2.mlb.com/components/game/mlb/year_2012/month_05/}
 }
 \usage{
 MetsBraves
+
+May14
+
+May
 }
 \description{
-A dataset containing play-by-play data from MLBAM GameDay and processed by 
-\code{\link{openWAR}} for the August 8th, 2012 game between the New York Mets and Atlanta Braves.
+Datasets containing play-by-play data from MLBAM GameDay and processed by 
+\code{\link{openWAR}}. \code{MetsBraves} contains data for the August 
+8th, 2012 game between the New York Mets and Atlanta Braves. \code{May14}
+contains data from all games on May 14, 2013. \code{May} contains data
+for all games from May 2013.
 }
 \keyword{datasets}
 

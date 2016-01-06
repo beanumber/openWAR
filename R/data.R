@@ -1,36 +1,27 @@
-#' A sample of play-by-play data from MLBAM
+#' Samples of play-by-play data from MLBAM
 #' 
-#' A dataset containing play-by-play data from MLBAM GameDay and processed by 
-#' \code{\link{openWAR}} for the August 8th, 2012 game between the New York Mets and Atlanta Braves. 
+#' Datasets containing play-by-play data from MLBAM GameDay and processed by 
+#' \code{\link{openWAR}}. \code{MetsBraves} contains data for the August 
+#' 8th, 2012 game between the New York Mets and Atlanta Braves. \code{May14}
+#' contains data from all games on May 14, 2013. \code{May} contains data
+#' for all games from May 2013. 
 #' 
-#' @format A \code{\link{gameday}} object. 
+#' @format For \code{MetsBraves}, a \code{\link{gameday}} object. For 
+#' \code{\link{May14}} and \code{\link{May}}, a \code{\link{GameDayPlays}}
+#' data frame.
+#' @docType data
 #' 
 #' @source \url{http://gd2.mlb.com/components/game/mlb/year_2012/month_08/day_12/gid_2012_08_12_atlmlb_nynmlb_1/}
-#' 
+#' @source \url{http://gd2.mlb.com/components/game/mlb/year_2012/month_05/day_14/}
+#' @source \url{http://gd2.mlb.com/components/game/mlb/year_2012/month_05/}
 "MetsBraves" 
 
-#' A day-long sample of GameDayPlays data from MLBAM
-#' 
-#' A dataset containing play-by-play data from MLBAM GameDay and processed by 
-#' \code{openWAR} for all games on May 14, 2013. 
-#' 
-#' @format A \code{\link{GameDayPlays}} object, which is also a \code{data.frame} with 1132 
-#' rows. 
-#' 
-#' @source \url{http://gd2.mlb.com/components/game/mlb/year_2012/month_05/day_14/}
-#' 
+#' @rdname MetsBraves
+#' @docType data
 "May14" 
 
-#' A month-long sample of GameDayPlays data from MLBAM
-#' 
-#' A dataset containing play-by-play data from MLBAM GameDay and processed by 
-#' \code{openWAR} for all games in May, 2013. 
-#' 
-#' @format A \code{\link{GameDayPlays}} object, which is also a \code{data.frame} with 31738 
-#' rows. 
-#' 
-#' @source \url{http://gd2.mlb.com/components/game/mlb/year_2012/month_05/}
-#' 
+#' @rdname MetsBraves
+#' @docType data
 "May" 
 
 #' A sample of processed data that has been through \code{\link{makeWAR}}
@@ -50,6 +41,7 @@
 #' A dataset containing computed openWAR values for MLB players during the 2012 season along with
 #' the runs above average for each component of openWAR.    
 #' 
+#' @docType data
 #' @format An \code{\link{openWARPlayers}} object, which is also a \code{\link{data.frame}} with 
 #' 40 columns. Each row represents a single player. The columns are as follows:
 #' \describe{
@@ -102,10 +94,12 @@
 #' \code{\link{summary.openWARPlayers}}
 #' 
 "openWAR2012"
-
 #' @rdname openWAR2012
+#' @docType data
 "openWAR2013"
 #' @rdname openWAR2012
+#' @docType data
 "openWAR2014"
 #' @rdname openWAR2012
+#' @docType data
 "openWAR2015"

@@ -1,7 +1,6 @@
 utils::globalVariables("event")
 
 #' @title An object containing play-by-play data
-#' @aliases GameDayPlays-class
 #' 
 #' @description A data set that contains play-by-play information returned by \code{\link{getData}}
 #' 
@@ -78,7 +77,7 @@ utils::globalVariables("event")
 #' @exportClass GameDayPlays
 #' @examples showClass('GameDayPlays')
 #' @seealso \code{\link{GameDayPlays-class}}
-
+#' 
 setClass("GameDayPlays", contains = "data.frame")
 
 

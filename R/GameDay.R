@@ -234,7 +234,7 @@ readData.gameday = function(gd) {
     return(out)
 }
 
-#' @title updataHalfInning
+#' Update action within a half-inning
 #' 
 #' @description updateHalfInning
 #' 

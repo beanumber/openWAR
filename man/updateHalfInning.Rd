@@ -2,7 +2,7 @@
 % Please edit documentation in R/GameDay.R
 \name{updateHalfInning}
 \alias{updateHalfInning}
-\title{updataHalfInning}
+\title{Update action within a half-inning}
 \usage{
 updateHalfInning(dat)
 }

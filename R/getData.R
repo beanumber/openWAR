@@ -130,7 +130,7 @@ getGameIds <- function(date = Sys.Date()) {
     return(games)
 }
 
-#' @title Updates data.
+#' Update data for a single game from GameDay
 #' 
 #' @description Replaces data from a single game.
 #' 
