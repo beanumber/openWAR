@@ -221,7 +221,7 @@ readData.gameday = function(gd) {
       out <- dplyr::mutate_(out, isPA = ~!event %in% c("Defensive Indiff", "Stolen Base 2B", "Runner Out"))
       out <- dplyr::mutate_(out, isAB = ~isPA & !event %in% c("Walk", "Intent Walk", "Hit By Pitch", "Sac Fly", "Sac Bunt"))
       out <- dplyr::mutate_(out, isHit = ~event %in% c("Single", "Double", "Triple", "Home Run"))
-      out <- dplyr::mutate_(out, isBIP = ~event != "Home Run" & !is.na(x) & !is.na(y))
+      out <- dplyr::mutate_(out, isBIP = ~(event != "Home Run" | grepl("inside-the-park", description)) & !is.na(x) & !is.na(y))
       
       # translate the coordinates so that home plate is (0,0) and second base is (0, 127' 3 3/8')
       out = recenter(out)
