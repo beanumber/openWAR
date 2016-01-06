@@ -360,18 +360,18 @@ makeWARFielding = function(data, ...) {
     message("....Applying the collective fielding model...")
     p.hat <- predict(fmod, newdata = select_(data, ~our.x, ~our.y))
     # Step 2a: Define \delta.field for the defense, collectively
-    delta.field = data$delta * p.hat
-    
+    delta.field <- with(data, ifelse(endOuts == startOuts, 
+                                  delta * p.hat, delta * (1 - p.hat)))
     # Compute the individual responsibility of each fielder
-    P = getFielderResp(data)
+    P <- getFielderResp(data)
     # Step 2b: Define \delta.field for the defense, individually
-    delta.fielders = delta.field * P
-    names(delta.fielders) = gsub("resp", "delta", names(delta.fielders))
+    delta.fielders <- delta.field * P
+    names(delta.fielders) <- gsub("resp", "delta", names(delta.fielders))
     
-    out = data.frame(p.hat, delta.field, delta.fielders)
+    out <- data.frame(p.hat, delta.field, delta.fielders)
     
     # Normalize the delta's into RAA's
-    raa.field = getFielderRAA(cbind(out, venueId = data$venueId))
+    raa.field <- getFielderRAA(cbind(out, venueId = data$venueId))
     return(cbind(out, raa.field))
 }
 
