@@ -35,6 +35,7 @@ Imports:
     lattice
 Suggests:
     openWARData,
+    rmarkdown,
     Lahman,
     testthat,
     knitr
