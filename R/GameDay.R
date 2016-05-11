@@ -59,9 +59,11 @@ gameday <- function(gameId = "gid_2012_08_12_atlmlb_nynmlb_1", ...) {
 #' @param ... currently ignored
 #' 
 #' @return a vector of URLs
+#' @export
 
 getURLs <- function(gd, ...) UseMethod("getURLs")
 
+#' @export
 getURLs.gameday <- function(gd, ...) {
   xml_paths <- c("/bis_boxscore.xml", "/inning/inning_all.xml", 
                  "/inning/inning_hit.xml", "/game.xml", "/game_events.xml")
@@ -96,6 +98,7 @@ getURLs.gameday <- function(gd, ...) {
 
 readData <- function(gd, ...) UseMethod("readData")
 
+#' @export
 readData.gameday = function(gd, ...) {
   # First, build gd$data as a list of data frames
   gd$data <- lapply(gd$url, xml2df)

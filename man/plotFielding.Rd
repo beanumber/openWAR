@@ -46,8 +46,7 @@ Creates a plot of the fielding model for an individual player.
 This is a convenience function for visually checking the fielding models. 
 It provides a way to inspect the quality of the fielding models for individual
 players, and was used to generate one of the figures used in the \code{\link{openWAR}}
-paper. However, this function is not exported, since it is not really accessible
-to end users. We hope to add this functionality in a future release.
+paper.
 }
 \examples{
 fmod <- getModelFieldingCollective(May)

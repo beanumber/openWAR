@@ -5,8 +5,7 @@
 #' @details This is a convenience function for visually checking the fielding models. 
 #' It provides a way to inspect the quality of the fielding models for individual
 #' players, and was used to generate one of the figures used in the \code{\link{openWAR}}
-#' paper. However, this function is not exported, since it is not really accessible
-#' to end users. We hope to add this functionality in a future release. 
+#' paper. 
 #' 
 #' @param x a model object, currently \code{\link{lm}}, \code{\link{glm}}, and
 #' \code{\link{bkde2D}} are
@@ -22,7 +21,6 @@
 #' 
 #' @export
 #' @return A contourplot object
-#' 
 
 plotFielding = function(x, ...) UseMethod("plotFielding")
 
@@ -62,7 +60,7 @@ plotFielding.lm = function(x, ...) {
 #' @rdname plotFielding
 
 plotFielding.formula = function(x, ...) {
-    print(lattice::contourplot(x, data = data, region = TRUE, ..., alpha.regions = 0.5, 
+    print(lattice::contourplot(x, region = TRUE, ..., alpha.regions = 0.5, 
                       col.regions = grDevices::colorRampPalette(RColorBrewer::brewer.pal(9, "Blues"))(100)
                       , cuts = 10, contour = TRUE, panel = panel.fielding
 #        , xlim = c(-350, 350), ylim = c(0, 550)

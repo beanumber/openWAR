@@ -23,11 +23,13 @@ openWARPlays <- function(x) {
 #' @return A data.frame of class \code{\link{openWARPlayers}}
 #' 
 #' @import dplyr
+#' @export
 
 getRAA = function(data, ...) UseMethod("getRAA")
 
 #' @rdname getRAA
 #' @method getRAA openWARPlays
+#' @export
 
 getRAA.openWARPlays = function(data, ...) {
     message("...Tabulating RAA per player...")
