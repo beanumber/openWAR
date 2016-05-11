@@ -156,7 +156,7 @@ readData.gameday = function(gd, ...) {
     out <- out %>%
       rename_(batterName = ~playerName.x, pitcherName = ~playerName.y, 
               inning = ~inning.x, event = ~event.x) %>%
-      select(-ends_with(".y"))
+      select_(~-ends_with(".y"))
     
     # Convert columns to numerics
     # numeric_cols <- c("ab_num", "balls", "strikes", "endOuts", "batterId", "pitcherId", 
@@ -585,9 +585,10 @@ recenter = function(dat, ...) {
 }
 
 #' @rdname plot.GameDayPlays
+#' @importFrom graphics plot
 #' @export
 #' @method plot gameday
 
 
-plot.gameday = function(x, ...) { plot(x$ds, ...) }
+plot.gameday = function(x, ...) { graphics::plot(x$ds, ...) }
     

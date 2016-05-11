@@ -3,10 +3,9 @@
 #' @description A \code{\link{data.frame}} of players and their tabulated openWAR values.  The
 #'  function \code{\link{getWAR}} returns an object of class \code{\link{openWARPlayers}}.
 #' 
-#' @exportClass openWARPlayers
+#' @param x an object
 #' @examples 
-#' 
-#' showClass('openWARPlayers')
+#' class(openWAR2012)
 #' 
 #' @format An \code{\link{openWARPlayers}} object.
 #' \describe{
@@ -52,9 +51,9 @@
 #'    \item{isReplacement}{A boolean indicating if the player was part of the replacement pool for calculating replacement level}
 #'    }
 
-
-
-setClass("openWARPlayers", contains = "data.frame")
+openWARPlayers <- function(x) { 
+  class(x) <- c("openWARPlayers", class(x))
+}
 
 #' @title Summarize openWAR across players
 #' 

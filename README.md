@@ -44,12 +44,19 @@ gd <- gameday()
 summary(gd)
 ```
 
-    ##        Length Class  Mode     
-    ## gameId 1      -none- character
-    ## base   1      -none- character
-    ## url    5      -none- character
+    ##        Length Class        Mode     
+    ## gameId  1     -none-       character
+    ## base    1     -none-       character
+    ## url     5     -none-       character
+    ## ds     62     GameDayPlays list
 
-To retrieve a data.frame of many games worth, try:
+``` r
+plot(gd)
+```
+
+![](README_files/figure-markdown_github/unnamed-chunk-4-1.png)
+
+To retrieve a `data.frame` of many games worth, try:
 
 ``` r
 ds <- getData()

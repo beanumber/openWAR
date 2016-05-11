@@ -57,11 +57,12 @@ plotFielding.lm = function(x, ...) {
 
 #' @export
 #' @importFrom grDevices colorRampPalette
+#' @import lattice
 #' @importFrom RColorBrewer brewer.pal
 #' @rdname plotFielding
 
 plotFielding.formula = function(x, ...) {
-    print(contourplot(x, data = data, region = TRUE, ..., alpha.regions = 0.5, 
+    print(lattice::contourplot(x, data = data, region = TRUE, ..., alpha.regions = 0.5, 
                       col.regions = grDevices::colorRampPalette(RColorBrewer::brewer.pal(9, "Blues"))(100)
                       , cuts = 10, contour = TRUE, panel = panel.fielding
 #        , xlim = c(-350, 350), ylim = c(0, 550)

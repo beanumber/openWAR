@@ -32,6 +32,7 @@
 getReplacementPlayers = function(data, nteams = 30, ...) UseMethod("getReplacementPlayers")
 
 #' @export
+#' @importFrom utils head
 #' @rdname getReplacementPlayers
 #' @method getReplacementPlayers openWARPlayers
 
@@ -44,7 +45,7 @@ getReplacementPlayers.openWARPlayers = function(data, nteams = 30, ...) {
     mlb.pos.playerIds <- data %>%
       arrange_(~desc(PA.bat)) %>%
       select_(~playerId) %>%
-      head(round(nteams * 13))
+      utils::head(round(nteams * 13))
 
     # Find the players with the most batters faced, 12 per club
     mlb.pitcherIds <- data %>%

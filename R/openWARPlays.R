@@ -3,10 +3,13 @@
 #' @description Contains the output from the function \code{\link{makeWAR}}
 #' specific to \code{openWAR}.
 #' 
-#' @exportClass openWARPlays
-#' @examples showClass('openWARPlays')
+#' @param x an object
+#' @examples 
+#' class(MayProcessed$openWAR)
 
-setClass("openWARPlays", contains = "data.frame")
+openWARPlays <- function(x) { 
+  class(x) <- c("openWARPlays", class(x))
+}
 
 #' @title getRAA
 #' 
@@ -20,20 +23,9 @@ setClass("openWARPlays", contains = "data.frame")
 #' @return A data.frame of class \code{\link{openWARPlayers}}
 #' 
 #' @import dplyr
-#' 
-#' @export getRAA
-#' @examples
-#' 
-#' players = getRAA(MayProcessed$openWAR)
-#' 
 
 getRAA = function(data, ...) UseMethod("getRAA")
 
-getRAA2 <- function(data, ...) {
-  x <- select(data, )
-}
-
-#' @export
 #' @rdname getRAA
 #' @method getRAA openWARPlays
 

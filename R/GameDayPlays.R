@@ -72,13 +72,15 @@ utils::globalVariables("event")
 #'         \item{theta}{radial angle, in radians, of the location of the batted ball.
 #'         Home plate has \code{theta} of 0.}
 #'      }
-#' 
+#' @param x an object
 #' @import methods
-#' @exportClass GameDayPlays
-#' @examples showClass('GameDayPlays')
-#' @seealso \code{\link{GameDayPlays-class}}
+#' @examples 
+#' class(May)
 #' 
-setClass("GameDayPlays", contains = "data.frame")
+
+GameDayPlays <- function(x) { 
+  class(x) <- c("GameDayPlays", class(x))
+}
 
 
 
