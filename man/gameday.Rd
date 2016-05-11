@@ -33,7 +33,7 @@ contains the \code{\link{GameDayPlays}} object of play-by-play data.
 exampleGameday <- gameday(gameId = 'gid_2012_08_12_atlmlb_nynmlb_1')
 # Display GameId
 exampleGameday$gameId
-# Summary of the different types fo game events for gameId = 'gid_2012_08_12_atlmlb_nynmlb_1'
+# Summary of the different types of game events for gameId = 'gid_2012_08_12_atlmlb_nynmlb_1'
 summary(exampleGameday$ds$event)
 plot(exampleGameday$ds)
 }

@@ -256,8 +256,8 @@ getModelFieldingCollective.default = function(data) {
     # Find 2D kernel density estimates for hits and outs Make sure to specify the range, so that they over estimated over the
     # same grid
     grid = list(range(data$our.x, na.rm = TRUE), range(data$our.y, na.rm = TRUE))
-    fit.out <- KernSmooth::bkde2D(as.matrix(outs), bandwidth = c(10, 10), range.x = grid)
-    fit.hit <- KernSmooth::bkde2D(as.matrix(hits), bandwidth = c(10, 10), range.x = grid)
+    fit.out <- KernSmooth::bkde2D(as.matrix(na.omit(outs)), bandwidth = c(10, 10), range.x = grid)
+    fit.hit <- KernSmooth::bkde2D(as.matrix(na.omit(hits)), bandwidth = c(10, 10), range.x = grid)
     class(fit.out) <- union("bkde2D", class(fit.out))
     class(fit.hit) <- union("bkde2D", class(fit.hit))
     

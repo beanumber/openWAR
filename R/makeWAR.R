@@ -388,20 +388,20 @@ makeWARFielding = function(data, ...) {
 #' @return A data.frame containing fielding RAA values for all plate appearances with a ball in play
 #' 
 #' @export
-#' 
+#' @importFrom stats lm
 #' 
 
 getFielderRAA = function(data) {
     # Build a model for each fielder's expected change in runs
-    mod.P = lm(delta.P ~ factor(venueId), data = data)
-    mod.C = lm(delta.C ~ factor(venueId), data = data)
-    mod.1B = lm(delta.1B ~ factor(venueId), data = data)
-    mod.2B = lm(delta.2B ~ factor(venueId), data = data)
-    mod.3B = lm(delta.3B ~ factor(venueId), data = data)
-    mod.SS = lm(delta.SS ~ factor(venueId), data = data)
-    mod.LF = lm(delta.LF ~ factor(venueId), data = data)
-    mod.CF = lm(delta.CF ~ factor(venueId), data = data)
-    mod.RF = lm(delta.RF ~ factor(venueId), data = data)
+    mod.P = stats::lm(delta.P ~ factor(venueId), data = data)
+    mod.C = stats::lm(delta.C ~ factor(venueId), data = data)
+    mod.1B = stats::lm(delta.1B ~ factor(venueId), data = data)
+    mod.2B = stats::lm(delta.2B ~ factor(venueId), data = data)
+    mod.3B = stats::lm(delta.3B ~ factor(venueId), data = data)
+    mod.SS = stats::lm(delta.SS ~ factor(venueId), data = data)
+    mod.LF = stats::lm(delta.LF ~ factor(venueId), data = data)
+    mod.CF = stats::lm(delta.CF ~ factor(venueId), data = data)
+    mod.RF = stats::lm(delta.RF ~ factor(venueId), data = data)
     
     # Define RAA to be the residuals from the individual fielders models
     raa = -data.frame(mod.P$residuals, mod.C$residuals, mod.1B$residuals, mod.2B$residuals, mod.3B$residuals, mod.SS$residuals, 
