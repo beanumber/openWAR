@@ -12,7 +12,7 @@ This package is designed to present a reference implementation of [Wins Above Re
 The **Sxslt** package is required in order to download new game data from MLBAM. This package is not present on CRAN. Hence, some manual installation may be necessary. The following command:
 
 ``` r
-devtools::install_github("beanumber/Sxslt")
+devtools::install_github("omegahat/Sxslt")
 ```
 
 should do the trick. If it doesn't please check that your operating system meets the `SystemRequirements`. These can be installed on Ubuntu by:
@@ -44,11 +44,10 @@ gd <- gameday()
 summary(gd)
 ```
 
-    ##        Length Class        Mode     
-    ## gameId  1     -none-       character
-    ## base    1     -none-       character
-    ## url     5     -none-       character
-    ## ds     62     GameDayPlays list
+    ##        Length Class  Mode     
+    ## gameId 1      -none- character
+    ## base   1      -none- character
+    ## url    5      -none- character
 
 To retrieve a data.frame of many games worth, try:
 
