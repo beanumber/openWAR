@@ -185,6 +185,7 @@ makeWAR.GameDayPlays_Pitching = function(x, models = list(), verbose = TRUE, low
 }    
 
 #' @export
+#' @importFrom stats coef
 #' @rdname makeWAR
 #' @method makeWAR GameDayPlays_Offense
     
@@ -196,7 +197,7 @@ makeWAR.GameDayPlays_Offense = function(x, models = list(), verbose = TRUE, low.
                                models[["baserunning"]], verbose)
   if (verbose) {
     message("....Baserunning Model....")
-    message(paste("....", length(coef(mod.br)), "coefficients -- suppressing output..."))
+    message(paste("....", length(stats::coef(mod.br)), "coefficients -- suppressing output..."))
     # print(sort(coef(mod.br)))
   }
   x$models.used[["baserunning"]] <- mod.br
@@ -304,6 +305,7 @@ makeWAR.GameDayPlays_Batters = function(x, models = list(), verbose = TRUE, low.
 #' @return a data frame with three columns: \code{startExR}, \code{endExR}, and 
 #' \code{delta}. The latter is the change in run expectancy.
 #' 
+#' @importFrom stats predict
 #' @export
 #' @examples
 #' 

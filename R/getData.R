@@ -43,17 +43,17 @@ getData <- function(start = Sys.Date() - 1, end = NULL, gameIds = NULL, drop.sus
 
     # if (require(multicore)) { message('Using multicore to parallelize!') gd.list = mclapply(gIds,
     # gameday, mc.cores = max(1, getOption('core') - 1)) } else {
-    gd.list = lapply(gIds, gameday)
+    gd.list <- lapply(gIds, gameday)
     # }
-    ds.list = lapply(gd.list, "[[", "ds")
-    out = do.call(rbind, ds.list)
-    out = dplyr::filter_(out, ~game_type == "R")
+    ds.list <- lapply(gd.list, "[[", "ds")
+    out <- bind_rows(ds.list)
+    out <- dplyr::filter_(out, ~game_type == "R")
     # exclude suspended games
     if (drop.suspended) {
         # test = ddply(out, ~gameId, summarise, Innings = max(inning))
         test <- dplyr::summarise_(group_by_(out, ~gameId), Innings = ~max(inning))
-        suspended = dplyr::filter_(test, ~Innings < 5)$gameId
-        out = dplyr::filter_(out, ~!gameId %in% suspended)
+        suspended <- dplyr::filter_(test, ~Innings < 5)$gameId
+        out <- dplyr::filter_(out, ~!gameId %in% suspended)
     }
     
     # Set the class attribute
@@ -121,12 +121,12 @@ getGameIds <- function(date = Sys.Date()) {
     mm = format(date, "%m")
     dd = format(date, "%d")
     url <- paste("http://gd2.mlb.com/components/game/mlb/year_", yyyy, "/month_", mm, "/day_", dd, "/", sep = "")
-    cat(paste("\nRetrieving data from", date, "..."))
+    message(paste("\nRetrieving data from", date, "..."))
     a <- RCurl::getURL(url)
     b <- strsplit(a, "<a")
     ind <- grep("gid", b[[1]])
     games <- substring(b[[1]][ind], 8, 37)
-    cat(paste("\n...found", length(games), "games\n"))
+    message(paste("\n...found", length(games), "games\n"))
     return(games)
 }
 

@@ -163,8 +163,7 @@ panel.baseball <- function() {
 
 
 plot.GameDayPlays = function(x, batterName = NULL, pitcherName = NULL, events = NULL, ...) {
-  
-    xy.fields = c("our.x", "our.y")
+    xy.fields <- c("our.x", "our.y")
     if (!length(intersect(xy.fields, names(x))) == length(xy.fields)) {
         stop("(x,y) coordinate locations not found.")
     }
@@ -180,8 +179,8 @@ plot.GameDayPlays = function(x, batterName = NULL, pitcherName = NULL, events = 
     }
     ds <- filter_(x, ~!is.na(our.y) & !is.na(our.x))
     ds <- droplevels(ds)
-    nkeycols = min(5, nlevels(ds$event))
-    plot = xyplot(our.y ~ our.x
+    nkeycols <- min(5, nlevels(factor(ds$event)))
+    plot = lattice::xyplot(our.y ~ our.x
                   , groups = event
                   , data = ds
                   , ...

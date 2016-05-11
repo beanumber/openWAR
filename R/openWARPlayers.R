@@ -235,6 +235,7 @@ summary.do.openWARPlayers = function(object, ...) {
 #' @return a faceted densityplot
 #' 
 #' @import lattice
+#' @importFrom tidyr gather
 #' @export
 #' @examples
 #' 
@@ -245,20 +246,24 @@ summary.do.openWARPlayers = function(object, ...) {
 #' }
 
 plot.do.openWARPlayers = function(x, playerIds = c(431151, 285079), ...) {
-  playerIds = sort(playerIds)
+  playerIds <- sort(playerIds)
   # is it worth the trouble to filter the rows?
-  rows = filter_(x, ~playerId %in% playerIds)
+  rows <- filter_(x, ~playerId %in% playerIds)
   # Remove unused factor levels
   rows$Name = factor(rows$Name)
   
   lkup = unique(rows[, c("playerId", "Name")])
+  lkup <- rows %>%
+    select_(~playerId, ~Name) %>%
+    unique()
   #    labels = as.character(lkup[order(lkup$batterId), ]$Name)
   labels = as.character(arrange_(lkup, ~playerId)$Name)
   
-  sims.long = reshape(rows[, c("playerId", "Name", "RAA", "RAA.bat", "RAA.br", "RAA.field", "RAA.pitch")], varying = 3:7, 
-                      timevar = "component", direction = "long")
+  sims_tidy <- rows %>%
+      select_("playerId", "Name", "RAA", "RAA.bat", "RAA.br", "RAA.field", "RAA.pitch") %>%
+      tidyr::gather(key = "component", value = "RAA", -playerId, -Name)
   
-  plot = densityplot(~RAA | component, groups = ~playerId, data = sims.long
+  plot = lattice::densityplot(~RAA | component, groups = ~playerId, data = sims_tidy
                      , panel = function(x, y, ...) { 
                        panel.densityplot(x, plot.points = FALSE, lwd = 3, ...)
                      }

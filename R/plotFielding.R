@@ -34,6 +34,8 @@ plotFielding.glm = function(x, ...) {
 }
 
 #' @export
+#' @importFrom mosaic lhs
+#' @importFrom stats terms
 #' @rdname plotFielding
 
 plotFielding.lm = function(x, ...) {
@@ -48,17 +50,19 @@ plotFielding.lm = function(x, ...) {
     my.grid = expand.grid(our.x = xs, our.y = ys)
     my.grid$z.hat = predict(model, newdata = my.grid, type = "response")
     
-    label = gsub("[^A-Z]", "", paste(lhs(terms(model)), collapse = ""))
+    label = gsub("[^A-Z]", "", paste(mosaic::lhs(stats::terms(model)), collapse = ""))
     
     plotFielding.formula(z.hat ~ our.x + our.y, data = my.grid, label = label, ...)
 }
 
 #' @export
+#' @importFrom grDevices colorRampPalette
+#' @importFrom RColorBrewer brewer.pal
 #' @rdname plotFielding
 
 plotFielding.formula = function(x, ...) {
     print(contourplot(x, data = data, region = TRUE, ..., alpha.regions = 0.5, 
-                      col.regions = colorRampPalette(RColorBrewer::brewer.pal(9, "Blues"))(100)
+                      col.regions = grDevices::colorRampPalette(RColorBrewer::brewer.pal(9, "Blues"))(100)
                       , cuts = 10, contour = TRUE, panel = panel.fielding
 #        , xlim = c(-350, 350), ylim = c(0, 550)
         , xlab = "Horizontal Distance from Home Plate (ft.)", 

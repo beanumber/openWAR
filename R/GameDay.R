@@ -27,7 +27,7 @@
 #' summary(exampleGameday$ds$event)
 #' plot(exampleGameday$ds)
 
-gameday = function(gameId = "gid_2012_08_12_atlmlb_nynmlb_1", ...) {
+gameday <- function(gameId = "gid_2012_08_12_atlmlb_nynmlb_1", ...) {
     # Check to make the gameId is at least potentially valid
     if (nchar(gameId) != 30) {
         stop("This is not a valid MLBAM gameId!")
@@ -37,39 +37,38 @@ gameday = function(gameId = "gid_2012_08_12_atlmlb_nynmlb_1", ...) {
     dd <- substring(gameId, 13, 14)
     
     # Base URL
-    base = paste("http://gd2.mlb.com/components/game/mlb/year_", yyyy, "/month_", mm, "/day_", dd, "/", sep = "")
+    base <- paste0("http://gd2.mlb.com/components/game/mlb/year_", yyyy, "/month_", mm, "/day_", dd, "/")
     message(gameId)
     
-    gd = list(gameId = gameId, base = base)
-    class(gd) = "gameday"
-    gd$url = getURLs.gameday(gd)
-    # gd$xml = getXML.gameday(gd) if (!is.null(gd$xml)) { gd$ds = getData.gameday(gd) }
-    try(gd$ds <- readData.gameday(gd))
+    gd <- list(gameId = gameId, base = base)
+    class(gd) <- "gameday"
+    gd$url <- getURLs(gd)
+    try(gd$ds <- readData(gd))
     return(gd)
 }
 
 ############################################################################################### Utility functions
 
 #' @title getURLs.gameday
-#' @aliases getXML.gameday
 #' 
 #' @description Convenience function for returning data related to a game
 #' 
 #' @details Given a gameId string, this function can return several URLs
 #' 
 #' @param gd A \code{gameday} object
+#' @param ... currently ignored
 #' 
 #' @return a vector of URLs
 
+getURLs <- function(gd, ...) UseMethod("getURLs")
 
-getURLs.gameday = function(gd) {
-    url = NULL
-    url["bis_boxscore.xml"] = paste(gd$base, gd$gameId, "/bis_boxscore.xml", sep = "")
-    url["inning_all.xml"] = paste(gd$base, gd$gameId, "/inning/inning_all.xml", sep = "")
-    url["inning_hit.xml"] = paste(gd$base, gd$gameId, "/inning/inning_hit.xml", sep = "")
-    url["game.xml"] = paste(gd$base, gd$gameId, "/game.xml", sep = "")
-    url["game_events.xml"] = paste(gd$base, gd$gameId, "/game_events.xml", sep = "")
-    return(url)
+getURLs.gameday <- function(gd, ...) {
+  xml_paths <- c("/bis_boxscore.xml", "/inning/inning_all.xml", 
+                 "/inning/inning_hit.xml", "/game.xml", "/game_events.xml")
+  url <- paste0(gd$base, gd$gameId, xml_paths)
+  names(url) <- c("bis_boxscore.xml", "inning_all.xml", 
+                  "inning_hit.xml", "game.xml", "game_events.xml")
+  return(url)
 }
 
 #' @title get game data
@@ -79,13 +78,14 @@ getURLs.gameday = function(gd) {
 #' @details Grabs XML files from MLBAM and converts to data.frames in memory
 #' 
 #' @param gd A gameday object
+#' @param ... currently ignored
 #' 
 #' @return A gameday object
 #'
 #' @importFrom Sxslt xsltApplyStyleSheet
 #' @importFrom XML saveXML
-#' @importFrom stringr str_split
-#' @importFrom stringr str_count
+#' @importFrom stringr str_split str_count str_extract
+#' @importFrom tidyr spread
 #' @import dplyr
 #' 
 #' @export
@@ -94,145 +94,177 @@ getURLs.gameday = function(gd) {
 #' library(openWAR)
 #' gd <- gameday()
 
-readData.gameday = function(gd) {
+readData <- function(gd, ...) UseMethod("readData")
+
+readData.gameday = function(gd, ...) {
+  # First, build gd$data as a list of data frames
+  gd$data <- lapply(gd$url, xml2df)
+  names(gd$data) <- gsub("\\.xml", "", names(gd$data))
   
-    # First, build gd$data as a list of data frames
-#    dirname = file.path(find.package("openWAR"))
-    labels = do.call("rbind", strsplit(basename(gd$url), split = "\\."))[, 1]
-    for (i in 1:length(labels)) {
-      # Find the XSLT template
-      xslt.filename <- paste(labels[i], ".xsl", sep = "")
-      xsl <- system.file("xsl", xslt.filename, package = "openWAR")
-#        xsl = paste(dirname, "/xsl/", labels[i], ".xsl", sep = "")
-      
-      # Use the shell command 'xsltproc' cmd = paste('xsltproc', xsl, gd$url[i], sep=' ') dat = try(system(cmd, intern=TRUE))
-      # Alternative within R apply the stylesheet to the XML
-      dat = stringr::str_split(XML::saveXML(Sxslt::xsltApplyStyleSheet(gd$url[i], xsl)$doc), "\n")[[1]]
-      # remove the xml description on the first line
-      dat = dat[-1]
-      # remove any blank lines
-      dat = dat[dat != ""]
-      
-      if (!is.null(attr(dat, "status"))) {
-        break
-      }
-      df = as.data.frame(do.call("rbind", strsplit(dat[-1], split = "\\|")))
-      if (nrow(df) == 0) {
-        break
-      }
-      names(df) = strsplit(dat[1], split = "\\|")[[1]]
-      gd$data[[labels[[i]][1]]] = df
-    }
+  if (length(gd$data) == 5) {
+    # If any timestamps are missing, set them equal to the previous timstamp
+    missing_idx <- which(as.character(gd$data$game_events$timestamp) == "")
+    gd$data$game_events$timestamp[missing_idx] <- gd$data$game_events$timestamp[missing_idx - 1]
     
-    if (length(gd$data) == 5) {
-      # If any timestamps are missing, set them equal to the previous timstamp
-      missing.idx = which(gd$data$game_events$timestamp == "")
-      gd$data$game_events$timestamp[missing.idx] = gd$data$game_events$timestamp[missing.idx - 1]
-      
-      # Now, merge the data frames into one large data frame
-      out <- merge(x = gd$data$inning_all, y = gd$data$inning_hit[, c("inning", "batterId", "pitcherId", "event", "x", "y")], 
-                   by = c("inning", "batterId", "pitcherId", "event"), all.x = TRUE)
-      out <- merge(x = gd$data$game_events, y = out, by = "ab_num", all.x = TRUE)
-      out <- cbind(out, gd$data$game)
-      
-      # Make sure R understands that timestamp is a date
-      out <- dplyr::mutate_(out, timestamp = ~as.character(strptime(timestamp.x, format = "%Y-%m-%dT%H:%M:%S")))
-      # Make sure that the runnerMovement is not a factor
-      out <- dplyr::mutate_(out, runnerMovement = ~as.character(runnerMovement))
-      
-      # Merge again to get the starting fielders
-      out <- dplyr::mutate_(out, field_teamId = ~ifelse(half == "top", as.character(home_teamId), as.character(away_teamId)))
-      # Create a lookup for the player's name
-      lkup = gd$data$bis_boxscore
-      lkup = lkup[!duplicated(lkup$playerId), ]
-      
-      # suppressWarnings for na
-      lkup <- dplyr::mutate_(lkup, bo = ~suppressWarnings(as.numeric(as.character(bo))))
-      
-      # Weed out pitchers
-      lineup = dplyr::filter_(lkup, ~bo %% 100 == 0)
-      lineup$batterPos = sapply(strsplit(as.character(lineup$pos), split = "-"), "[", 1)
-#      lineup.long = lineup[order(lineup$teamId, lineup$batterPos), ]
-      lineup.long <- dplyr::arrange_(lineup, ~teamId, ~batterPos)
-      lineup.wide <- reshape(lineup.long, v.names = "playerId", timevar = "batterPos", idvar = "teamId", direction = "wide", 
-                             drop = c("playerName", "bo", "pos"))
-      def.pos <- c("playerId.C", "playerId.1B", "playerId.2B", "playerId.3B", "playerId.SS", "playerId.LF", "playerId.CF", 
-                   "playerId.RF")
-      out <- merge(x = out, y = lineup.wide[, c("teamId", def.pos)], by.x = "field_teamId", by.y = "teamId", all.x = TRUE)
-      
-      # Grab the defensive position of the batter
-      out <- merge(x = out, y = lineup[, c("playerId", "batterPos")], by.x = "batterId", by.y = "playerId", all.x = TRUE)
-      
-      # Grab the batters and pitchers names
-      out <- merge(x = out, y = lkup[, c("playerId", "playerName")], by.x = "batterId", by.y = "playerId", all.x = TRUE)
-      out <- merge(x = out, y = lkup[, c("playerId", "playerName")], by.x = "pitcherId", by.y = "playerId", all.x = TRUE)
-      
-      # Clean up some column names
-      idx <- which(names(out) %in% c("inning.x", "event.x", "batterPos", "playerName.x", "playerName.y"))
-      names(out)[idx] = c("inning", "event", "batterPos", "batterName", "pitcherName")
-      out = out[, !names(out) %in% c("inning.y", "event.y", "timestamp.x", "timestamp.y")]
-      
-      # Convert columns to numerics
-      cols <- c("ab_num", "balls", "strikes", "endOuts", "batterId", "pitcherId", "actionId", "home_teamId", "away_teamId", 
-                "venueId", "inning", "x", "y", "playerId.1B", "playerId.2B", "playerId.3B", "playerId.C", "playerId.CF", "playerId.LF", 
-                "playerId.P", "playerId.RF", "playerId.SS")
-      colIds = which(names(out) %in% cols)
-      for (colId in colIds) {
-        # cat(colId)
-        out[, colId] = as.numeric(as.character(out[, colId]))
-      }
-      
-      # Update fielders for defensive switches
-      out = makeSubstitutions(out)
-      # Sometimes data errors result in the batter's defensive position not getting set.  Set it to UN manually.
-      missing.idx = which(is.na(out$batterPos) & out$batterId > 0)
-      out$batterPos[missing.idx] = "UN"
-      
-      # Experimental -- I think we can filter out non-inning-all events now
-      out = dplyr::filter_(out, ~!is.na(batterId))
-      out = dplyr::filter_(out, ~!event %in% c("Game Advisory", "Defensive Switch", "Offensive sub", "Pitching Substitution", "Defensive Sub", 
-                                      "Player Injured", "Ejection", "Umpire Substitution"))
-      
-      # Runs on play out$runsOnPlay = str_count(out$description, ' scores.') + str_count(out$description, 'homers')
-      out$runsOnPlay = stringr::str_count(as.character(out$runnerMovement), ":T:")
-      
-      # runner movement, score, and outs out = ddply(out, ~inning + half, updateHalfInning)
-      out <- dplyr::do_(dplyr::group_by_(out, ~inning, ~half), ~updateHalfInning(.))
-      # Once the non-PA related events have been removed, best to sort by ab_num, since the timestamp is occassionally missing!
-#      out = out[order(out$ab_num), ]
-      out <- arrange_(out, ~ab_num)
-      
-      # number of baserunners
-      out$startCode <- as.numeric((1 * (!is.na(as.data.frame(out)[, c("start1B", "start2B", "start3B")]))) %*% c(1, 2, 4))
-      out$endCode <- as.numeric((1 * (!is.na(as.data.frame(out)[, c("end1B", "end2B", "end3B")]))) %*% c(1, 2, 4))
-      
-      # Figure out who fielded the ball
-      out$fielderId = getFielderId(out)
-      
-      # double-check -- should work for all normal plays, but fails on third out out$startBR = (1 * !is.na(out[, c('start1B',
-      # 'start2B', 'start3B')])) %*% c(1, 1, 1) out$endBR = (1 * !is.na(out[, c('end1B', 'end2B', 'end3B')])) %*% c(1, 1, 1)
-      # with(out, startBR + 1 - endBR == runsOnPlay + endOuts - startOuts)
-      
-      out$gameId = as.character(gd$gameId)
-#      out = out[order(out$ab_num), ]
-      out <- arrange_(out, ~ab_num)
-      
-      # add some convenience calculation fields
-      out <- dplyr::mutate_(out, isPA = ~!event %in% c("Defensive Indiff", "Stolen Base 2B", "Runner Out"))
-      out <- dplyr::mutate_(out, isAB = ~isPA & !event %in% c("Walk", "Intent Walk", "Hit By Pitch", "Sac Fly", "Sac Bunt"))
-      out <- dplyr::mutate_(out, isHit = ~event %in% c("Single", "Double", "Triple", "Home Run"))
-      out <- dplyr::mutate_(out, isBIP = ~(event != "Home Run" | grepl("inside-the-park", description)) & !is.na(x) & !is.na(y))
-      
-      # translate the coordinates so that home plate is (0,0) and second base is (0, 127' 3 3/8')
-      out = recenter(out)
-    } else {
-      warning("Game data is no bueno -- most likely a rainout")
-      out = NULL
+    # Now, merge the data frames into one large data frame
+    out <- gd$data$inning_hit %>%
+      select_("inning", "batterId", "pitcherId", "event", "x", "y") %>%
+      right_join(gd$data$inning_all, by = c("inning", "batterId", "pitcherId", "event")) %>%
+      right_join(gd$data$game_events, by = "ab_num") %>%
+      cbind(gd$data$game)
+    
+    # Make sure R understands that timestamp is a date
+    if (!"POSIXt" %in% class(out$timestamp.x)) {
+      out <- out %>%
+        dplyr::mutate_(timestamp = ~as.character(strptime(timestamp.x, format = "%Y-%m-%dT%H:%M:%S")))
     }
-    out <- ungroup(out)
-    class(out) <- c("GameDayPlays", class(out))
-    return(out)
+    out <- out %>%
+      dplyr::rename_(timestamp = ~timestamp.x) %>%
+      # Make sure that the runnerMovement is not a factor
+      dplyr::mutate_(runnerMovement = ~as.character(runnerMovement)) %>%
+      dplyr::mutate_(field_teamId = ~ifelse(half == "top", home_teamId, away_teamId))
+    # Create a lookup for the player's name
+    lkup <- gd$data$bis_boxscore
+    lkup <- lkup[!duplicated(lkup$playerId), ] %>%
+      # suppressWarnings for na
+      dplyr::mutate_(bo = ~suppressWarnings(as.numeric(as.character(bo))))
+    
+    # Weed out pitchers
+    lineup <- dplyr::filter_(lkup, ~bo %% 100 == 0) %>%
+      dplyr::mutate_(batterPos = ~sapply(strsplit(as.character(pos), split = "-"), "[", 1))
+    lineup_tidy <- dplyr::arrange_(lineup, ~teamId, ~batterPos)
+    
+    lineup_wide <- lineup_tidy %>%
+      filter_(~batterPos %in% c("C", "1B", "2B", "3B", "SS", "LF", "CF", "RF")) %>%
+      select_(~teamId, ~playerId, ~batterPos) %>%
+      tidyr::spread(key = batterPos, value = playerId)
+    names(lineup_wide) <- paste("playerId", names(lineup_wide), sep = ".") %>%
+      gsub("playerId.teamId", "teamId", x = .)
+    
+    # Merge again to get the starting fielders
+    out <- out %>%
+      left_join(lineup_wide, by = c("field_teamId" = "teamId"))
+    
+    out <- out %>%
+      # Grab the defensive position of the batter
+      left_join(select_(lineup, ~playerId, ~batterPos), by = c("batterId" = "playerId")) %>%
+      # Grab the batters and pitchers names
+      left_join(select_(lkup, ~playerId, ~playerName), by = c("batterId" = "playerId")) %>%
+      left_join(select_(lkup, ~playerId, ~playerName), by = c("pitcherId" = "playerId"))
+    
+    # Clean up some column names
+    out <- out %>%
+      rename_(batterName = ~playerName.x, pitcherName = ~playerName.y, 
+              inning = ~inning.x, event = ~event.x) %>%
+      select(-ends_with(".y"))
+    
+    # Convert columns to numerics
+    # numeric_cols <- c("ab_num", "balls", "strikes", "endOuts", "batterId", "pitcherId", 
+    #           "actionId", "home_teamId", "away_teamId", 
+    #           "venueId", "inning", "x", "y", 
+    #           "playerId.1B", "playerId.2B", "playerId.3B", 
+    #           "playerId.C", "playerId.CF", "playerId.LF", 
+    #           "playerId.P", "playerId.RF", "playerId.SS")
+    # colIds = which(names(out) %in% cols)
+    # for (colId in colIds) {
+    #   # cat(colId)
+    #   out[, colId] = as.numeric(as.character(out[, colId]))
+    # }
+    
+    # Update fielders for defensive switches
+    out <- makeSubstitutions(out)
+    # Sometimes data errors result in the batter's defensive position not getting set.  
+    # Set it to UN manually.
+    out <- out %>%
+      mutate_(batterPos = ~ifelse(is.na(batterPos) & batterId > 0, "UN", batterPos))
+    
+    # Experimental -- I think we can filter out non-inning-all events now
+    out <- out %>%
+      dplyr::filter_(~!is.na(batterId)) %>%
+      dplyr::filter_(~!event %in% c("Game Advisory", "Defensive Switch", 
+                                    "Offensive sub", "Pitching Substitution", 
+                                    "Defensive Sub", "Player Injured", 
+                                    "Ejection", "Umpire Substitution"))
+    
+    # Runs on play out$runsOnPlay = str_count(out$description, ' scores.') + str_count(out$description, 'homers')
+    out <- out %>%
+      mutate_(runsOnPlay = ~stringr::str_count(as.character(runnerMovement), ":T:")) %>%
+      mutate_(runsOnPlay = ~ifelse(is.na(runsOnPlay), 0, runsOnPlay))
+    
+    # runner movement, score, and outs
+    out <- out %>%
+      dplyr::group_by_(~inning, ~half) %>%
+      dplyr::do_(~updateHalfInning(.))
+    # Once the non-PA related events have been removed, best to sort by ab_num, 
+    # since the timestamp is occassionally missing!
+    out <- arrange_(out, ~ab_num)
+    
+    # number of baserunners
+    out$startCode <- as.numeric((1 * (!is.na(as.data.frame(out)[, c("start1B", "start2B", "start3B")]))) %*% c(1, 2, 4))
+    out$endCode <- as.numeric((1 * (!is.na(as.data.frame(out)[, c("end1B", "end2B", "end3B")]))) %*% c(1, 2, 4))
+    
+    # Figure out who fielded the ball
+    out$fielderId <- getFielderId(out)
+    out$gameId = as.character(gd$gameId)
+    out <- arrange_(out, ~ab_num)
+    
+    # add some convenience calculation fields
+    out <- out %>%
+      dplyr::mutate_(isPA = ~!event %in% c("Defensive Indiff", "Stolen Base 2B", "Runner Out")) %>%
+      dplyr::mutate_(isAB = ~isPA & !event %in% c("Walk", "Intent Walk", "Hit By Pitch", "Sac Fly", "Sac Bunt")) %>%
+      dplyr::mutate_(isHit = ~event %in% c("Single", "Double", "Triple", "Home Run")) %>%
+      dplyr::mutate_(isBIP = ~(event != "Home Run" | grepl("inside-the-park", description)) & !is.na(x) & !is.na(y))
+    
+    # translate the coordinates so that home plate is (0,0) and second base is (0, 127' 3 3/8')
+    out <- recenter(out)
+  } else {
+    warning("Game data is no bueno -- most likely a rainout")
+    out <- NULL
+  }
+  out <- ungroup(out)
+  class(out) <- c("GameDayPlays", class(out))
+  return(out)
 }
+
+# helper function to convert the XML files to data frames
+#' @importFrom stringr str_split
+#' @importFrom XML saveXML
+#' @importFrom Sxslt xsltApplyStyleSheet
+#' @importFrom magrittr extract2
+#' @importFrom readr read_delim
+
+xml2df <- function(xml_path, ...) {
+  # Find the XSLT template
+  xslt_filename <- gsub("\\.xml", "\\.xsl", basename(xml_path))
+  xsl <- system.file("xsl", xslt_filename, package = "openWAR")
+  
+  # Use the shell command 'xsltproc' cmd = paste('xsltproc', xsl, gd$url[i], sep=' ') 
+  # dat = try(system(cmd, intern=TRUE))
+  # Alternative within R apply the stylesheet to the XML
+  dat <- Sxslt::xsltApplyStyleSheet(xml_path, xsl)$doc %>%
+    XML::saveXML() %>%
+    stringr::str_split(pattern = "\n") %>%
+    magrittr::extract2(1)
+  # remove the xml description on the first line
+  dat <- dat[-1]
+  # remove any blank lines
+  dat <- dat[dat != ""]
+  
+  if (!is.null(attr(dat, "status")) | length(dat) < 2) {
+    stop(paste(xml_path, "has no data -- probably a rain out."))
+  }
+  df <- suppressWarnings(
+    paste0(dat, collapse = "\n") %>% 
+    readr::read_delim(delim = "|")
+  )
+  # remove any columns that don't have a name
+  df <- df[ , !is.na(names(df))]
+  if (nrow(df) == 0) {
+    stop(paste(xml_path, "resulted in a data frame with 0 rows."))
+  }
+  return(df)
+}
+
 
 #' Update action within a half-inning
 #' 
@@ -245,59 +277,65 @@ readData.gameday = function(gd) {
 
 updateHalfInning <- function(dat) {
 #  cat(print(paste(dat$inning[1], dat$half[1])))
-    # cat(print('new inning')) 
-    # IMPORTANT: Have to sort the data frame just in case data = data[order(data$timestamp),] 
-    # Sometimes the timestamp is blank -- so sort these by AB num
-#    dat = dat[order(dat$ab_num), ]
-    dat <- arrange_(dat, ~ab_num)
-    dat$startOuts = 0
-    dat$runsInInning = sum(dat$runsOnPlay)
-    dat$runsITD = cumsum(c(0, dat$runsOnPlay))[1:nrow(dat)]
-    dat = dplyr::mutate_(dat, runsFuture = ~runsInInning - runsITD)
-    dat$start1B = as.character(NA)
-    dat$start2B = as.character(NA)
-    dat$start3B = as.character(NA)
-    dat$end1B = as.character(NA)
-    dat$end2B = as.character(NA)
-    dat$end3B = as.character(NA)
-#  cat(print(dat$runnerMovement[1]))
-    leadoff.mv = getRunnerMovement(dat[1, "runnerMovement"])
-    dat[1, "end1B"] = leadoff.mv["end1B"]
-    dat[1, "end2B"] = leadoff.mv["end2B"]
-    dat[1, "end3B"] = leadoff.mv["end3B"]
-    if (nrow(dat) > 1) {
-        for (i in 2:nrow(dat)) {
-            # cat(print(i))
-            dat[i, "startOuts"] = dat[i - 1, "endOuts"]
-            dat[i, "start1B"] = dat[i - 1, "end1B"]
-            dat[i, "start2B"] = dat[i - 1, "end2B"]
-            dat[i, "start3B"] = dat[i - 1, "end3B"]
-            runner.mv = getRunnerMovement(dat[i, "runnerMovement"])
-            if (!is.na(runner.mv["end1B"])) {
-                dat[i, "end1B"] = runner.mv["end1B"]
-            } else if (!is.na(dat[i, "start1B"]) & is.na(runner.mv["start1B"])) {
-                dat[i, "end1B"] = dat[i, "start1B"]
-            }
-            if (!is.na(runner.mv["end2B"])) {
-                dat[i, "end2B"] = runner.mv["end2B"]
-            } else if (!is.na(dat[i, "start2B"]) & is.na(runner.mv["start2B"])) {
-                dat[i, "end2B"] = dat[i, "start2B"]
-            }
-            if (!is.na(runner.mv["end3B"])) {
-                dat[i, "end3B"] = runner.mv["end3B"]
-            } else if (!is.na(dat[i, "start3B"]) & is.na(runner.mv["start3B"])) {
-                dat[i, "end3B"] = dat[i, "start3B"]
-            }
-            # Always end the inning with nobody on if (dat[i, 'endOuts'] == 3) { dat[i, 'end1B'] = NA dat[i, 'end2B'] = NA dat[i,
-            # 'end3B'] = NA }
-        }
+#  cat(print('new inning')) 
+  # IMPORTANT: Have to sort the data frame just in case
+  # Sometimes the timestamp is blank -- so sort these by AB num
+  dat <- arrange_(dat, ~ab_num) %>%
+    mutate_(startOuts = 0, 
+            runsInInning = sum(.$runsOnPlay))
+  dat$runsITD = cumsum(c(0, dat$runsOnPlay))[1:nrow(dat)]
+  dat <- dat %>%
+    dplyr::mutate_(runsFuture = ~runsInInning - runsITD, 
+                   start1B = NA, 
+                   start2B = NA, 
+                   start3B = as.character(NA), 
+                   end1B = as.character(NA), 
+                   end2B = NA, 
+                   end3B = as.character(NA))
+  #  cat(print(dat$runnerMovement[1]))
+  leadoff.mv <- getRunnerMovement(dat[1, "runnerMovement"])
+  dat[1, "end1B"] = leadoff.mv["end1B"]
+  dat[1, "end2B"] = leadoff.mv["end2B"]
+  dat[1, "end3B"] = leadoff.mv["end3B"]
+  if (nrow(dat) > 1) {
+    for (i in 2:nrow(dat)) {
+      # cat(print(i))
+      dat[i, "startOuts"] = dat[i - 1, "endOuts"]
+      dat[i, "start1B"] = dat[i - 1, "end1B"]
+      dat[i, "start2B"] = dat[i - 1, "end2B"]
+      dat[i, "start3B"] = dat[i - 1, "end3B"]
+      runner.mv <- getRunnerMovement(dat[i, "runnerMovement"])
+      if (!is.na(runner.mv["end1B"])) {
+        dat[i, "end1B"] = runner.mv["end1B"]
+      } else if (!is.na(dat[i, "start1B"]) & is.na(runner.mv["start1B"])) {
+        dat[i, "end1B"] = dat[i, "start1B"]
+      }
+      if (!is.na(runner.mv["end2B"])) {
+        dat[i, "end2B"] = runner.mv["end2B"]
+      } else if (!is.na(dat[i, "start2B"]) & is.na(runner.mv["start2B"])) {
+        dat[i, "end2B"] = dat[i, "start2B"]
+      }
+      if (!is.na(runner.mv["end3B"])) {
+        dat[i, "end3B"] = runner.mv["end3B"]
+      } else if (!is.na(dat[i, "start3B"]) & is.na(runner.mv["start3B"])) {
+        dat[i, "end3B"] = dat[i, "start3B"]
+      }
+      # Always end the inning with nobody on 
+      # if (dat[i, 'endOuts'] == 3) { dat[i, 'end1B'] = NA dat[i, 'end2B'] = NA dat[i,
+      # 'end3B'] = NA }
     }
-    # Force the bases empty at the end of every inning
-    dat[nrow(dat), "end1B"] = NA
-    dat[nrow(dat), "end2B"] = NA
-    dat[nrow(dat), "end3B"] = NA
-    dat$outsInInning = sum(dat$endOuts - dat$startOuts)
-    return(dat)
+  }
+  # Force the bases empty at the end of every inning
+  dat[nrow(dat), c("end1B", "end2B", "end3B")] <- NA
+  dat <- dat %>%
+    mutate_(outsInInning = ~sum(endOuts - startOuts)) %>%
+    mutate_(start1B = ~as.integer(start1B)) %>%
+    mutate_(start2B = ~as.integer(start2B)) %>%
+    mutate_(start3B = ~as.integer(start3B)) %>%
+    mutate_(end1B = ~as.integer(end1B)) %>%
+    mutate_(end2B = ~as.integer(end2B)) %>%
+    mutate_(end3B = ~as.integer(end3B))
+  return(dat)
 }
 
 #' getRunnerMovement
@@ -312,45 +350,54 @@ updateHalfInning <- function(dat) {
 #'
 getRunnerMovement = function(x) {
     # runner movement
-    y = as.character(x)
+    y <- as.character(x)
 #    cat(print(y))
-    rm.vec = rep(NA, 6)
-    names(rm.vec) = c("start1B", "start2B", "start3B", "end1B", "end2B", "end3B")
+    rm.vec <- rep(NA, 6)
+    names(rm.vec) <- c("start1B", "start2B", "start3B", "end1B", "end2B", "end3B")
     if (!is.na(x) & nchar(y[1]) > 0) {
-        z = substr(y, start = 2, stop = (nchar(y) - 1))
-        rm.df <- as.data.frame(do.call("rbind", stringr::str_split(unlist(stringr::str_split(z, "\\]\\[")), ":")), stringsAsFactors = FALSE)
-        
-#        cat(print(class(rm.df)))
-#        cat(print(names(rm.df)))
-        
-        names(rm.df) = c("id", "start", "end", "event")
-        
-        # In case a runner moved twice during the at-bat, for now just concentrate on where he ended up
-        rm.df$end = ifelse(rm.df$end == "", "4B", rm.df$end)
-        # rm.df = ddply(rm.df, ~ id, summarise, start = min(start), end = max(end))
-        
-        rm.df <- dplyr::summarize(dplyr::group_by_(rm.df, ~id), start = ~min(start), end = ~max(end))
-        
-        rm.df$end = ifelse(rm.df$end == "4B", "", rm.df$end)
-        if (nrow(dplyr::filter_(rm.df, ~start == "1B")) > 0) {
-            rm.vec["start1B"] = dplyr::filter_(rm.df, ~start == "1B")$id
-        }
-        if (nrow(dplyr::filter_(rm.df, ~start == "2B")) > 0) {
-            rm.vec["start2B"] = dplyr::filter_(rm.df, ~start == "2B")$id
-        }
-        if (nrow(dplyr::filter_(rm.df, ~start == "3B")) > 0) {
-            rm.vec["start3B"] = dplyr::filter_(rm.df, ~start == "3B")$id
-        }
-        if (nrow(dplyr::filter_(rm.df, ~end == "1B")) > 0) {
-            rm.vec["end1B"] = dplyr::filter_(rm.df, ~end == "1B")$id
-        }
-        if (nrow(dplyr::filter_(rm.df, ~end == "2B")) > 0) {
-            rm.vec["end2B"] = dplyr::filter_(rm.df, ~end == "2B")$id
-        }
-        if (nrow(dplyr::filter_(rm.df, ~end == "3B")) > 0) {
-            rm.vec["end3B"] = dplyr::filter_(rm.df, ~end == "3B")$id
-        }
-        # rm.vec = as.numeric(rm.vec)
+      # remove backets
+      z <- substr(y, start = 2, stop = (nchar(y) - 1))
+      rm.df <- z %>%
+        stringr::str_split("\\]\\[") %>%
+        unlist() %>%
+        stringr::str_split(":") %>%
+        do.call("rbind", args = .) %>%
+        as.data.frame(stringsAsFactors = FALSE)
+      #        cat(print(class(rm.df)))
+      #        cat(print(names(rm.df)))
+      names(rm.df) <- c("id", "start", "end", "score", "event")
+      
+      # In case a runner moved twice during the at-bat, 
+      # for now just concentrate on where he ended up
+      rm.df <- rm.df %>%
+        mutate_(end = ~ifelse(end == "", "4B", end))
+      
+      rm.df <- rm.df %>%
+        dplyr::group_by_(~id) %>%
+        dplyr::summarize_(start = ~min(start), end = ~max(end))
+      
+      rm.df <- rm.df %>%
+        mutate_(end = ~ifelse(end == "4B", "", end))
+      
+      if (nrow(dplyr::filter_(rm.df, ~start == "1B")) > 0) {
+        rm.vec["start1B"] = dplyr::filter_(rm.df, ~start == "1B")$id
+      }
+      if (nrow(dplyr::filter_(rm.df, ~start == "2B")) > 0) {
+        rm.vec["start2B"] = dplyr::filter_(rm.df, ~start == "2B")$id
+      }
+      if (nrow(dplyr::filter_(rm.df, ~start == "3B")) > 0) {
+        rm.vec["start3B"] = dplyr::filter_(rm.df, ~start == "3B")$id
+      }
+      if (nrow(dplyr::filter_(rm.df, ~end == "1B")) > 0) {
+        rm.vec["end1B"] = dplyr::filter_(rm.df, ~end == "1B")$id
+      }
+      if (nrow(dplyr::filter_(rm.df, ~end == "2B")) > 0) {
+        rm.vec["end2B"] = dplyr::filter_(rm.df, ~end == "2B")$id
+      }
+      if (nrow(dplyr::filter_(rm.df, ~end == "3B")) > 0) {
+        rm.vec["end3B"] = dplyr::filter_(rm.df, ~end == "3B")$id
+      }
+      # rm.vec <- as.numeric(rm.vec)
     }
     return(rm.vec)
 }
@@ -526,14 +573,14 @@ getFielderId = function(dat) {
 
 recenter = function(dat, ...) {
     # From MLBAM specs
-    dat = dplyr::mutate_(dat, our.x = ~x - 125)
-    dat = dplyr::mutate_(dat, our.y = ~199 - y)
+    dat <- dat %>%
+      dplyr::mutate_(our.x = ~x - 125, our.y = ~199 - y)
     # set distance from home to 2B
     scale = sqrt(90^2 + 90^2)/51
-    dat = dplyr::mutate_(dat, r = ~scale * sqrt(our.x^2 + our.y^2))
-    dat = dplyr::mutate_(dat, theta = ~atan2(our.y, our.x))
-    dat = dplyr::mutate_(dat, our.x = ~r * cos(theta))
-    dat = dplyr::mutate_(dat, our.y = ~r * sin(theta))
+    dat <- dat %>%
+      dplyr::mutate_(r = ~scale * sqrt(our.x^2 + our.y^2), 
+                     theta = ~atan2(our.y, our.x), 
+                     our.x = ~r * cos(theta), our.y = ~r * sin(theta))
     return(dat)
 }
 

@@ -70,12 +70,13 @@ getModelRunExpectancy.default = function(data, mod.re = NULL, verbose = TRUE, dr
 
 
 #' @export
+#' @importFrom utils methods
 #' @rdname getModelRunExpectancy
 #' @method getModelRunExpectancy GameDayPlays
 
 getModelRunExpectancy.GameDayPlays = function(data, mod.re = NULL, verbose = TRUE, drop.incomplete = TRUE, ...) {
     # Check to see whether the supplied run expectancy model has a predict() method
-    if (!paste("predict", class(mod.re), sep = ".") %in% methods(predict)) {
+    if (!paste("predict", class(mod.re), sep = ".") %in% utils::methods(predict)) {
         message("....Supplied Run Expectancy model does not have a predict method...")
         message("....Building in-sample Run Expectancy Model...")
         # Drop incomplete innings
@@ -154,8 +155,10 @@ getModelBatting = function(data, mod.bat = NULL, verbose = TRUE) {
     return(mod.bat)
 }
 
+#' @importFrom stats glm
+
 getModelFieldingPosition = function(data, position) {
-    mod = glm((fielderPos == position) ~ poly(our.x, 2) + poly(our.y, 2) + I(our.x * our.y), data = data, family = "binomial")
+    mod = stats::glm((fielderPos == position) ~ poly(our.x, 2) + poly(our.y, 2) + I(our.x * our.y), data = data, family = "binomial")
     return(mod)
 }
 
@@ -239,6 +242,7 @@ getModelFieldingCollective.GameDayPlays = function(data) {
 }
 
 #' @export
+#' @importFrom stats na.omit
 #' @rdname getModelFieldingCollective
 #' @method getModelFieldingCollective default
 #' 
@@ -256,8 +260,8 @@ getModelFieldingCollective.default = function(data) {
     # Find 2D kernel density estimates for hits and outs Make sure to specify the range, so that they over estimated over the
     # same grid
     grid = list(range(data$our.x, na.rm = TRUE), range(data$our.y, na.rm = TRUE))
-    fit.out <- KernSmooth::bkde2D(as.matrix(na.omit(outs)), bandwidth = c(10, 10), range.x = grid)
-    fit.hit <- KernSmooth::bkde2D(as.matrix(na.omit(hits)), bandwidth = c(10, 10), range.x = grid)
+    fit.out <- KernSmooth::bkde2D(as.matrix(stats::na.omit(outs)), bandwidth = c(10, 10), range.x = grid)
+    fit.hit <- KernSmooth::bkde2D(as.matrix(stats::na.omit(hits)), bandwidth = c(10, 10), range.x = grid)
     class(fit.out) <- union("bkde2D", class(fit.out))
     class(fit.hit) <- union("bkde2D", class(fit.hit))
     

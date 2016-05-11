@@ -41,9 +41,10 @@ Getting individual game data is as simple as:
 library(openWAR)
 gd <- gameday()
 summary(gd)
+plot(gd)
 ```
 
-To retrieve a data.frame of many games worth, try:
+To retrieve a `data.frame` of many games worth, try:
 
 ```{r, eval=FALSE}
 ds <- getData()
