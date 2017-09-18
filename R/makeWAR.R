@@ -149,7 +149,10 @@ makeWAR.GameDayPlays_Fielding = function(x, models = list(), verbose = TRUE, low
   # append the model used to the list of models
   x$models.used[["pitching"]] <- mod.pitch
   # Note the pitcher RAA's are the negative residuals!
-  x$data <- mutate_(x$data, raa.pitch = ~predict(mod.pitch, newdata = x$data[, c("venueId", "throws", "stand")]) - delta.pitch)  
+  # mutate_ is thrownig an error here.
+  #x$data <- mutate_(x$data, raa.pitch = ~predict(mod.pitch, newdata = x$data[, c("venueId", "throws", "stand")]) - delta.pitch)
+  x$data$raa.pitch <- predict(mod.pitch, newdata = x$data[, c("venueId", "throws", "stand")]) - x$data$delta.pitch 
+  
   # Add the new class
   class(x) = c("GameDayPlays_Pitching", class(x))
   if (step) {
@@ -174,7 +177,10 @@ makeWAR.GameDayPlays_Pitching = function(x, models = list(), verbose = TRUE, low
   }
   x$models.used[["offense"]] <- mod.off
   # delta.off is the contribution above average of the batter AND all of the runners
-  x$data <- mutate_(x$data, delta.off = ~delta - predict(mod.off, newdata = x$data[, c("venueId", "throws", "stand")]))
+  # mutate throws an error here.
+  #x$data <- mutate_(x$data, delta.off = ~delta - predict(mod.off, newdata = x$data[, c("venueId", "throws", "stand")]))
+  x$data$delta.off <- x$data$delta - predict(mod.off, newdata = x$data[, c("venueId", "throws", "stand")])
+  
   # Add the new class
   class(x) = c("GameDayPlays_Offense", class(x))
   if (step) {
@@ -229,7 +235,9 @@ makeWAR.GameDayPlays_Baserunning = function(x, models = list(), verbose = TRUE, 
   x$models.used[["batting"]] <- mod.bat
   # Control for batter position Note that including 'idx' is not necessary -- it just ensures that the argument passed is a
   # data.frame
-  x$data <- mutate_(x$data, raa.bat = ~delta.bat - predict(mod.bat, newdata = x$data[, c("batterPos", "idx")]))
+  # mutate throws error here.
+  #x$data <- mutate_(x$data, raa.bat = ~delta.bat - predict(mod.bat, newdata = x$data[, c("batterPos", "idx")]))
+  x$data$raa.bat <- x$data$delta.bat - predict(mod.bat, newdata = x$data[, c("batterPos", "idx")])
   # Add the new class
   class(x) = c("GameDayPlays_Batters", class(x))
   if (step) {
