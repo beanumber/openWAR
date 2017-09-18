@@ -92,7 +92,9 @@ shakeWAR.openWARPlays <- function(data, N = 10, resample = "plays", ...) {
 shakeWAR.GameDayPlays <- function(data, N = 10, resample = "plays", ...) {
   if (resample == "both") {
     # resample the actual plays AND rebuild the models each time this captures both measurement error and sampling error
-    bstrap = mosaic::do(N) * getWAR(makeWAR(mosaic::resample(data), low.memory = TRUE)$openWAR)
+    #bstrap = mosaic::do(N) * getWAR(makeWAR(mosaic::resample(data), low.memory = TRUE)$openWAR)
+    madeWar <- makeWAR(data)
+    bstrap <- mosaic::do(N) * getWAR(mosaic::resample(madeWar), verbose = FALSE)
     # bstrap should be a data.frame of class 'do.openWARPlayers'
     class(bstrap) <- c("do.openWARPlayers", class(bstrap))
     # with roughly N * M rows, where M is the numbers of players

@@ -23,7 +23,6 @@ Depends:
     R (>= 3.0.0)
 Imports:
     mosaic,
-    XML,
     xml2,
     RCurl,
     dplyr,
