@@ -30,6 +30,7 @@
 #' @return a \code{do.\link{openWARPlayers}} data frame with RAA values 
 #' @export 
 #' @importFrom mosaic resample
+#' @importFrom dplyr mutate
 #' @examples
 #' 
 #' \dontrun{
@@ -69,7 +70,7 @@ shakeWAR.list <- function(data, N = 10, resample = "plays", ...) {
 
 shakeWAR.openWARPlays <- function(data, N = 10, resample = "plays", ...) {
   # assume the models are fixed, and resample the RAA values this captures the sampling error
-  bstrap = mosaic::do(N) * getWAR(mosaic::resample(data), verbose = FALSE)
+  bstrap <- mosaic::do(N) * getWAR(mosaic::resample(data), verbose = TRUE) %>% mutate(playerId = as.numeric(playerId))
   # bstrap should be a data.frame of class 'do.openWARPlayers'
   class(bstrap) <- c("do.openWARPlayers", class(bstrap))
   # with roughly N * M rows, where M is the numbers of players
@@ -92,9 +93,9 @@ shakeWAR.openWARPlays <- function(data, N = 10, resample = "plays", ...) {
 shakeWAR.GameDayPlays <- function(data, N = 10, resample = "plays", ...) {
   if (resample == "both") {
     # resample the actual plays AND rebuild the models each time this captures both measurement error and sampling error
-    #bstrap = mosaic::do(N) * getWAR(makeWAR(mosaic::resample(data), low.memory = TRUE)$openWAR)
-    madeWar <- makeWAR(data)
-    bstrap <- mosaic::do(N) * getWAR(mosaic::resample(madeWar), verbose = FALSE)
+    bstrap <- mosaic::do(N) * getWAR(makeWAR(mosaic::resample(data), low.memory = TRUE)$openWAR)
+    #madeWar <- makeWAR(data)
+    #bstrap <- mosaic::do(N) * getWAR(mosaic::resample(madeWar), verbose = FALSE)
     # bstrap should be a data.frame of class 'do.openWARPlayers'
     class(bstrap) <- c("do.openWARPlayers", class(bstrap))
     # with roughly N * M rows, where M is the numbers of players
