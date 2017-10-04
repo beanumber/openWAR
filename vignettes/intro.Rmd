@@ -213,6 +213,7 @@ str(madeWAR)
 ```
 
 ```{r}
+library(dplyr)
 madeWAR$openWAR %>%
   filter(raa.bat > 3) %>%
   select(gameId, batterName, pitcherName, event, delta, raa.bat) %>%

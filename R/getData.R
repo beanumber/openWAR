@@ -46,7 +46,7 @@ getData <- function(start = Sys.Date() - 1, end = NULL, gameIds = NULL, drop.sus
     gd.list <- lapply(gIds, gameday)
     # }
     ds.list <- lapply(gd.list, "[[", "ds")
-    out <- bind_rows(ds.list)
+    out <- dplyr::bind_rows(ds.list)
     out <- dplyr::filter_(out, ~game_type == "R")
     # exclude suspended games
     if (drop.suspended) {

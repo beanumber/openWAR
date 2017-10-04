@@ -43,7 +43,10 @@ gameday <- function(gameId = "gid_2012_08_12_atlmlb_nynmlb_1", ...) {
     gd <- list(gameId = gameId, base = base)
     class(gd) <- "gameday"
     gd$url <- getURLs(gd)
-    try(gd$ds <- readData(gd))
+    #gd$ds <- try(readData(gd))
+    # Should this tryCatch be moved down to the xml2df function, or is it better here?
+    file <- tryCatch(readData(gd), error=function(e) NULL)
+    if(!is.null(file)) gd$ds <- file
     return(gd)
 }
 
@@ -84,8 +87,7 @@ getURLs.gameday <- function(gd, ...) {
 #' 
 #' @return A gameday object
 #'
-#' @importFrom Sxslt xsltApplyStyleSheet
-#' @importFrom XML saveXML
+#' @importFrom xslt xml_xslt
 #' @importFrom stringr str_split str_count str_extract
 #' @importFrom tidyr spread
 #' @import dplyr
@@ -231,37 +233,45 @@ readData.gameday = function(gd, ...) {
 
 # helper function to convert the XML files to data frames
 #' @importFrom stringr str_split
-#' @importFrom XML saveXML
-#' @importFrom Sxslt xsltApplyStyleSheet
+#' @importFrom xslt xml_xslt
+#' @importFrom xml2 read_xml
 #' @importFrom magrittr extract2
 #' @importFrom readr read_delim
+#' @importFrom dplyr select
 
 xml2df <- function(xml_path, ...) {
   # Find the XSLT template
   xslt_filename <- gsub("\\.xml", "\\.xsl", basename(xml_path))
-  xsl <- system.file("xsl", xslt_filename, package = "openWAR")
+  
+  xsl <- xml2::read_xml(system.file("xsl", xslt_filename, package = "openWAR"))
+  xml_path <- xml2::read_xml(xml_path)
   
   # Use the shell command 'xsltproc' cmd = paste('xsltproc', xsl, gd$url[i], sep=' ') 
   # dat = try(system(cmd, intern=TRUE))
   # Alternative within R apply the stylesheet to the XML
-  dat <- Sxslt::xsltApplyStyleSheet(xml_path, xsl)$doc %>%
-    XML::saveXML() %>%
+  dat <- xslt::xml_xslt(xml_path, xsl) %>%
+    #XML::saveXML() %>%
     stringr::str_split(pattern = "\n") %>%
     magrittr::extract2(1)
-  # remove the xml description on the first line
-  dat <- dat[-1]
+  
   # remove any blank lines
   dat <- dat[dat != ""]
   
   if (!is.null(attr(dat, "status")) | length(dat) < 2) {
     stop(paste(xml_path, "has no data -- probably a rain out."))
   }
+  
   df <- suppressWarnings(
     paste0(dat, collapse = "\n") %>% 
     readr::read_delim(delim = "|")
   )
+
   # remove any columns that don't have a name
   df <- df[ , !is.na(names(df))]
+  # Check for extra columns that may have been appended as a result of a double-pipe delimiter.
+  if(length(df)==10) df <- dplyr::select(df, - one_of("X10"))
+
+  
   if (nrow(df) == 0) {
     stop(paste(xml_path, "resulted in a data frame with 0 rows."))
   }
