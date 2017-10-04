@@ -30,4 +30,3 @@ openWAR.sim = shakeWAR(May)
 plot(openWAR.sim, playerIds = c(431151, 502517, 408234, 285078, 518774, 285079))
 }
 }
-

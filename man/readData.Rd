@@ -25,4 +25,3 @@ Grabs XML files from MLBAM and converts to data.frames in memory
 library(openWAR)
 gd <- gameday()
 }
-

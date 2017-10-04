@@ -25,4 +25,3 @@ relative to the expected number of bases advanced given an event.  For example, 
 advances exactly the expected number of bases given an event would not be attributed any 
 RAA for that play.
 }
-

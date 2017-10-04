@@ -2,9 +2,9 @@
 % Please edit documentation in R/data.R
 \docType{data}
 \name{MetsBraves}
-\alias{May}
-\alias{May14}
 \alias{MetsBraves}
+\alias{May14}
+\alias{May}
 \title{Samples of play-by-play data from MLBAM}
 \format{For \code{MetsBraves}, a \code{\link{gameday}} object. For 
 \code{\link{May14}} and \code{\link{May}}, a \code{\link{GameDayPlays}}
@@ -31,4 +31,3 @@ contains data from all games on May 14, 2013. \code{May} contains data
 for all games from May 2013.
 }
 \keyword{datasets}
-

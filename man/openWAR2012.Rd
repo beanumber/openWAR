@@ -73,4 +73,3 @@ the runs above average for each component of openWAR.
 \code{\link{summary.openWARPlayers}}
 }
 \keyword{datasets}
-

@@ -16,4 +16,3 @@ specific to \code{openWAR}.
 \examples{
 class(MayProcessed$openWAR)
 }
-

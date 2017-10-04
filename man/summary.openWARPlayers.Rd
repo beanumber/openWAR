@@ -27,4 +27,3 @@ summary(war)
 summary(openWAR2012)
 summary(openWAR2013)
 }
-

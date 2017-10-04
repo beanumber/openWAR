@@ -3,12 +3,12 @@
 \name{makeWAR}
 \alias{makeWAR}
 \alias{makeWAR.GameDayPlays}
+\alias{makeWAR.GameDayPlays_Runs}
+\alias{makeWAR.GameDayPlays_Fielding}
+\alias{makeWAR.GameDayPlays_Pitching}
+\alias{makeWAR.GameDayPlays_Offense}
 \alias{makeWAR.GameDayPlays_Baserunning}
 \alias{makeWAR.GameDayPlays_Batters}
-\alias{makeWAR.GameDayPlays_Fielding}
-\alias{makeWAR.GameDayPlays_Offense}
-\alias{makeWAR.GameDayPlays_Pitching}
-\alias{makeWAR.GameDayPlays_Runs}
 \title{Compute the runs above average (RAA)  for each play.}
 \usage{
 makeWAR(x, models = list(), verbose = TRUE, low.memory = TRUE,
@@ -138,4 +138,3 @@ res7 <- makeWAR(res6, step = TRUE)
 print(object.size(res7), units = "Mb")
 }
 }
-

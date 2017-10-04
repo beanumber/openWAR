@@ -44,4 +44,3 @@ players = getWAR(MayProcessed$openWAR)
 summary(players)
 replacementIds = getReplacementPlayers(players)
 }
-

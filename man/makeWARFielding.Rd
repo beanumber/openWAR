@@ -20,4 +20,3 @@ the stadium that the plate appearance took place in.
 \description{
 Compute the RAA values for all of the fielders.  Used internally in \code{makeWAR}.
 }
-

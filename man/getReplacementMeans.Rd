@@ -32,4 +32,3 @@ replIds = getReplacementPlayers(players)
 replMeans = getReplacementMeans(MayProcessed$openWAR, replIds)
 
 }
-

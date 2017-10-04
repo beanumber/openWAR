@@ -23,4 +23,3 @@ Tabulates runs above average (RAA) values per player
 \details{
 Takes an object of class \code{\link{openWARPlays}} and consolidates the RAA values by player
 }
-

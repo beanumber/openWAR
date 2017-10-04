@@ -34,4 +34,3 @@ replIds = getReplacementPlayers(players)
 replacementActivity = getReplacementActivity(MayProcessed$openWAR,replIds)
 
 }
-

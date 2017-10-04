@@ -31,4 +31,3 @@ fmod <- getModelFieldingCollective(May)
 plotFielding(fmod)
 
 }
-

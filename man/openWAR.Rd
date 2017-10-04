@@ -4,6 +4,7 @@
 \name{openWAR}
 \alias{openWAR}
 \alias{openWAR-package}
+\alias{openWAR-package}
 \title{Contains functions for computing openWAR.}
 \description{
 This package allows a user to explore \code{\link{openWAR}}.
@@ -19,4 +20,3 @@ To learn more about openWAR, start with the vignettes:
 \author{
 Ben Baumer and Gregory J. Matthews
 }
-

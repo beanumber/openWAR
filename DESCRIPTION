@@ -5,7 +5,9 @@ Version: 0.2.3.9002
 Date: 2013-07-31
 Authors@R: c(
     person("Ben", "Baumer", email = "ben.baumer@gmail.com", role = c("aut", "cre")), 
-    person("Gregory", "Matthews", email = "gjm112@gmail.com", role = c("aut")))
+    person("Gregory", "Matthews", email = "gjm112@gmail.com", role = c("aut")),
+    person("Kris", "Eberwein", role = c("ctb")),
+    person("David", "Mitchell", role = c("ctb")))
 Maintainer: Ben Baumer <ben.baumer@gmail.com>
 Description: There are two primary purposes this package serves: 1) it
     facilitates the computation of openWAR, a fully open-source implementation of

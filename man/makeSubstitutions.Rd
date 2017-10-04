@@ -12,4 +12,3 @@ makeSubstitutions(dat)
 \description{
 make substitutions
 }
-

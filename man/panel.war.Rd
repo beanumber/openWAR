@@ -29,4 +29,3 @@ war = getWAR(MayProcessed$openWAR)
 summary(war)
 plot(war)
 }
-

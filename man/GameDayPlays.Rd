@@ -84,4 +84,3 @@ A data set that contains play-by-play information returned by \code{\link{getDat
 class(May)
 
 }
-

@@ -2,9 +2,9 @@
 % Please edit documentation in R/shakeWAR.R
 \name{shakeWAR}
 \alias{shakeWAR}
-\alias{shakeWAR.GameDayPlays}
 \alias{shakeWAR.list}
 \alias{shakeWAR.openWARPlays}
+\alias{shakeWAR.GameDayPlays}
 \title{Estimates the variance of openWAR}
 \usage{
 shakeWAR(data, N = 10, resample = "plays", ...)
@@ -73,4 +73,3 @@ owar <- shakeWAR(May, N = 2, resample = "both")
 summary(owar)
 }
 }
-

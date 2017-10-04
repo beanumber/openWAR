@@ -18,4 +18,3 @@ Determine the Runs Above Average (RAA) of the fielders.
 \details{
 RAA is the residuals from a simple fielding model.  Used in the function \code{makeWARFielding}
 }
-

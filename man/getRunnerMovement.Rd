@@ -13,4 +13,3 @@ getRunnerMovement(x)
 Condense the GameDay descriptions of runner movement into
 a character vector.
 }
-

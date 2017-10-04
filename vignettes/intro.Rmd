@@ -26,7 +26,7 @@ library(openWAR)
 To retrieve data for a single game, you need to know the MLBAM identifier for that game. The default game was played on August 12th, 2012 between the New York Mets and the Atlanta Braves. 
 
 ```{r, eval=FALSE}
-gd = gameday()
+gd <- gameday()
 ```
 
 For convenience, we have included the data for this game in the package as `MetsBraves`. 
@@ -75,7 +75,7 @@ MetsBraves$ds %>%
 More often, we'll be interested in investigating data from many games. The function `getData()` will load (or download) data over any time interval in which you are interested. Let's figure out how many home runs were hit on May 14th, 2013. 
 
 ```{r may14, eval=FALSE, warning=FALSE}
-May14 = getData(start = "2013-05-14")
+May14 <- getData(start = "2013-05-14")
 ```
 
 This data has also been included in the package as `May14`.
@@ -134,7 +134,7 @@ Building up a large data set will take a long time, but you can do it with the `
 
 ```{r, eval=FALSE}
 # Will take a loooong time
-MLBAM2013 = getData(start = "2013-03-31", end = "2013-09-30")
+MLBAM2013 <- getData(start = "2013-03-31", end = "2013-09-30")
 ```
 
 For example, consider the half inning we visited previously. 
@@ -148,7 +148,7 @@ MetsBraves$ds %>%
 The inning began in the state `(0,0)`. Our estimate $\hat{\rho}(0,0)$ of the expected value (in runs) of that state is:
 
 ```{r}
-fit.rem = getRunEx(May14)
+fit.rem <- getRunEx(May14)
 fit.rem(baseCode = 0, outs = 0)
 ```
 
@@ -339,7 +339,7 @@ openWAR2012 %>%
 Here are our estimates of the top 50 players in baseball.
 
 ```{r}
-summary(openWAR2012, n=50)
+summary(openWAR2012, n = 50)
 ```
 
 #### Making Comparisons

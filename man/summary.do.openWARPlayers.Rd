@@ -24,4 +24,3 @@ sim = shakeWAR(May)
 summary(sim)
 }
 }
-

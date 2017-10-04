@@ -33,4 +33,3 @@ re.mod = getModels(May, type = 'run-expectancy')
 states = expand.grid(startCode = 0:7, startOuts = 0:2)
 matrix(predict(re.mod[["run-expectancy"]], newdata=states), ncol=3)
 }
-

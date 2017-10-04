@@ -37,4 +37,3 @@ exampleGameday$gameId
 summary(exampleGameday$ds$event)
 plot(exampleGameday$ds)
 }
-

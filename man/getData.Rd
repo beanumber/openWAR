@@ -61,4 +61,3 @@ ds = getData(start = '2013-03-31', end = '2013-09-30')
 ds = getDataWeekly('2013-03-31')
 }
 }
-

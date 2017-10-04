@@ -2,8 +2,8 @@
 % Please edit documentation in R/getModels.R
 \name{getModelRunExpectancy}
 \alias{getModelRunExpectancy}
-\alias{getModelRunExpectancy.GameDayPlays}
 \alias{getModelRunExpectancy.default}
+\alias{getModelRunExpectancy.GameDayPlays}
 \title{getModelRunExpectancy}
 \usage{
 getModelRunExpectancy(data, mod.re = NULL, verbose = TRUE,
@@ -45,4 +45,3 @@ re.mod <- getModelRunExpectancy(May)
 states = expand.grid(startCode = 0:7, startOuts = 0:2)
 matrix(predict(re.mod, newdata=states), ncol=3)
 }
-

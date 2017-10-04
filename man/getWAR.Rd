@@ -76,4 +76,3 @@ war <- getWAR(MayProcessed$openWAR)
 war <- getWAR(MayProcessed$openWAR, dataRepl = head(MayProcessed$openWAR, 10000))
 
 }
-

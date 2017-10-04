@@ -12,4 +12,3 @@ getFielderId(dat)
 \description{
 getFilderId
 }
-

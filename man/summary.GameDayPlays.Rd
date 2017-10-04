@@ -25,4 +25,3 @@ Tabulates cumulative statistics by team for the contents of a \code{\link{GameDa
 summary(May)
 
 }
-

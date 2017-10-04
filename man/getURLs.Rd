@@ -20,4 +20,3 @@ Convenience function for returning data related to a game
 \details{
 Given a gameId string, this function can return several URLs
 }
-

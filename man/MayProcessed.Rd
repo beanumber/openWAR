@@ -18,4 +18,3 @@ MayProcessed
 A sample of processed data that has been through \code{\link{makeWAR}}
 }
 \keyword{datasets}
-

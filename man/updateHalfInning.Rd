@@ -15,4 +15,3 @@ A gameday object
 \description{
 updateHalfInning
 }
-

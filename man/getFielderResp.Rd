@@ -22,4 +22,3 @@ Fits 9 logistic regression models, each giving the probability of
 a fielder at one of the 9 defensive positions successfully converting the 
 ball into at least one out.
 }
-

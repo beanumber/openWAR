@@ -60,4 +60,3 @@ A \code{\link{data.frame}} of players and their tabulated openWAR values.  The
 class(openWAR2012)
 
 }
-

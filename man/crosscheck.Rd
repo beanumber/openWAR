@@ -22,4 +22,3 @@ Cross-check the accuracy of the GameDay data with the Lahman database
 \details{
 Cross-checks summary statistics with the Lahman database.
 }
-

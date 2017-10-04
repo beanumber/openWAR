@@ -30,4 +30,3 @@ re24full <- makeWARre24(May14, mod.re = Maymod.re)
 sum(re24$delta)
 sum(re24full$delta)
 }
-

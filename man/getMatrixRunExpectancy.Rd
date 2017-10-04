@@ -24,4 +24,3 @@ ERM <- getMatrixRunExpectancy(getModelRunExpectancy(May, verbose = FALSE))
 dim(ERM)
 ERM
 }
-

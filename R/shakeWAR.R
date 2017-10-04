@@ -70,7 +70,8 @@ shakeWAR.list <- function(data, N = 10, resample = "plays", ...) {
 
 shakeWAR.openWARPlays <- function(data, N = 10, resample = "plays", ...) {
   # assume the models are fixed, and resample the RAA values this captures the sampling error
-  bstrap <- mosaic.do(N) * getWAR(mosaic::resample(data), verbose = TRUE) %>% mutate(playerId = as.numeric(playerId))
+  bstrap <- mosaic.do(N) * getWAR(mosaic::resample(data), verbose = TRUE) %>% 
+      mutate_(playerId = ~as.numeric(playerId))
   # bstrap should be a data.frame of class 'do.openWARPlayers'
   class(bstrap) <- c("do.openWARPlayers", class(bstrap))
   # with roughly N * M rows, where M is the numbers of players

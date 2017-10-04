@@ -24,4 +24,3 @@ getGameIds()
 getGameIds('2008-05-14')
 
 }
-
