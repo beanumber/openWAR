@@ -269,7 +269,7 @@ xml2df <- function(xml_path, ...) {
   # remove any columns that don't have a name
   df <- df[ , !is.na(names(df))]
   # Check for extra columns that may have been appended as a result of a double-pipe delimiter.
-  if(length(df)==10) df <- dplyr::select(df, - one_of("X10"))
+  if("X10" %in% colnames(df)) df <- dplyr::select(df, - one_of("X10"))
 
   
   if (nrow(df) == 0) {
