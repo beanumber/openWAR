@@ -120,7 +120,7 @@ getGameIds <- function(date = Sys.Date()) {
     yyyy = format(date, "%Y")
     mm = format(date, "%m")
     dd = format(date, "%d")
-    url <- paste("http://gd2.mlb.com/components/game/mlb/year_", yyyy, "/month_", mm, "/day_", dd, "/", sep = "")
+    url <- paste("http://gd2.mlb.com/components/game/mlb/year_", yyyy, "/month_", mm, "/day_", dd, sep = "")
     message(paste("\nRetrieving data from", date, "..."))
     a <- RCurl::getURL(url)
     b <- strsplit(a, "<a")
