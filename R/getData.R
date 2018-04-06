@@ -120,12 +120,12 @@ getGameIds <- function(date = Sys.Date()) {
     yyyy = format(date, "%Y")
     mm = format(date, "%m")
     dd = format(date, "%d")
-    url <- paste("http://gd2.mlb.com/components/game/mlb/year_", yyyy, "/month_", mm, "/day_", dd, "/", sep = "")
+    url <- paste("http://gd2.mlb.com/components/game/mlb/year_", yyyy, "/month_", mm, "/day_", dd, sep = "")
     message(paste("\nRetrieving data from", date, "..."))
     a <- RCurl::getURL(url)
     b <- strsplit(a, "<a")
     ind <- grep("gid", b[[1]])
-    games <- substring(b[[1]][ind], 8, 37)
+    games <- substring(b[[1]][ind], 15, 44) #The location of the gid moved in the URL.
     message(paste("\n...found", length(games), "games\n"))
     return(games)
 }
