@@ -83,6 +83,7 @@ makeWAR = function(x, models = list(), verbose = TRUE, low.memory = TRUE, step =
 #' print(object.size(res), units = "Mb")
 
 makeWAR.GameDayPlays = function(x, models = list(), verbose = TRUE, low.memory = TRUE, step = FALSE, ...) {
+  class(x) <- unique(c("GameDayPlays", class(dplyr::tbl_df(x))))
   x$idx <- 1:nrow(x)
   # Step 1: Define \delta, the change in expected runs
   mod.re = getModelRunExpectancy(select_(x, "outsInInning", "runsFuture", "startCode", "startOuts"), 
@@ -366,7 +367,7 @@ makeWARFielding = function(data, ...) {
     message("...Estimating Fielding Runs Above Average...")
     
     # Compute the collective responsibility of all fielders
-    fmod = getModelFieldingCollective(data[, c("fielderId", "our.x", "our.y")])
+    fmod <- getModelFieldingCollective(data[, c("fielderId", "our.x", "our.y")])
     message("....Applying the collective fielding model...")
     p.hat <- predict(fmod, newdata = select_(data, ~our.x, ~our.y))
     # Step 2a: Define \delta.field for the defense, collectively

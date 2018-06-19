@@ -238,7 +238,7 @@ getModelFieldingCollective = function(data) { UseMethod("getModelFieldingCollect
 #' @method getModelFieldingCollective GameDayPlays
 
 getModelFieldingCollective.GameDayPlays = function(data) {
-  getModelFieldingCollective(filter_(data, ~isBIP == TRUE))
+  getModelFieldingCollective(dplyr::filter_(data, ~isBIP == TRUE))
 }
 
 #' @export

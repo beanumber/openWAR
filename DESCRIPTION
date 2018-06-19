@@ -1,8 +1,8 @@
 Package: openWAR
 Type: Package
 Title: Machinery for Analyzing Baseball Data and Computing WAR
-Version: 0.2.3.9002
-Date: 2013-07-31
+Version: 0.2.3.9003
+Date: 2018-06-1
 Authors@R: c(
     person("Ben", "Baumer", email = "ben.baumer@gmail.com", role = c("aut", "cre")), 
     person("Gregory", "Matthews", email = "gjm112@gmail.com", role = c("aut")),
