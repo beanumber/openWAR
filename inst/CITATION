@@ -9,12 +9,13 @@ citEntry(entry = "Article",
   year         = "2015",
   volume       = "11",
   number       = "2",
-  pages        = "",
+  pages        = "69--84",
+  doi          = "10.1515/jqas-2014-0098",
   url          = "http://arxiv.org/abs/1312.7158",
   textVersion  =
   paste("Benjamin S. Baumer, Shane T. Jensen, Gregory J. Matthews (2015).",
         "openWAR: An Open Source System for Overall Player Performance in Major League Baseball.",
-        "Journal of Statistics in Sports, 11(2).",
+        "Journal of Quantitative Analysis in Sports, 11(2):69-84.",
         "URL http://arxiv.org/abs/1312.7158.")
 )
 
